@@ -1,0 +1,100 @@
+(((((((((((((((((T&T)|(y5&T))&u9)|(F&T))&v6)|(q6&F))&z9)|(v2&u1))&v1)|(F&T))|T)&z10)|(v8&T))|r9)&(w7|y6))|F)|F)-{'w7': False, 'u9': False, 'y5': True, 'u1': False, 'q6': False, 'z9': False, 'v1': False, 'v6': True, 'z10': True, 'y6': True, 'v8': True, 'v2': True, 'r9': False}
+((((((((((((((F&s8)|T)&(F|T))&F)|y4)|T)&q9)&y5)|t0)&(F|y7))|T)&(F|w7))|F)&(r5|s8))-{'w7': False, 'y7': False, 'y5': True, 'r5': False, 't0': True, 's8': False, 'y4': True, 'q9': True}
+((((((((((((~x10|u6)&(w1|q9))|p5)&p10)|(y3&y7))&F)|F)&(x6|T))&w8)&F)&p5)|(x6&s7))-{'y3': False, 'p5': True, 'w1': True, 'y7': True, 's7': False, 'p10': True, 'x10': True, 'w8': False, 'u6': False, 'x6': True, 'q9': False}
+(((((((((((q2&T)|(s8&y0))&T)|(F&T))|q3)&(r1|u5))|q5)|F)&(F|T))&T)|(T&T))-{'q3': False, 'r1': False, 'q2': False, 'u5': True, 's8': False, 'q5': True, 'y0': True}
+((((((((((r3&T)|(y10&T))|T)&T)|(v2&F))&z2)|q4)&(y8|F))&y5)|(s4&T))-{'v2': False, 'y8': True, 'y5': True, 'z2': False, 'q4': True, 'y10': True, 's4': False, 'r3': True}
+((((((((((~((((T&x5)|(u2&r8))&t4)|(F&F))|x10)&(w4|t1))&T)|(y2&p8))|T)&(r10|t3))&F)&T)|(T&F))&F)-{'u2': True, 'w4': False, 'r8': False, 't4': True, 'r10': False, 'p8': True, 'x10': True, 't1': False, 'y2': True, 'x5': False, 't3': True}
+((((((((x3&y8)|(T&T))&z2)|(F&y0))|p1)&(p6|u8))|T)&(F|F))-{'x3': True, 'y0': True, 'p1': False, 'y8': False, 'u8': True, 'z2': False, 'p6': False}
+(((((((F|F)&F)&T)|t0)&(z3|T))|v2)&(p9|v1))-{'p9': True, 'v2': True, 'v1': True, 't0': False, 'z3': True}
+(((((((T|s2)&(F|y0))|q8)|u1)&(z4|t8))&T)|(F&u5))-{'y0': True, 'q8': True, 'u5': False, 'z4': True, 'u1': False, 't8': False, 's2': True}
+(((((((~T|s9)&(q0|F))|q2)&F)&r5)|(T&F))|y5)-{'y5': True, 's9': False, 'q2': False, 'r5': False, 'q0': False}
+((((((~(((~((((T&T)|t1)&(T|w0))&F)&F)|(v6&F))|z0)|q2)&(F|p5))&s5)|(s0&v8))&v10)|(v5&F))-{'z0': True, 'q2': True, 'w0': False, 'v8': True, 'p5': True, 't1': False, 's0': False, 'v10': False, 'v5': False, 's5': True, 'v6': True}
+((((((~~(((y4|v2)&(z1|T))|T)&T)|w4)&(F|t0))|F)&(T|T))|r10)-{'z1': False, 'w4': False, 'v2': False, 'r10': True, 't0': False, 'y4': True}
+(((((~(((((t8&T)|(t3&T))&s0)|(z5&T))|T)&z1)|(s6&x3))&F)&F)|(T&z0))-{'x3': False, 'z1': True, 'z0': False, 's6': False, 't8': True, 's0': False, 'z5': False, 't3': False}
+(((((~(((~(t3|F)&u5)&T)&r6)&F)|(x2&T))|w3)&w5)|v0)-{'w3': False, 'w5': False, 'x2': False, 'u5': True, 't3': True, 'r6': False, 'v0': False}
+(((((~((~(((p9&F)|F)&y10)&u7)|(F&F))&r2)|T)&(F|p6))|F)&(T|T))-{'y10': True, 'u7': False, 'p9': False, 'p6': False, 'r2': True}
+(((((~((~u9|u7)&(p7|T))|T)&z7)|F)|F)&t4)-{'p7': False, 'u7': False, 't4': False, 'u9': True, 'z7': False}
+(((((~x5|F)&F)|(T&T))&u4)|(s2&z8))-{'s2': False, 'z8': True, 'x5': False, 'u4': True}
+((((T|T)&(x10|t4))&T)|(T&y10))-{'t4': False, 'y10': True, 'x10': True}
+((((v9&T)|(x5&F))|T)&(F|T))-{'x5': True, 'v9': True}
+((((~((z9|F)&(w4|y5))&T)|(F&y0))|y1)&u5)-{'y0': False, 'w4': False, 'u5': False, 'y5': False, 'y1': False, 'z9': False}
+((((~((~~s0&r8)|(F&u8))&F)|(x2&x5))|p8)&(s7|F))-{'s7': True, 'p8': False, 'u8': True, 'r8': True, 's0': True, 'x5': True, 'x2': True}
+((((~(~(~T|F)|T)&T)&F)&F)|(q9&v1))-{'v1': True, 'q9': False}
+((((~~~T|F)&(p6|F))|p2)|x9)-{'p2': True, 'p6': True, 'x9': False}
+(((T|F)|F)&r0)-{'r0': True}
+(((T|q9)&(F|u3))&F)-{'u3': True, 'q9': False}
+(((~((((((F|w0)&(F|z3))|F)&(v6|T))|F)&(T|F))|T)&y3)|(u5&T))-{'y3': True, 'u5': False, 'z3': False, 'w0': True, 'v6': False}
+(((~(((F|x7)|T)&(t4|T))|T)&(r3|t0))&z0)-{'x7': False, 'z0': False, 't0': False, 't4': False, 'r3': True}
+(((~(((~F|y1)&(T|T))|t3)&w6)&F)|(F&T))-{'y1': False, 'w6': False, 't3': False}
+(((~((~~(~(((z3|w1)|F)&(F|F))&u0)|w2)&(q0|w5))&F)|(r8&T))|F)-{'w1': True, 'w5': False, 'u0': False, 'r8': False, 'w2': True, 'q0': True, 'z3': True}
+(((~((~~x2&z5)|(u2&v10))&v9)|T)&(T|T))-{'u2': True, 'z5': False, 'x2': False, 'v9': True, 'v10': True}
+(((~(~((((~F&T)|T)&(F|s10))|F)&p2)&s4)|q2)&(F|r5))-{'p2': False, 's4': False, 'q2': False, 'r5': False, 's10': True}
+(((~(~((z6|r0)|F)&y5)&z2)&F)|(T&p8))-{'z6': False, 'y5': False, 'r0': True, 'p8': True, 'z2': False}
+(((~F|F)&T)|(F&p1))-{'p1': False}
+(((~w7|T)&(T|z5))|F)-{'w7': False, 'z5': False}
+(((~z5&F)|T)&(T|x5))-{'z5': False, 'x5': True}
+(((~~(((((T|x0)&(T|r0))&y1)|(p6&T))|F)&q0)&F)|(w5&r7))-{'w5': False, 'x0': True, 'r7': False, 'p6': True, 'y1': True, 'r0': True, 'q0': False}
+((F|T)&(T|T))-{}
+((F|T)&(s10|F))-{'s10': True}
+((T&z7)|(T&T))-{'z7': False}
+((p0|F)&(u7|F))-{'u7': False, 'p0': False}
+((u8&F)|(F&F))-{'u8': False}
+((~((((((F|F)&T)|(F&w7))&F)|(v3&T))|s5)|r7)|F)-{'w7': False, 'v3': False, 'r7': False, 's5': True}
+((~((((((~v0&u3)|r6)&(F|F))|u9)&T)|(F&T))|F)&F)-{'u3': False, 'u9': False, 'r6': True, 'v0': True}
+((~((((~T&t2)&T)|(T&z0))&F)|F)&(v5|x6))-{'z0': False, 'v5': True, 'x6': False, 't2': True}
+((~(((F|y10)|t8)&F)&T)|(s4&q2))-{'t8': False, 's4': True, 'y10': True, 'q2': True}
+((~(((t2|r6)|x9)&(y10|t9))&w8)|(w9&z1))-{'t9': False, 'z1': False, 'r6': False, 'w9': True, 'x9': False, 'w8': True, 'y10': False, 't2': True}
+((~(((~~F|x6)&(F|F))|q8)&v4)|(T&r5))-{'x6': False, 'q8': False, 'r5': True, 'v4': True}
+((~(F|F)&p0)&q10)-{'p0': True, 'q10': True}
+((~T&t10)|(u3&F))-{'u3': False, 't10': False}
+((~z4|T)&(F|q8))-{'q8': True, 'z4': True}
+(F&T)-{}
+(F&w5)-{'w5': False}
+(T|p0)-{'p0': True}
+(~((((((~(F|F)&v6)|(s1&r1))&T)&T)|(z9&t0))&T)|t2)-{'s1': False, 'r1': True, 'v6': True, 't0': False, 'z9': False, 't2': False}
+(~((~((s2&T)|(F&F))&F)|(q1&F))&F)-{'q1': False, 's2': False}
+(~((~t5&F)|(F&y7))|t10)-{'t5': True, 'y7': True, 't10': False}
+(~((~~p5&z4)|T)&p3)-{'p5': False, 'p3': True, 'z4': True}
+(~((~~~(((((T|T)|F)&(u8|p9))|z2)&(F|T))&T)|T)&T)-{'z2': True, 'p9': False, 'u8': False}
+(~(~~((~(~~y3|F)&z9)|(T&T))|s4)|z4)-{'y3': True, 's4': True, 'z9': False, 'z4': False}
+(~F&T)-{}
+(~T&F)-{}
+(~T|T)-{}
+(~T|t9)-{'t9': False}
+~(((((((((((F&T)&F)|(F&T))|q3)&(T|u2))|p6)&(T|T))&q7)|(u4&F))|z1)&(F|u0))-{'q3': True, 'z1': False, 'u0': False, 'u4': True, 'u2': True, 'q7': True, 'p6': False}
+~((((((F&F)&u7)|(F&F))|z4)&(s1|T))|T)-{'s1': True, 'u7': True, 'z4': True}
+~(((((~~~T|u5)&F)|T)&z2)|(F&F))-{'z2': True, 'u5': False}
+~((((F|u6)&(T|T))|u9)&q3)-{'q3': False, 'u9': False, 'u6': True}
+~(((q1|x5)|r7)|x1)-{'x5': False, 'q1': True, 'x1': False, 'r7': False}
+~(((~u10&x6)|(T&F))&T)-{'x6': True, 'u10': False}
+~(((~~(~~((F&y5)|(w5&x5))|z1)&u9)|(T&t8))|T)-{'z1': False, 'u9': False, 'w5': True, 'y5': True, 't8': True, 'x5': False}
+~((F|r4)&(y0|F))-{'y0': False, 'r4': False}
+~((u3&w3)|(u10&x4))-{'u3': False, 'w3': False, 'x4': False, 'u10': False}
+~((v0&u7)|(T&x9))-{'u7': True, 'v0': True, 'x9': False}
+~((w9|t0)&T)-{'t0': False, 'w9': False}
+~((z7&v6)&T)-{'z7': True, 'v6': True}
+~((~(((((((T&y5)|(p8&t1))|F)&F)&q6)|(T&F))&v5)&u5)|(r0&F))-{'u5': True, 'y5': False, 'p8': True, 'v5': False, 't1': False, 'q6': False, 'r0': True}
+~((~(((T|F)|F)|T)|T)&(w3|T))-{'w3': False}
+~((~((~(((T&F)|F)&(q3|t1))&s1)|T)|F)&(y5|T))-{'s1': False, 't1': True, 'y5': False, 'q3': True}
+~((~~((~F&F)|(x10&s4))&y1)|(t6&u5))-{'y1': True, 's4': False, 't6': True, 'x10': False, 'u5': True}
+~((~~~((~(F|T)&T)|(p9&z4))&y6)|T)-{'y6': True, 'p9': False, 'z4': True}
+~((~~~T&q7)|(F&T))-{'q7': False}
+~(~((((~~(v7|z6)&y10)|(F&F))|F)&(z6|w9))|F)-{'z6': False, 'v7': False, 'y10': False, 'w9': True}
+~(~~(((((p0|T)|q4)&(z7|r1))|F)&(z9|T))|u7)-{'u7': True, 'r1': False, 'q4': False, 'z9': True, 'p0': True, 'z7': True}
+~T-{}
+~T-{}
+~v6-{'v6': False}
+~z5-{'z5': False}
+~~((((((((F|T)|T)&(q3|v6))&T)|(T&F))&q0)&z10)|F)-{'q3': False, 'z10': False, 'q0': True, 'v6': False}
+~~(((~((~((F&z1)|w10)|F)&(T|T))|p4)&(x8|F))&F)-{'z1': True, 'p4': True, 'x8': False, 'w10': False}
+~~((~(((((F&y9)|y7)&r4)|(y8&T))|F)&F)|(F&y7))-{'y9': True, 'y7': True, 'r4': True, 'y8': True}
+~~(F|p8)-{'p8': True}
+~~(F|w2)-{'w2': True}
+~~(r3&F)-{'r3': True}
+~~(~(((~((w7|v5)&(q6|r10))|T)&(t1|T))|T)|v7)-{'w7': True, 'v7': True, 'r10': False, 't1': False, 'q6': True, 'v5': False}
+~~w2-{'w2': False}
+~~~((((((v2&F)&y3)&y3)|F)&p3)|(F&u7))-{'y3': True, 'u7': False, 'v2': True, 'p3': True}
+~~~((((~u9|F)|F)|F)&(T|F))-{'u9': False}
+~~~(~~F&s0)-{'s0': False}
+~~~T-{}
+~~~~~x0-{'x0': True}

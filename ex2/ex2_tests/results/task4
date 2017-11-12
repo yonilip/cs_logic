@@ -1,0 +1,300 @@
+(1) Task_4 testing formula: (((((((((((((((((T&T)|(y5&T))&u9)|(F&T))&v6)|(q6&F))&z9)|(v2&u1))&v1)|(F&T))|T)&z10)|(v8&T))|r9)&(w7|y6))|F)|F)
+truth_values False
+-------------------------------
+(2) Task_4 testing formula: ((((((((((((((F&s8)|T)&(F|T))&F)|y4)|T)&q9)&y5)|t0)&(F|y7))|T)&(F|w7))|F)&(r5|s8))
+truth_values False
+-------------------------------
+(3) Task_4 testing formula: ((((((((((((~x10|u6)&(w1|q9))|p5)&p10)|(y3&y7))&F)|F)&(x6|T))&w8)&F)&p5)|(x6&s7))
+truth_values False
+-------------------------------
+(4) Task_4 testing formula: (((((((((((q2&T)|(s8&y0))&T)|(F&T))|q3)&(r1|u5))|q5)|F)&(F|T))&T)|(T&T))
+truth_values True
+-------------------------------
+(5) Task_4 testing formula: ((((((((((r3&T)|(y10&T))|T)&T)|(v2&F))&z2)|q4)&(y8|F))&y5)|(s4&T))
+truth_values False
+-------------------------------
+(6) Task_4 testing formula: ((((((((((~((((T&x5)|(u2&r8))&t4)|(F&F))|x10)&(w4|t1))&T)|(y2&p8))|T)&(r10|t3))&F)&T)|(T&F))&F)
+truth_values False
+-------------------------------
+(7) Task_4 testing formula: ((((((((x3&y8)|(T&T))&z2)|(F&y0))|p1)&(p6|u8))|T)&(F|F))
+truth_values False
+-------------------------------
+(8) Task_4 testing formula: (((((((F|F)&F)&T)|t0)&(z3|T))|v2)&(p9|v1))
+truth_values False
+-------------------------------
+(9) Task_4 testing formula: (((((((T|s2)&(F|y0))|q8)|u1)&(z4|t8))&T)|(F&u5))
+truth_values False
+-------------------------------
+(10) Task_4 testing formula: (((((((~T|s9)&(q0|F))|q2)&F)&r5)|(T&F))|y5)
+truth_values False
+-------------------------------
+(11) Task_4 testing formula: ((((((~(((~((((T&T)|t1)&(T|w0))&F)&F)|(v6&F))|z0)|q2)&(F|p5))&s5)|(s0&v8))&v10)|(v5&F))
+truth_values False
+-------------------------------
+(12) Task_4 testing formula: ((((((~~(((y4|v2)&(z1|T))|T)&T)|w4)&(F|t0))|F)&(T|T))|r10)
+truth_values False
+-------------------------------
+(13) Task_4 testing formula: (((((~(((((t8&T)|(t3&T))&s0)|(z5&T))|T)&z1)|(s6&x3))&F)&F)|(T&z0))
+truth_values False
+-------------------------------
+(14) Task_4 testing formula: (((((~(((~(t3|F)&u5)&T)&r6)&F)|(x2&T))|w3)&w5)|v0)
+truth_values False
+-------------------------------
+(15) Task_4 testing formula: (((((~((~(((p9&F)|F)&y10)&u7)|(F&F))&r2)|T)&(F|p6))|F)&(T|T))
+truth_values False
+-------------------------------
+(16) Task_4 testing formula: (((((~((~u9|u7)&(p7|T))|T)&z7)|F)|F)&t4)
+truth_values False
+-------------------------------
+(17) Task_4 testing formula: (((((~x5|F)&F)|(T&T))&u4)|(s2&z8))
+truth_values False
+-------------------------------
+(18) Task_4 testing formula: ((((T|T)&(x10|t4))&T)|(T&y10))
+truth_values False
+-------------------------------
+(19) Task_4 testing formula: ((((v9&T)|(x5&F))|T)&(F|T))
+truth_values True
+-------------------------------
+(20) Task_4 testing formula: ((((~((z9|F)&(w4|y5))&T)|(F&y0))|y1)&u5)
+truth_values False
+-------------------------------
+(21) Task_4 testing formula: ((((~((~~s0&r8)|(F&u8))&F)|(x2&x5))|p8)&(s7|F))
+truth_values False
+-------------------------------
+(22) Task_4 testing formula: ((((~(~(~T|F)|T)&T)&F)&F)|(q9&v1))
+truth_values False
+-------------------------------
+(23) Task_4 testing formula: ((((~~~T|F)&(p6|F))|p2)|x9)
+truth_values False
+-------------------------------
+(24) Task_4 testing formula: (((T|F)|F)&r0)
+truth_values False
+-------------------------------
+(25) Task_4 testing formula: (((T|q9)&(F|u3))&F)
+truth_values False
+-------------------------------
+(26) Task_4 testing formula: (((~((((((F|w0)&(F|z3))|F)&(v6|T))|F)&(T|F))|T)&y3)|(u5&T))
+truth_values False
+-------------------------------
+(27) Task_4 testing formula: (((~(((F|x7)|T)&(t4|T))|T)&(r3|t0))&z0)
+truth_values False
+-------------------------------
+(28) Task_4 testing formula: (((~(((~F|y1)&(T|T))|t3)&w6)&F)|(F&T))
+truth_values False
+-------------------------------
+(29) Task_4 testing formula: (((~((~~(~(((z3|w1)|F)&(F|F))&u0)|w2)&(q0|w5))&F)|(r8&T))|F)
+truth_values False
+-------------------------------
+(30) Task_4 testing formula: (((~((~~x2&z5)|(u2&v10))&v9)|T)&(T|T))
+truth_values True
+-------------------------------
+(31) Task_4 testing formula: (((~(~((((~F&T)|T)&(F|s10))|F)&p2)&s4)|q2)&(F|r5))
+truth_values False
+-------------------------------
+(32) Task_4 testing formula: (((~(~((z6|r0)|F)&y5)&z2)&F)|(T&p8))
+truth_values False
+-------------------------------
+(33) Task_4 testing formula: (((~F|F)&T)|(F&p1))
+truth_values True
+-------------------------------
+(34) Task_4 testing formula: (((~w7|T)&(T|z5))|F)
+truth_values True
+-------------------------------
+(35) Task_4 testing formula: (((~z5&F)|T)&(T|x5))
+truth_values True
+-------------------------------
+(36) Task_4 testing formula: (((~~(((((T|x0)&(T|r0))&y1)|(p6&T))|F)&q0)&F)|(w5&r7))
+truth_values False
+-------------------------------
+(37) Task_4 testing formula: ((F|T)&(T|T))
+truth_values True
+-------------------------------
+(38) Task_4 testing formula: ((F|T)&(s10|F))
+truth_values False
+-------------------------------
+(39) Task_4 testing formula: ((T&z7)|(T&T))
+truth_values True
+-------------------------------
+(40) Task_4 testing formula: ((p0|F)&(u7|F))
+truth_values False
+-------------------------------
+(41) Task_4 testing formula: ((u8&F)|(F&F))
+truth_values False
+-------------------------------
+(42) Task_4 testing formula: ((~((((((F|F)&T)|(F&w7))&F)|(v3&T))|s5)|r7)|F)
+truth_values False
+-------------------------------
+(43) Task_4 testing formula: ((~((((((~v0&u3)|r6)&(F|F))|u9)&T)|(F&T))|F)&F)
+truth_values False
+-------------------------------
+(44) Task_4 testing formula: ((~((((~T&t2)&T)|(T&z0))&F)|F)&(v5|x6))
+truth_values False
+-------------------------------
+(45) Task_4 testing formula: ((~(((F|y10)|t8)&F)&T)|(s4&q2))
+truth_values True
+-------------------------------
+(46) Task_4 testing formula: ((~(((t2|r6)|x9)&(y10|t9))&w8)|(w9&z1))
+truth_values False
+-------------------------------
+(47) Task_4 testing formula: ((~(((~~F|x6)&(F|F))|q8)&v4)|(T&r5))
+truth_values False
+-------------------------------
+(48) Task_4 testing formula: ((~(F|F)&p0)&q10)
+truth_values False
+-------------------------------
+(49) Task_4 testing formula: ((~T&t10)|(u3&F))
+truth_values False
+-------------------------------
+(50) Task_4 testing formula: ((~z4|T)&(F|q8))
+truth_values False
+-------------------------------
+(51) Task_4 testing formula: (F&T)
+truth_values False
+-------------------------------
+(52) Task_4 testing formula: (F&w5)
+truth_values False
+-------------------------------
+(53) Task_4 testing formula: (T|p0)
+truth_values True
+-------------------------------
+(54) Task_4 testing formula: (~((((((~(F|F)&v6)|(s1&r1))&T)&T)|(z9&t0))&T)|t2)
+truth_values False
+-------------------------------
+(55) Task_4 testing formula: (~((~((s2&T)|(F&F))&F)|(q1&F))&F)
+truth_values False
+-------------------------------
+(56) Task_4 testing formula: (~((~t5&F)|(F&y7))|t10)
+truth_values True
+-------------------------------
+(57) Task_4 testing formula: (~((~~p5&z4)|T)&p3)
+truth_values False
+-------------------------------
+(58) Task_4 testing formula: (~((~~~(((((T|T)|F)&(u8|p9))|z2)&(F|T))&T)|T)&T)
+truth_values False
+-------------------------------
+(59) Task_4 testing formula: (~(~~((~(~~y3|F)&z9)|(T&T))|s4)|z4)
+truth_values False
+-------------------------------
+(60) Task_4 testing formula: (~F&T)
+truth_values True
+-------------------------------
+(61) Task_4 testing formula: (~T&F)
+truth_values False
+-------------------------------
+(62) Task_4 testing formula: (~T|T)
+truth_values True
+-------------------------------
+(63) Task_4 testing formula: (~T|t9)
+truth_values False
+-------------------------------
+(64) Task_4 testing formula: ~(((((((((((F&T)&F)|(F&T))|q3)&(T|u2))|p6)&(T|T))&q7)|(u4&F))|z1)&(F|u0))
+truth_values False
+-------------------------------
+(65) Task_4 testing formula: ~((((((F&F)&u7)|(F&F))|z4)&(s1|T))|T)
+truth_values False
+-------------------------------
+(66) Task_4 testing formula: ~(((((~~~T|u5)&F)|T)&z2)|(F&F))
+truth_values False
+-------------------------------
+(67) Task_4 testing formula: ~((((F|u6)&(T|T))|u9)&q3)
+truth_values False
+-------------------------------
+(68) Task_4 testing formula: ~(((q1|x5)|r7)|x1)
+truth_values False
+-------------------------------
+(69) Task_4 testing formula: ~(((~u10&x6)|(T&F))&T)
+truth_values False
+-------------------------------
+(70) Task_4 testing formula: ~(((~~(~~((F&y5)|(w5&x5))|z1)&u9)|(T&t8))|T)
+truth_values False
+-------------------------------
+(71) Task_4 testing formula: ~((F|r4)&(y0|F))
+truth_values False
+-------------------------------
+(72) Task_4 testing formula: ~((u3&w3)|(u10&x4))
+truth_values False
+-------------------------------
+(73) Task_4 testing formula: ~((v0&u7)|(T&x9))
+truth_values False
+-------------------------------
+(74) Task_4 testing formula: ~((w9|t0)&T)
+truth_values False
+-------------------------------
+(75) Task_4 testing formula: ~((z7&v6)&T)
+truth_values False
+-------------------------------
+(76) Task_4 testing formula: ~((~(((((((T&y5)|(p8&t1))|F)&F)&q6)|(T&F))&v5)&u5)|(r0&F))
+truth_values False
+-------------------------------
+(77) Task_4 testing formula: ~((~(((T|F)|F)|T)|T)&(w3|T))
+truth_values False
+-------------------------------
+(78) Task_4 testing formula: ~((~((~(((T&F)|F)&(q3|t1))&s1)|T)|F)&(y5|T))
+truth_values True
+-------------------------------
+(79) Task_4 testing formula: ~((~~((~F&F)|(x10&s4))&y1)|(t6&u5))
+truth_values False
+-------------------------------
+(80) Task_4 testing formula: ~((~~~((~(F|T)&T)|(p9&z4))&y6)|T)
+truth_values False
+-------------------------------
+(81) Task_4 testing formula: ~((~~~T&q7)|(F&T))
+truth_values True
+-------------------------------
+(82) Task_4 testing formula: ~(~((((~~(v7|z6)&y10)|(F&F))|F)&(z6|w9))|F)
+truth_values False
+-------------------------------
+(83) Task_4 testing formula: ~(~~(((((p0|T)|q4)&(z7|r1))|F)&(z9|T))|u7)
+truth_values False
+-------------------------------
+(84) Task_4 testing formula: ~T
+truth_values False
+-------------------------------
+(85) Task_4 testing formula: ~T
+truth_values False
+-------------------------------
+(86) Task_4 testing formula: ~v6
+truth_values False
+-------------------------------
+(87) Task_4 testing formula: ~z5
+truth_values False
+-------------------------------
+(88) Task_4 testing formula: ~~((((((((F|T)|T)&(q3|v6))&T)|(T&F))&q0)&z10)|F)
+truth_values False
+-------------------------------
+(89) Task_4 testing formula: ~~(((~((~((F&z1)|w10)|F)&(T|T))|p4)&(x8|F))&F)
+truth_values False
+-------------------------------
+(90) Task_4 testing formula: ~~((~(((((F&y9)|y7)&r4)|(y8&T))|F)&F)|(F&y7))
+truth_values False
+-------------------------------
+(91) Task_4 testing formula: ~~(F|p8)
+truth_values False
+-------------------------------
+(92) Task_4 testing formula: ~~(F|w2)
+truth_values False
+-------------------------------
+(93) Task_4 testing formula: ~~(r3&F)
+truth_values False
+-------------------------------
+(94) Task_4 testing formula: ~~(~(((~((w7|v5)&(q6|r10))|T)&(t1|T))|T)|v7)
+truth_values False
+-------------------------------
+(95) Task_4 testing formula: ~~w2
+truth_values False
+-------------------------------
+(96) Task_4 testing formula: ~~~((((((v2&F)&y3)&y3)|F)&p3)|(F&u7))
+truth_values True
+-------------------------------
+(97) Task_4 testing formula: ~~~((((~u9|F)|F)|F)&(T|F))
+truth_values False
+-------------------------------
+(98) Task_4 testing formula: ~~~(~~F&s0)
+truth_values True
+-------------------------------
+(99) Task_4 testing formula: ~~~T
+truth_values False
+-------------------------------
+(100) Task_4 testing formula: ~~~~~x0
+truth_values False
+-------------------------------

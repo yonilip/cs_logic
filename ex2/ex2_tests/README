@@ -1,0 +1,5 @@
+1. extract ex2_eliav_test.tar in 'code' folder
+
+2. open cmd and move to 'code'
+
+3. run on the command line chmod u+x run_test.sh

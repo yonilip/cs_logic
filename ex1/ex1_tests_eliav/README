@@ -1,0 +1,11 @@
+1. put eliav_tests.py, tests_generator_ex1 and tests in 'code' folder
+
+2. open cmd and move and move to 'code' folder
+
+3. run 'python3 eliav_tests.py'
+
+*Recommendation*
+Run the script as follow: "python3 eliav_tests.py > 'summary.txt'" it will save the test outputs in summary.txt.
+Thus solving bugs can be much more easy :).
+
+Good luck! :)

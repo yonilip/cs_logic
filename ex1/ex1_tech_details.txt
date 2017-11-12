@@ -1,0 +1,43 @@
+ex1
+Technical Details:
+
+
+Folder Hierarchy:
+
+The provided zip file (attached below) contains a folder named "code" with the following files in the following structure:
+
+~/propositions/syntax.py    #a skeleton for your code
+
+~/propositions/syntax_test.py    #test functions
+
+~/test_ex1.py    #a script that runs the tests
+
+
+
+General Comments:
+
+* Please check your code with the provided tests (by running functions from test_ex1.py script). We would run the same tests while grading your exercise, in addition to a manual inspection of the code.
+
+* Please ignore the tests that are not called by test_ex1.py (those that end with _all_operators), as they're for later exercises.
+
+* You are more than welcome to add your own tests if you feel that the provided tests are insufficient. You can submit your test file but it won't be graded. 
+
+
+
+Submission format:
+
+Please submit a zip file with the following format:
+
+ex1_[student_id 9-digits].zip 
+
+(for example: if Freddie's id is 200443322, then Freddie should submit a zip file named ex1_200443322.zip)
+
+Your zip file should include your "code/" directory with its full structure as provided to you. More specifically, in this exercise you must include only the file: 
+
+code/propositions/syntax.py
+
+You can submit the rest of the files, and we will ignore them while grading your exercise.
+
+
+
+We wish you a pleasant logic programming!

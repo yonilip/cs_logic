@@ -1,0 +1,300 @@
+(1) Task_1 testing formula: (((((((((((((((((T&T)|(y5&T))&u9)|(F&T))&v6)|(q6&F))&z9)|(v2&u1))&v1)|(F&T))|T)&z10)|(v8&T))|r9)&(w7|y6))|F)|F) evaluate result: True
+model ['q6', 'r9', 'u1', 'u9', 'v1', 'v2', 'v6', 'v8', 'w7', 'y5', 'y6', 'z10', 'z9']
+-------------------------------
+(2) Task_1 testing formula: ((((((((((((((F&s8)|T)&(F|T))&F)|y4)|T)&q9)&y5)|t0)&(F|y7))|T)&(F|w7))|F)&(r5|s8)) evaluate result: False
+model ['q9', 'r5', 's8', 't0', 'w7', 'y4', 'y5', 'y7']
+-------------------------------
+(3) Task_1 testing formula: ((((((((((((~x10|u6)&(w1|q9))|p5)&p10)|(y3&y7))&F)|F)&(x6|T))&w8)&F)&p5)|(x6&s7)) evaluate result: False
+model ['p10', 'p5', 'q9', 's7', 'u6', 'w1', 'w8', 'x10', 'x6', 'y3', 'y7']
+-------------------------------
+(4) Task_1 testing formula: (((((((((((q2&T)|(s8&y0))&T)|(F&T))|q3)&(r1|u5))|q5)|F)&(F|T))&T)|(T&T)) evaluate result: True
+model ['q2', 'q3', 'q5', 'r1', 's8', 'u5', 'y0']
+-------------------------------
+(5) Task_1 testing formula: ((((((((((r3&T)|(y10&T))|T)&T)|(v2&F))&z2)|q4)&(y8|F))&y5)|(s4&T)) evaluate result: True
+model ['q4', 'r3', 's4', 'v2', 'y10', 'y5', 'y8', 'z2']
+-------------------------------
+(6) Task_1 testing formula: ((((((((((~((((T&x5)|(u2&r8))&t4)|(F&F))|x10)&(w4|t1))&T)|(y2&p8))|T)&(r10|t3))&F)&T)|(T&F))&F) evaluate result: False
+model ['p8', 'r10', 'r8', 't1', 't3', 't4', 'u2', 'w4', 'x10', 'x5', 'y2']
+-------------------------------
+(7) Task_1 testing formula: ((((((((x3&y8)|(T&T))&z2)|(F&y0))|p1)&(p6|u8))|T)&(F|F)) evaluate result: False
+model ['p1', 'p6', 'u8', 'x3', 'y0', 'y8', 'z2']
+-------------------------------
+(8) Task_1 testing formula: (((((((F|F)&F)&T)|t0)&(z3|T))|v2)&(p9|v1)) evaluate result: True
+model ['p9', 't0', 'v1', 'v2', 'z3']
+-------------------------------
+(9) Task_1 testing formula: (((((((T|s2)&(F|y0))|q8)|u1)&(z4|t8))&T)|(F&u5)) evaluate result: True
+model ['q8', 's2', 't8', 'u1', 'u5', 'y0', 'z4']
+-------------------------------
+(10) Task_1 testing formula: (((((((~T|s9)&(q0|F))|q2)&F)&r5)|(T&F))|y5) evaluate result: True
+model ['q0', 'q2', 'r5', 's9', 'y5']
+-------------------------------
+(11) Task_1 testing formula: ((((((~(((~((((T&T)|t1)&(T|w0))&F)&F)|(v6&F))|z0)|q2)&(F|p5))&s5)|(s0&v8))&v10)|(v5&F)) evaluate result: False
+model ['p5', 'q2', 's0', 's5', 't1', 'v10', 'v5', 'v6', 'v8', 'w0', 'z0']
+-------------------------------
+(12) Task_1 testing formula: ((((((~~(((y4|v2)&(z1|T))|T)&T)|w4)&(F|t0))|F)&(T|T))|r10) evaluate result: True
+model ['r10', 't0', 'v2', 'w4', 'y4', 'z1']
+-------------------------------
+(13) Task_1 testing formula: (((((~(((((t8&T)|(t3&T))&s0)|(z5&T))|T)&z1)|(s6&x3))&F)&F)|(T&z0)) evaluate result: False
+model ['s0', 's6', 't3', 't8', 'x3', 'z0', 'z1', 'z5']
+-------------------------------
+(14) Task_1 testing formula: (((((~(((~(t3|F)&u5)&T)&r6)&F)|(x2&T))|w3)&w5)|v0) evaluate result: False
+model ['r6', 't3', 'u5', 'v0', 'w3', 'w5', 'x2']
+-------------------------------
+(15) Task_1 testing formula: (((((~((~(((p9&F)|F)&y10)&u7)|(F&F))&r2)|T)&(F|p6))|F)&(T|T)) evaluate result: False
+model ['p6', 'p9', 'r2', 'u7', 'y10']
+-------------------------------
+(16) Task_1 testing formula: (((((~((~u9|u7)&(p7|T))|T)&z7)|F)|F)&t4) evaluate result: False
+model ['p7', 't4', 'u7', 'u9', 'z7']
+-------------------------------
+(17) Task_1 testing formula: (((((~x5|F)&F)|(T&T))&u4)|(s2&z8)) evaluate result: True
+model ['s2', 'u4', 'x5', 'z8']
+-------------------------------
+(18) Task_1 testing formula: ((((T|T)&(x10|t4))&T)|(T&y10)) evaluate result: True
+model ['t4', 'x10', 'y10']
+-------------------------------
+(19) Task_1 testing formula: ((((v9&T)|(x5&F))|T)&(F|T)) evaluate result: True
+model ['v9', 'x5']
+-------------------------------
+(20) Task_1 testing formula: ((((~((z9|F)&(w4|y5))&T)|(F&y0))|y1)&u5) evaluate result: False
+model ['u5', 'w4', 'y0', 'y1', 'y5', 'z9']
+-------------------------------
+(21) Task_1 testing formula: ((((~((~~s0&r8)|(F&u8))&F)|(x2&x5))|p8)&(s7|F)) evaluate result: True
+model ['p8', 'r8', 's0', 's7', 'u8', 'x2', 'x5']
+-------------------------------
+(22) Task_1 testing formula: ((((~(~(~T|F)|T)&T)&F)&F)|(q9&v1)) evaluate result: False
+model ['q9', 'v1']
+-------------------------------
+(23) Task_1 testing formula: ((((~~~T|F)&(p6|F))|p2)|x9) evaluate result: True
+model ['p2', 'p6', 'x9']
+-------------------------------
+(24) Task_1 testing formula: (((T|F)|F)&r0) evaluate result: True
+model ['r0']
+-------------------------------
+(25) Task_1 testing formula: (((T|q9)&(F|u3))&F) evaluate result: False
+model ['q9', 'u3']
+-------------------------------
+(26) Task_1 testing formula: (((~((((((F|w0)&(F|z3))|F)&(v6|T))|F)&(T|F))|T)&y3)|(u5&T)) evaluate result: True
+model ['u5', 'v6', 'w0', 'y3', 'z3']
+-------------------------------
+(27) Task_1 testing formula: (((~(((F|x7)|T)&(t4|T))|T)&(r3|t0))&z0) evaluate result: False
+model ['r3', 't0', 't4', 'x7', 'z0']
+-------------------------------
+(28) Task_1 testing formula: (((~(((~F|y1)&(T|T))|t3)&w6)&F)|(F&T)) evaluate result: False
+model ['t3', 'w6', 'y1']
+-------------------------------
+(29) Task_1 testing formula: (((~((~~(~(((z3|w1)|F)&(F|F))&u0)|w2)&(q0|w5))&F)|(r8&T))|F) evaluate result: False
+model ['q0', 'r8', 'u0', 'w1', 'w2', 'w5', 'z3']
+-------------------------------
+(30) Task_1 testing formula: (((~((~~x2&z5)|(u2&v10))&v9)|T)&(T|T)) evaluate result: True
+model ['u2', 'v10', 'v9', 'x2', 'z5']
+-------------------------------
+(31) Task_1 testing formula: (((~(~((((~F&T)|T)&(F|s10))|F)&p2)&s4)|q2)&(F|r5)) evaluate result: False
+model ['p2', 'q2', 'r5', 's10', 's4']
+-------------------------------
+(32) Task_1 testing formula: (((~(~((z6|r0)|F)&y5)&z2)&F)|(T&p8)) evaluate result: True
+model ['p8', 'r0', 'y5', 'z2', 'z6']
+-------------------------------
+(33) Task_1 testing formula: (((~F|F)&T)|(F&p1)) evaluate result: True
+model ['p1']
+-------------------------------
+(34) Task_1 testing formula: (((~w7|T)&(T|z5))|F) evaluate result: True
+model ['w7', 'z5']
+-------------------------------
+(35) Task_1 testing formula: (((~z5&F)|T)&(T|x5)) evaluate result: True
+model ['x5', 'z5']
+-------------------------------
+(36) Task_1 testing formula: (((~~(((((T|x0)&(T|r0))&y1)|(p6&T))|F)&q0)&F)|(w5&r7)) evaluate result: False
+model ['p6', 'q0', 'r0', 'r7', 'w5', 'x0', 'y1']
+-------------------------------
+(37) Task_1 testing formula: ((F|T)&(T|T)) evaluate result: True
+model []
+-------------------------------
+(38) Task_1 testing formula: ((F|T)&(s10|F)) evaluate result: True
+model ['s10']
+-------------------------------
+(39) Task_1 testing formula: ((T&z7)|(T&T)) evaluate result: True
+model ['z7']
+-------------------------------
+(40) Task_1 testing formula: ((p0|F)&(u7|F)) evaluate result: False
+model ['p0', 'u7']
+-------------------------------
+(41) Task_1 testing formula: ((u8&F)|(F&F)) evaluate result: False
+model ['u8']
+-------------------------------
+(42) Task_1 testing formula: ((~((((((F|F)&T)|(F&w7))&F)|(v3&T))|s5)|r7)|F) evaluate result: False
+model ['r7', 's5', 'v3', 'w7']
+-------------------------------
+(43) Task_1 testing formula: ((~((((((~v0&u3)|r6)&(F|F))|u9)&T)|(F&T))|F)&F) evaluate result: False
+model ['r6', 'u3', 'u9', 'v0']
+-------------------------------
+(44) Task_1 testing formula: ((~((((~T&t2)&T)|(T&z0))&F)|F)&(v5|x6)) evaluate result: True
+model ['t2', 'v5', 'x6', 'z0']
+-------------------------------
+(45) Task_1 testing formula: ((~(((F|y10)|t8)&F)&T)|(s4&q2)) evaluate result: True
+model ['q2', 's4', 't8', 'y10']
+-------------------------------
+(46) Task_1 testing formula: ((~(((t2|r6)|x9)&(y10|t9))&w8)|(w9&z1)) evaluate result: True
+model ['r6', 't2', 't9', 'w8', 'w9', 'x9', 'y10', 'z1']
+-------------------------------
+(47) Task_1 testing formula: ((~(((~~F|x6)&(F|F))|q8)&v4)|(T&r5)) evaluate result: True
+model ['q8', 'r5', 'v4', 'x6']
+-------------------------------
+(48) Task_1 testing formula: ((~(F|F)&p0)&q10) evaluate result: True
+model ['p0', 'q10']
+-------------------------------
+(49) Task_1 testing formula: ((~T&t10)|(u3&F)) evaluate result: False
+model ['t10', 'u3']
+-------------------------------
+(50) Task_1 testing formula: ((~z4|T)&(F|q8)) evaluate result: True
+model ['q8', 'z4']
+-------------------------------
+(51) Task_1 testing formula: (F&T) evaluate result: False
+model []
+-------------------------------
+(52) Task_1 testing formula: (F&w5) evaluate result: False
+model ['w5']
+-------------------------------
+(53) Task_1 testing formula: (T|p0) evaluate result: True
+model ['p0']
+-------------------------------
+(54) Task_1 testing formula: (~((((((~(F|F)&v6)|(s1&r1))&T)&T)|(z9&t0))&T)|t2) evaluate result: False
+model ['r1', 's1', 't0', 't2', 'v6', 'z9']
+-------------------------------
+(55) Task_1 testing formula: (~((~((s2&T)|(F&F))&F)|(q1&F))&F) evaluate result: False
+model ['q1', 's2']
+-------------------------------
+(56) Task_1 testing formula: (~((~t5&F)|(F&y7))|t10) evaluate result: True
+model ['t10', 't5', 'y7']
+-------------------------------
+(57) Task_1 testing formula: (~((~~p5&z4)|T)&p3) evaluate result: False
+model ['p3', 'p5', 'z4']
+-------------------------------
+(58) Task_1 testing formula: (~((~~~(((((T|T)|F)&(u8|p9))|z2)&(F|T))&T)|T)&T) evaluate result: False
+model ['p9', 'u8', 'z2']
+-------------------------------
+(59) Task_1 testing formula: (~(~~((~(~~y3|F)&z9)|(T&T))|s4)|z4) evaluate result: False
+model ['s4', 'y3', 'z4', 'z9']
+-------------------------------
+(60) Task_1 testing formula: (~F&T) evaluate result: True
+model []
+-------------------------------
+(61) Task_1 testing formula: (~T&F) evaluate result: False
+model []
+-------------------------------
+(62) Task_1 testing formula: (~T|T) evaluate result: True
+model []
+-------------------------------
+(63) Task_1 testing formula: (~T|t9) evaluate result: False
+model ['t9']
+-------------------------------
+(64) Task_1 testing formula: ~(((((((((((F&T)&F)|(F&T))|q3)&(T|u2))|p6)&(T|T))&q7)|(u4&F))|z1)&(F|u0)) evaluate result: True
+model ['p6', 'q3', 'q7', 'u0', 'u2', 'u4', 'z1']
+-------------------------------
+(65) Task_1 testing formula: ~((((((F&F)&u7)|(F&F))|z4)&(s1|T))|T) evaluate result: False
+model ['s1', 'u7', 'z4']
+-------------------------------
+(66) Task_1 testing formula: ~(((((~~~T|u5)&F)|T)&z2)|(F&F)) evaluate result: False
+model ['u5', 'z2']
+-------------------------------
+(67) Task_1 testing formula: ~((((F|u6)&(T|T))|u9)&q3) evaluate result: True
+model ['q3', 'u6', 'u9']
+-------------------------------
+(68) Task_1 testing formula: ~(((q1|x5)|r7)|x1) evaluate result: False
+model ['q1', 'r7', 'x1', 'x5']
+-------------------------------
+(69) Task_1 testing formula: ~(((~u10&x6)|(T&F))&T) evaluate result: False
+model ['u10', 'x6']
+-------------------------------
+(70) Task_1 testing formula: ~(((~~(~~((F&y5)|(w5&x5))|z1)&u9)|(T&t8))|T) evaluate result: False
+model ['t8', 'u9', 'w5', 'x5', 'y5', 'z1']
+-------------------------------
+(71) Task_1 testing formula: ~((F|r4)&(y0|F)) evaluate result: True
+model ['r4', 'y0']
+-------------------------------
+(72) Task_1 testing formula: ~((u3&w3)|(u10&x4)) evaluate result: True
+model ['u10', 'u3', 'w3', 'x4']
+-------------------------------
+(73) Task_1 testing formula: ~((v0&u7)|(T&x9)) evaluate result: False
+model ['u7', 'v0', 'x9']
+-------------------------------
+(74) Task_1 testing formula: ~((w9|t0)&T) evaluate result: True
+model ['t0', 'w9']
+-------------------------------
+(75) Task_1 testing formula: ~((z7&v6)&T) evaluate result: False
+model ['v6', 'z7']
+-------------------------------
+(76) Task_1 testing formula: ~((~(((((((T&y5)|(p8&t1))|F)&F)&q6)|(T&F))&v5)&u5)|(r0&F)) evaluate result: False
+model ['p8', 'q6', 'r0', 't1', 'u5', 'v5', 'y5']
+-------------------------------
+(77) Task_1 testing formula: ~((~(((T|F)|F)|T)|T)&(w3|T)) evaluate result: False
+model ['w3']
+-------------------------------
+(78) Task_1 testing formula: ~((~((~(((T&F)|F)&(q3|t1))&s1)|T)|F)&(y5|T)) evaluate result: True
+model ['q3', 's1', 't1', 'y5']
+-------------------------------
+(79) Task_1 testing formula: ~((~~((~F&F)|(x10&s4))&y1)|(t6&u5)) evaluate result: False
+model ['s4', 't6', 'u5', 'x10', 'y1']
+-------------------------------
+(80) Task_1 testing formula: ~((~~~((~(F|T)&T)|(p9&z4))&y6)|T) evaluate result: False
+model ['p9', 'y6', 'z4']
+-------------------------------
+(81) Task_1 testing formula: ~((~~~T&q7)|(F&T)) evaluate result: True
+model ['q7']
+-------------------------------
+(82) Task_1 testing formula: ~(~((((~~(v7|z6)&y10)|(F&F))|F)&(z6|w9))|F) evaluate result: False
+model ['v7', 'w9', 'y10', 'z6']
+-------------------------------
+(83) Task_1 testing formula: ~(~~(((((p0|T)|q4)&(z7|r1))|F)&(z9|T))|u7) evaluate result: False
+model ['p0', 'q4', 'r1', 'u7', 'z7', 'z9']
+-------------------------------
+(84) Task_1 testing formula: ~T evaluate result: False
+model []
+-------------------------------
+(85) Task_1 testing formula: ~T evaluate result: False
+model []
+-------------------------------
+(86) Task_1 testing formula: ~v6 evaluate result: True
+model ['v6']
+-------------------------------
+(87) Task_1 testing formula: ~z5 evaluate result: True
+model ['z5']
+-------------------------------
+(88) Task_1 testing formula: ~~((((((((F|T)|T)&(q3|v6))&T)|(T&F))&q0)&z10)|F) evaluate result: False
+model ['q0', 'q3', 'v6', 'z10']
+-------------------------------
+(89) Task_1 testing formula: ~~(((~((~((F&z1)|w10)|F)&(T|T))|p4)&(x8|F))&F) evaluate result: False
+model ['p4', 'w10', 'x8', 'z1']
+-------------------------------
+(90) Task_1 testing formula: ~~((~(((((F&y9)|y7)&r4)|(y8&T))|F)&F)|(F&y7)) evaluate result: False
+model ['r4', 'y7', 'y8', 'y9']
+-------------------------------
+(91) Task_1 testing formula: ~~(F|p8) evaluate result: True
+model ['p8']
+-------------------------------
+(92) Task_1 testing formula: ~~(F|w2) evaluate result: True
+model ['w2']
+-------------------------------
+(93) Task_1 testing formula: ~~(r3&F) evaluate result: False
+model ['r3']
+-------------------------------
+(94) Task_1 testing formula: ~~(~(((~((w7|v5)&(q6|r10))|T)&(t1|T))|T)|v7) evaluate result: True
+model ['q6', 'r10', 't1', 'v5', 'v7', 'w7']
+-------------------------------
+(95) Task_1 testing formula: ~~w2 evaluate result: False
+model ['w2']
+-------------------------------
+(96) Task_1 testing formula: ~~~((((((v2&F)&y3)&y3)|F)&p3)|(F&u7)) evaluate result: True
+model ['p3', 'u7', 'v2', 'y3']
+-------------------------------
+(97) Task_1 testing formula: ~~~((((~u9|F)|F)|F)&(T|F)) evaluate result: False
+model ['u9']
+-------------------------------
+(98) Task_1 testing formula: ~~~(~~F&s0) evaluate result: True
+model ['s0']
+-------------------------------
+(99) Task_1 testing formula: ~~~T evaluate result: False
+model []
+-------------------------------
+(100) Task_1 testing formula: ~~~~~x0 evaluate result: False
+model ['x0']
+-------------------------------

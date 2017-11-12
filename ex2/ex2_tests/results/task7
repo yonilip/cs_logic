@@ -1,0 +1,166 @@
+(1) Task_7 testing formula: (((((((F&r1)|(p5&F))&F)|(z7&T))&F)&w1)|(T&T)) Result: True
+-------------------------------
+(2) Task_7 testing formula: ((((((T|F)|F)&F)|(w1&y6))|F)&(T|F)) Result: True
+-------------------------------
+(3) Task_7 testing formula: ((((((v10|F)&(F|w7))|T)&(z4|T))|r3)&(z9|p9)) Result: True
+-------------------------------
+(4) Task_7 testing formula: (((((T|w8)&t1)|F)&(s7|T))&F) Result: True
+-------------------------------
+(5) Task_7 testing formula: (((((s5|t7)|z3)&(T|p0))|y2)&(F|t9)) Result: True
+-------------------------------
+(6) Task_7 testing formula: (((((y1|T)&(p4|F))|F)&T)|(F&s7)) Result: True
+-------------------------------
+(7) Task_7 testing formula: (((((~q7&u1)|T)&(v3|s4))|F)&(T|u0)) Result: True
+-------------------------------
+(8) Task_7 testing formula: (((((~s3&t10)|(F&F))|F)&(s2|q3))&T) Result: True
+-------------------------------
+(9) Task_7 testing formula: ((((F&t10)&T)|(w4&F))&z3) Result: True
+-------------------------------
+(10) Task_7 testing formula: ((((p9&F)|(z3&F))|v8)&(F|T)) Result: True
+-------------------------------
+(11) Task_7 testing formula: ((((r8&F)|(T&F))|y5)|v10) Result: True
+-------------------------------
+(12) Task_7 testing formula: ((((u10&F)|F)&T)&F) Result: True
+-------------------------------
+(13) Task_7 testing formula: ((((w8|q1)&(F|x5))&F)&s3) Result: True
+-------------------------------
+(14) Task_7 testing formula: ((((~F|w4)&(T|F))|F)&(F|F)) Result: True
+-------------------------------
+(15) Task_7 testing formula: (((q3|T)&T)|T) Result: True
+-------------------------------
+(16) Task_7 testing formula: (((s0&F)|y9)|T) Result: True
+-------------------------------
+(17) Task_7 testing formula: (((u5|r1)|s8)&(T|T)) Result: True
+-------------------------------
+(18) Task_7 testing formula: (((w0|v2)|r2)&(T|p5)) Result: True
+-------------------------------
+(19) Task_7 testing formula: (((z0&x6)&p8)|(q4&T)) Result: True
+-------------------------------
+(20) Task_7 testing formula: (((~((F&F)|(F&T))|w0)&(T|T))|u3) Result: True
+-------------------------------
+(21) Task_7 testing formula: ((F&z8)|(q2&F)) Result: True
+-------------------------------
+(22) Task_7 testing formula: ((T&p2)|(z6&T)) Result: True
+-------------------------------
+(23) Task_7 testing formula: ((T&x4)|(F&T)) Result: True
+-------------------------------
+(24) Task_7 testing formula: ((T&z2)|(r9&F)) Result: True
+-------------------------------
+(25) Task_7 testing formula: ((T|F)&(T|r10)) Result: True
+-------------------------------
+(26) Task_7 testing formula: ((t5|F)&p5) Result: True
+-------------------------------
+(27) Task_7 testing formula: ((u6&F)|(T&F)) Result: True
+-------------------------------
+(28) Task_7 testing formula: ((u9|T)|z4) Result: True
+-------------------------------
+(29) Task_7 testing formula: ((v2|y3)&(F|r8)) Result: True
+-------------------------------
+(30) Task_7 testing formula: ((y10&F)|(y4&F)) Result: True
+-------------------------------
+(31) Task_7 testing formula: ((y2|z3)&(q1|p10)) Result: True
+-------------------------------
+(32) Task_7 testing formula: ((z0|T)&F) Result: True
+-------------------------------
+(33) Task_7 testing formula: ((z2&T)|(z0&q2)) Result: True
+-------------------------------
+(34) Task_7 testing formula: ((~((((T|T)&(u0|v7))&y10)|(T&T))|T)&(F|w1)) Result: True
+-------------------------------
+(35) Task_7 testing formula: ((~((p7&x5)|(s7&T))|p10)&(r6|T)) Result: True
+-------------------------------
+(36) Task_7 testing formula: ((~((t1&T)|(F&q0))&T)|(F&T)) Result: True
+-------------------------------
+(37) Task_7 testing formula: ((~(w1&p0)|v4)&(F|x6)) Result: True
+-------------------------------
+(38) Task_7 testing formula: ((~(~T|u5)&F)|(r1&q4)) Result: True
+-------------------------------
+(39) Task_7 testing formula: ((~F&t8)|(T&t9)) Result: True
+-------------------------------
+(40) Task_7 testing formula: ((~~(F|s1)&p2)|(p10&s3)) Result: True
+-------------------------------
+(41) Task_7 testing formula: (F|u7) Result: True
+-------------------------------
+(42) Task_7 testing formula: (F|w2) Result: True
+-------------------------------
+(43) Task_7 testing formula: (T&r4) Result: True
+-------------------------------
+(44) Task_7 testing formula: (p0&F) Result: True
+-------------------------------
+(45) Task_7 testing formula: (q0|z2) Result: True
+-------------------------------
+(46) Task_7 testing formula: (r6&z0) Result: True
+-------------------------------
+(47) Task_7 testing formula: (u10|T) Result: True
+-------------------------------
+(48) Task_7 testing formula: (x1|z7) Result: True
+-------------------------------
+(49) Task_7 testing formula: (y2|t4) Result: True
+-------------------------------
+(50) Task_7 testing formula: (~((F&q10)&p10)&t3) Result: True
+-------------------------------
+(51) Task_7 testing formula: (~((w5&v4)|(p2&t8))|u4) Result: True
+-------------------------------
+(52) Task_7 testing formula: (~((~T|w4)&(v6|p7))|T) Result: True
+-------------------------------
+(53) Task_7 testing formula: (~(p2&F)|T) Result: True
+-------------------------------
+(54) Task_7 testing formula: (~(r1|y6)|q8) Result: True
+-------------------------------
+(55) Task_7 testing formula: (~F|u8) Result: True
+-------------------------------
+(56) Task_7 testing formula: (~F|z10) Result: True
+-------------------------------
+(57) Task_7 testing formula: (~w9&z10) Result: True
+-------------------------------
+(58) Task_7 testing formula: (~~((x6|F)&(F|F))|z8) Result: True
+-------------------------------
+(59) Task_7 testing formula: ~((((F|r9)&F)|(u6&F))|q1) Result: True
+-------------------------------
+(60) Task_7 testing formula: ~((((T&u1)|(F&x8))|T)&x10) Result: True
+-------------------------------
+(61) Task_7 testing formula: ~((((q6&T)|p5)|u9)&(T|z3)) Result: True
+-------------------------------
+(62) Task_7 testing formula: ~(((F|F)&(F|z10))|F) Result: True
+-------------------------------
+(63) Task_7 testing formula: ~(((F|x9)|t5)&(s9|F)) Result: True
+-------------------------------
+(64) Task_7 testing formula: ~(((y5&T)&s3)|(F&w1)) Result: True
+-------------------------------
+(65) Task_7 testing formula: ~(((z2|q0)&r8)&F) Result: True
+-------------------------------
+(66) Task_7 testing formula: ~(((~u1|t5)&(F|z8))&T) Result: True
+-------------------------------
+(67) Task_7 testing formula: ~((F&v1)|T) Result: True
+-------------------------------
+(68) Task_7 testing formula: ~((p3&v4)|(v3&q2)) Result: True
+-------------------------------
+(69) Task_7 testing formula: ~((t4|T)&(T|y10)) Result: True
+-------------------------------
+(70) Task_7 testing formula: ~((~F&x7)|(z6&z4)) Result: True
+-------------------------------
+(71) Task_7 testing formula: ~(F|t5) Result: True
+-------------------------------
+(72) Task_7 testing formula: ~(~((t7|x9)&(u2|u10))|w2) Result: True
+-------------------------------
+(73) Task_7 testing formula: ~(~r1|T) Result: True
+-------------------------------
+(74) Task_7 testing formula: ~s7 Result: True
+-------------------------------
+(75) Task_7 testing formula: ~u6 Result: True
+-------------------------------
+(76) Task_7 testing formula: ~u9 Result: True
+-------------------------------
+(77) Task_7 testing formula: ~y5 Result: True
+-------------------------------
+(78) Task_7 testing formula: ~~((p2|z6)&F) Result: True
+-------------------------------
+(79) Task_7 testing formula: ~~((r4|F)&(z2|s5)) Result: True
+-------------------------------
+(80) Task_7 testing formula: ~~((y8&s1)&u5) Result: True
+-------------------------------
+(81) Task_7 testing formula: ~~(T|x2) Result: True
+-------------------------------
+(82) Task_7 testing formula: ~~q3 Result: True
+-------------------------------
+(83) Task_7 testing formula: ~~r8 Result: True
+-------------------------------
