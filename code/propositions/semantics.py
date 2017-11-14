@@ -171,9 +171,17 @@ def synthesize(models, values):
 def evaluate_inference(rule, model):
     """ Return whether the given inference rule holds in the given model """
     # Task 4.2
+    truth_values = [evaluate(rule.conclusion, model)]
+    for assumption in rule.assumptions:
+        truth_values.append(not evaluate(assumption, model))
+    return any(truth_values)
 
 
 def is_tautological_inference(rule):
     """ Return whether the given inference rule is a semantically correct
         implication of its assumptions """
     # Task 4.3
+    for model in all_models(rule.variables()):
+        if not evaluate_inference(rule, model):
+            return False
+    return True

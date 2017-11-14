@@ -269,8 +269,10 @@ def test_evaluate_inference(debug=False):
         if debug:
             print('Testing evaluation of inference rule', rule1, 'in model',
                   model)
-        assert evaluate_inference(rule1, model) == \
-               (not model['p']) or (not model['q']) or model['r']
+        first = evaluate_inference(rule1, model)
+        second = (not model['p']) or (not model['q']) or model['r']
+        # assert first == second
+        assert evaluate_inference(rule1, model) == (not model['p']) or (not model['q']) or model['r']
 
     # Test 2
     rule2 = InferenceRule([Formula.from_infix('(x|y)')],
