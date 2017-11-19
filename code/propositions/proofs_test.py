@@ -337,6 +337,16 @@ def test_is_valid(debug=False):
         print('Testing validity of the following deductive proof:\n' + str(proof))
     assert not proof.is_valid()
 
+    # Test circular proof
+
+    proof = DeductiveProof(InferenceRule([], Formula.from_infix('(x|y)')),
+                           [InferenceRule([Formula.from_infix('(x|y)')], Formula.from_infix('(y|x)'))],
+                           [DeductiveProof.Line(Formula.from_infix('(y|x)'), 0, [1]),
+                            DeductiveProof.Line(Formula.from_infix('(x|y)'), 0, [0])])
+    if debug:
+        print('Testing validity of the following deductive proof:\n' + str(proof))
+    assert not proof.is_valid()
+
 # Tests for functions:
 
 def test_instantiate(debug=True):

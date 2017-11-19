@@ -160,6 +160,9 @@ class DeductiveProof:
             return False
         for i in range(len(self.lines)):
             _map = {}
+            if self.lines[i].justification is not None:
+                if len(self.lines[i].justification) > i:
+                    return False
             if self.lines[i].rule is None:
                 continue
             instance_i = self.instance_for_line(i)
