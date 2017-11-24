@@ -251,9 +251,6 @@ def test_instance_for_line(debug=False):
             print('Testing instance for line', line,
                   'of the following deductive proof:\n' +
                   str(DISJUNCTION_COMMUTATIVITY_PROOF))
-        a = DISJUNCTION_COMMUTATIVITY_PROOF.instance_for_line(line)
-        b = InferenceRule([Formula.from_infix(a) for a in assumptions],
-                          Formula.from_infix(conclusion))
         assert DISJUNCTION_COMMUTATIVITY_PROOF.instance_for_line(line) == \
             InferenceRule([Formula.from_infix(a) for a in assumptions],
                           Formula.from_infix(conclusion))
@@ -333,16 +330,6 @@ def test_is_valid(debug=False):
                            [DeductiveProof.Line(Formula.from_infix('((x|y)|z)')),
                             DeductiveProof.Line(Formula.from_infix('(x|(y|z))'),
                                                 0, [0])])
-    if debug:
-        print('Testing validity of the following deductive proof:\n' + str(proof))
-    assert not proof.is_valid()
-
-    # Test circular proof
-
-    proof = DeductiveProof(InferenceRule([], Formula.from_infix('(x|y)')),
-                           [InferenceRule([Formula.from_infix('(x|y)')], Formula.from_infix('(y|x)'))],
-                           [DeductiveProof.Line(Formula.from_infix('(y|x)'), 0, [1]),
-                            DeductiveProof.Line(Formula.from_infix('(x|y)'), 0, [0])])
     if debug:
         print('Testing validity of the following deductive proof:\n' + str(proof))
     assert not proof.is_valid()
@@ -534,5 +521,55 @@ def test_inline_proof(debug=False):
     assert inlined_proof.statement == proof.statement
     assert inlined_proof.rules == [proof.rules[2], lemma2_proof.rules[1],
                                    lemma1_proof.rules[0]]
+    # Will be tested with the course staff's implementation of is_valid()
+    assert inlined_proof.is_valid()
+
+def test_inline_proof_extended(debug):
+    from propositions.provers import MP, I1, I2
+
+    # Test inlining the proof of a lemma with two assumptions
+    I2_decomposed = InferenceRule(
+            [Formula.from_infix('(p->(q->r))'), Formula.from_infix('(p->q)')],
+            Formula.from_infix('(p->r)'))
+    I2_decomposed_proof = DeductiveProof(I2_decomposed, [MP, I1, I2],
+        [DeductiveProof.Line(Formula.from_infix('(p->(q->r))')),
+         DeductiveProof.Line(Formula.from_infix('(p->q)')),
+         DeductiveProof.Line(Formula.from_infix('((p->(q->r))->((p->q)->(p->r)))'), 2, []),
+         DeductiveProof.Line(Formula.from_infix('((p->q)->(p->r))'), 0, [0, 2]),
+         DeductiveProof.Line(Formula.from_infix('(p->r)'), 0, [1, 3])])
+
+    statement = InferenceRule([Formula.from_infix('((x|y)->(z->r))'),
+                               Formula.from_infix('((x|y)->z)')],
+                              Formula.from_infix('((x|y)->r)'))
+    proof = DeductiveProof(statement, [I2_decomposed],
+        [DeductiveProof.Line(Formula.from_infix('((x|y)->(z->r))')),
+         DeductiveProof.Line(Formula.from_infix('((x|y)->z)')),
+         DeductiveProof.Line(Formula.from_infix('((x|y)->r)'), 0, [0, 1])])
+    if debug:
+        print('Testing inline_proof for the following main proof:\n' +
+              str(proof) + '\nand the following lemma proof:\n' +
+              str(I2_decomposed_proof))
+    inlined_proof = inline_proof(proof, I2_decomposed_proof)
+    assert inlined_proof.statement == proof.statement
+    assert inlined_proof.rules == [MP, I1, I2]
+    # Will be tested with the course staff's implementation of is_valid()
+    assert inlined_proof.is_valid()
+
+    # Test inlining the proof of a lemma with no assumptions
+    I1_renamed = InferenceRule([], Formula.from_infix('(x->(y->x))'))
+    I1_renamed_degenerate_proof = DeductiveProof(I1_renamed, [I1],
+        [DeductiveProof.Line(I1_renamed.conclusion, 0, [])])
+    proof = DeductiveProof(
+        InferenceRule([Formula('p')], Formula.from_infix('(q->p)')), [MP, I1_renamed],
+        [DeductiveProof.Line(Formula('p')),
+         DeductiveProof.Line(Formula.from_infix('(p->(q->p))'), 1, []),
+         DeductiveProof.Line(Formula.from_infix('(q->p)'), 0, [0, 1])])
+    if debug:
+        print('Testing inline_proof for the following main proof:\n' +
+              str(proof) + '\nand the following lemma proof:\n' +
+              str(I1_renamed_degenerate_proof))
+    inlined_proof = inline_proof(proof, I1_renamed_degenerate_proof)
+    assert inlined_proof.statement == proof.statement
+    assert inlined_proof.rules == [MP, I1]
     # Will be tested with the course staff's implementation of is_valid()
     assert inlined_proof.is_valid()

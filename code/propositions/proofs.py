@@ -3,11 +3,12 @@
     by Gonczarowski and Nisan.
     File name: code/propositions/proofs.py """
 
+from copy import deepcopy
 from propositions.syntax import *
 
 
 def replace_var_for_formulae(formula: Formula, template: Formula, instantiation_map: dict):
-    if template.is_variable_formula():
+    if template.is_variable_formula() or template.is_constant_formula():
         if template.root in instantiation_map.keys():
             return formula == instantiation_map[template.root]
         else:
@@ -26,6 +27,7 @@ def replace_var_for_formulae(formula: Formula, template: Formula, instantiation_
         first = replace_var_for_formulae(formula.first, template.first, instantiation_map)
         return first
 
+
 class InferenceRule:
     """ An inference rule, i.e., a list of zero or more assumed formulae, and
         a conclusion formula """
@@ -34,8 +36,8 @@ class InferenceRule:
         assert type(conclusion) == Formula
         for assumption in assumptions:
             assert type(assumption) == Formula
-        self.assumptions = assumptions
-        self.conclusion = conclusion
+        self.assumptions = assumptions  # list of Formulae
+        self.conclusion = conclusion  # Formula
 
     def __eq__(self, other):  # DONT EDIT
         if (len(self.assumptions) != len(other.assumptions)):
@@ -49,7 +51,7 @@ class InferenceRule:
 
     def __ne__(self, other):  # DONT EDIT
         return not self == other
-        
+
     def __repr__(self):  # DONT EDIT
         return str([assumption.infix() for assumption in self.assumptions]) + \
                ' ==> ' + self.conclusion.infix()
@@ -63,7 +65,7 @@ class InferenceRule:
         for assumption in self.assumptions:
             var_set.update(assumption.vars)
         return var_set
-        
+
     def is_instance_of(self, rule, instantiation_map=None):
         """ Return whether there exist formulae f1,...,fn and variables
             v1,...,vn such that self is obtained by simultaneously substituting
@@ -72,17 +74,18 @@ class InferenceRule:
             If so, and if instantiation_map is given, then it is (cleared and)
             populated with the mapping from each vi to the corresponding fi """
         # Task 4.4
-        # truth_vals = [InferenceRule._update_instantiation_map()]
         if len(self.assumptions) != len(rule.assumptions):
             return False
         if instantiation_map is None:
             instantiation_map = {}
-        if not InferenceRule._update_instantiation_map(self.conclusion, rule.conclusion, instantiation_map):
-            return False
         for i in range(len(self.assumptions)):
             if not InferenceRule._update_instantiation_map(self.assumptions[i],
                                                            rule.assumptions[i], instantiation_map):
+                instantiation_map.clear()
                 return False
+        if not InferenceRule._update_instantiation_map(self.conclusion, rule.conclusion, instantiation_map):
+            instantiation_map.clear()
+            return False
         return True
 
     @staticmethod
@@ -102,20 +105,21 @@ class InferenceRule:
             return True
         return False
 
-    
+
 class DeductiveProof:
     """ A deductive proof, i.e., a statement of an inference rule, a list of
         assumed inference rules, and a list of lines that prove the former from
         the latter """
-    
+
     class Line:
         """ A line, i.e., a formula, the index of the inference rule whose
             instance justifies the formula from previous lines, and the list
             of indices of these previous lines """
+
         def __init__(self, conclusion, rule=None, justification=None):  # DONT EDIT
-            self.conclusion = conclusion
-            self.rule = rule
-            self.justification = justification
+            self.conclusion = conclusion  # Formula
+            self.rule = rule  # int
+            self.justification = justification  # list of ints of previous rule
 
         def __repr__(self):  # DONT EDIT
             if (self.rule is None):
@@ -130,9 +134,9 @@ class DeductiveProof:
             return r
 
     def __init__(self, statement, rules, lines):  # DONT EDIT
-        self.statement = statement
-        self.rules = rules
-        self.lines = lines
+        self.statement = statement  # InferenceRule
+        self.rules = rules  # list of InferenceRules
+        self.lines = lines  # list of Line
 
     def __repr__(self):  # DONT EDIT
         r = 'Proof for ' + str(self.statement) + ':\n'
@@ -148,11 +152,14 @@ class DeductiveProof:
         # Task 4.5
         assumptions = []
         last_line = self.lines[line]
-        for i in range(line):
-            if i in last_line.justification:
+        if last_line.justification is not None:
+            for i in last_line.justification:
+                if i >= line:
+                    # print(line)
+                    return None
                 assumptions.append(self.lines[i].conclusion)
         return InferenceRule(assumptions, last_line.conclusion)
-        
+
     def is_valid(self):
         """ Return whether lines are a valid proof of statement from rules """
         # Task 4.6
@@ -171,20 +178,89 @@ class DeductiveProof:
         return True
 
 
+def get_substituted_formula(formula, instantiation_map):
+    if formula.is_variable_formula():
+        if formula.root in instantiation_map.keys():
+            formula = instantiation_map[formula.root]
+    elif formula.is_unary_formula():
+        formula.first = get_substituted_formula(formula.first, instantiation_map)
+    elif formula.is_binary_formula():
+        formula.first = get_substituted_formula(formula.first, instantiation_map)
+        formula.second = get_substituted_formula(formula.second, instantiation_map)
+    elif formula.is_ternary_formula():
+        formula.first = get_substituted_formula(formula.first, instantiation_map)
+        formula.second = get_substituted_formula(formula.second, instantiation_map)
+        formula.third = get_substituted_formula(formula.third, instantiation_map)
+    elif formula.is_constant_formula():
+        return formula
+    return formula
+
+
 def instantiate(formula, instantiation_map):
     """ Return a formula obtained from the given formula by simultaneously
         substituting, for each variable v that is a key of instantiation_map,
         each occurrence v with the formula instantiation_map[v] """
     # Task 5.2.1
+    return get_substituted_formula(formula, instantiation_map)
 
-def prove_instance(proof, instance):
+
+def prove_instance(proof: DeductiveProof, instance: InferenceRule):
     """ Return a proof of the given instance of the inference rule that proof
         proves, via the same inference rules used by proof """
     # Task 5.2.1
+    proof = deepcopy(proof)
+    statement = instance
+    new_lines = []
+    _map = {}
+    if not instance.is_instance_of(proof.statement, _map):
+        print("Problem")
+        return None
+    for line in proof.lines:
+        new_lines.append(DeductiveProof.Line(instantiate(line.conclusion, _map), line.rule, line.justification))
+    return DeductiveProof(statement, proof.rules, new_lines)
 
-def inline_proof(main_proof, lemma_proof):
+
+def inline_proof(main_proof: DeductiveProof, lemma_proof: DeductiveProof):
     """ Return a proof of the inference rule that main_proof proves, via the
         inference rules used in main_proof except for the one proven by
         lemma_proof, as well as via the inference rules used in lemma_proof
         (with duplicates removed) """
     # Task 5.2.2
+    pass
+    '''
+    keep original indexing mapping of rules of main proof
+    add rules from main proof w/o lemma_proof.statement and add rules from lemma_proof w/o adding duplicates and update mapping of indices
+    
+    '''
+    # lemma_proof = deepcopy(lemma_proof)
+    idx_of_lemma_rule = main_proof.rules.index(lemma_proof.statement)
+    new_rules = [rule for rule in main_proof.rules if str(rule) != str(lemma_proof.statement)]
+    new_rules.extend([rule for rule in lemma_proof.rules if rule not in new_rules])
+    main_proof_rule_mapping = {i: new_rules.index(rule) if rule in new_rules else None
+                               for i, rule in enumerate(main_proof.rules)}  # key is str of the rule, value is list of [old_rule_idx, new_rule_idx]
+    lemma_rule_mapping = {i: new_rules.index(rule) if rule in new_rules else None
+                          for i, rule in enumerate(lemma_proof.rules)}
+    main_proof_line_mapping = {}
+    new_lines = []
+    for i, line in enumerate(main_proof.lines):
+        if line.rule == idx_of_lemma_rule:
+            # append to lemma proof into here
+            inf_rule = InferenceRule([main_proof.lines[l_i].conclusion for l_i in line.justification]
+                                     if line.justification else [], line.conclusion)
+            adjusted_lemma = prove_instance(lemma_proof, inf_rule)
+            lines_of_adjusted_lemma = adjusted_lemma.lines
+            for j in lines_of_adjusted_lemma:
+                j.rule = lemma_rule_mapping[j.rule] if j.rule is not None else None
+                j.justification = [l + len(new_lines) for l in j.justification] if j.justification is not None else None
+            new_lines.extend(lines_of_adjusted_lemma)
+            main_proof_line_mapping[i] = len(new_lines) - 1
+        else:
+            line_rule = main_proof_rule_mapping[line.rule] if line.rule is not None else None
+            new_justification = [main_proof_line_mapping[j] for j in line.justification] \
+                if line.justification is not None else None
+            new_lines.append(DeductiveProof.Line(line.conclusion, line_rule, new_justification))
+            main_proof_line_mapping[i] = len(new_lines) - 1  # update line mapping
+
+    res = DeductiveProof(main_proof.statement, new_rules, new_lines)
+    print(res)
+    return res
