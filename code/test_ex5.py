@@ -21,7 +21,7 @@ def test_task3(debug=False):
 def test_task4(debug=False):
     test_prove_hypothetical_syllogism(debug)
 
-# test_task1(True)
-# test_task2(True)
+test_task1(True)
+test_task2(True)
 test_task3(True)
-# test_task4(True)
+test_task4(True)

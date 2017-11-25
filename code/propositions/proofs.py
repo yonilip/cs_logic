@@ -155,7 +155,6 @@ class DeductiveProof:
         if last_line.justification is not None:
             for i in last_line.justification:
                 if i >= line:
-                    # print(line)
                     return None
                 assumptions.append(self.lines[i].conclusion)
         return InferenceRule(assumptions, last_line.conclusion)
@@ -179,23 +178,24 @@ class DeductiveProof:
 
 
 def get_substituted_formula(formula, instantiation_map):
+    first, second, third = None, None, None
     if formula.is_variable_formula():
         if formula.root in instantiation_map.keys():
-            formula = instantiation_map[formula.root]
+            return instantiation_map[formula.root]
         else:
-            formula = list(instantiation_map.values())[0]
+            return list(instantiation_map.values())[0]
     elif formula.is_unary_formula():
-        formula.first = get_substituted_formula(formula.first, instantiation_map)
+        first = get_substituted_formula(formula.first, instantiation_map)
     elif formula.is_binary_formula():
-        formula.first = get_substituted_formula(formula.first, instantiation_map)
-        formula.second = get_substituted_formula(formula.second, instantiation_map)
+        first = get_substituted_formula(formula.first, instantiation_map)
+        second = get_substituted_formula(formula.second, instantiation_map)
     elif formula.is_ternary_formula():
-        formula.first = get_substituted_formula(formula.first, instantiation_map)
-        formula.second = get_substituted_formula(formula.second, instantiation_map)
-        formula.third = get_substituted_formula(formula.third, instantiation_map)
+        first = get_substituted_formula(formula.first, instantiation_map)
+        second = get_substituted_formula(formula.second, instantiation_map)
+        third = get_substituted_formula(formula.third, instantiation_map)
     elif formula.is_constant_formula():
         return formula
-    return formula
+    return Formula(formula.root, first, second, third)
 
 
 def instantiate(formula, instantiation_map):
@@ -215,7 +215,6 @@ def prove_instance(proof: DeductiveProof, instance: InferenceRule):
     new_lines = []
     _map = {}
     if not instance.is_instance_of(proof.statement, _map):
-        print("Problem")
         return None
     for line in proof.lines:
         new_lines.append(DeductiveProof.Line(instantiate(line.conclusion, _map), line.rule, line.justification))

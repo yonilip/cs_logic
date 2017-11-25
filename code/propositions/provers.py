@@ -36,17 +36,6 @@ AXIOMATIC_SYSTEM = [MP, I1, I2, N, A1, A2, A3, O1, O2, O3, T, F]
 def prove_implies_self():
     """ Return a valid deductive proof for '(p->p)' via MP,I1,I2 """
     # Task 5.1
-    '''
-    DeductiveProof members:
-    self.statement = statement  # InferenceRule
-    self.rules = rules  # list of InferenceRules
-    self.lines = lines  # list of Line
-    
-    Line members:
-    self.conclusion = conclusion  # Formula
-    self.rule = rule  # int
-    self.justification = justification  # list of ints of previous rule
-    '''
     statement = InferenceRule([], Formula(IMPLIES, Formula('p'), Formula('p')))
     rules = [MP, I1, I2]
     lines = [DeductiveProof.Line(Formula.from_infix('((p->((q->p)->p))->((p->(q->p))->(p->p)))'), 2, []),
@@ -63,36 +52,15 @@ def inverse_mp(proof, assumption):
         conclusion is the conclusion of proof, from the assumptions of proof
         except assumption, via MP,I1,I2 """
     # Task 5.3
-    '''
-    4 cases:
-    
-    1. looking at assumption* then should create assumption -> assumption using task1 p->p, should create instance of it
-        and use prove_instance to create this. Can create this at the start and add to new_lines (since this should
-        appear once in the whole proof). In our for loop when we get the line that is the assumption we can continue.
-    2. line is regular assumption != assumption: create instance using I1 and with MP infer the line. it is a regular assumption so, we can add it
-        next line's conclusion should be last line's conclusion -> (assumption->last line's conclusion) (which looks like I1) and there is no
-        justification. line 3 will use MP using line1 as p, line 2 will be p->q. conclusion will be assumption->line1 conclusion
-        rule will be MP, justification will be line 1 and line2. to get idx of line 1,2 we can look at the latest lines in new lines.
-        Notice that line1 will not use MP thus not have justification.
-    3. If line has MP as rule: its conclusion (f13), rule MP, justification is [f7 and f7->13]. p is f7 and p->q is f7->f13
-        we want to have last line as assumption*->f13. We can use I2 using assumption* as p, q is f7 and r is f13. create instance of
-        first line using I2 then use MP twice on part 1 and on part 2 of instance created by I2.
-        For the first MP we need part 1 and the whole inferring (that is the instnce created from I2) and part1 is true
-        since f7->f13 is in justification. anything that is before oure line should have an assumption*->last line
-        in new lines. so we should have assumption*->(f7->f13) and thus we conclude part2.
-        
-    4. in the last line we should rely on justifications. find idx of assumption*->f7 and use MP to get assumption*->f13
-        
-        create a new proof with new conclusion, no assumption and 
-    '''
     new_assumptions = [a for a in proof.statement.assumptions if a != assumption]
     imply_self = prove_instance(prove_implies_self(), InferenceRule([], Formula(IMPLIES, assumption, assumption)))
     new_lines = imply_self.lines
 
     for line in proof.lines:
+        rule_num = line.rule if line.rule is not None else -1
         if line.conclusion == assumption:
             continue
-        elif line in new_assumptions or (line.rule != 0 if line.rule is not None else True):
+        elif line.conclusion in new_assumptions or rule_num != 0:
             new_lines.append(line)
             line_by_I1_conc = Formula(IMPLIES, line.conclusion, Formula(IMPLIES, assumption, line.conclusion))
             line_by_I1 = DeductiveProof.Line(line_by_I1_conc, 1, [])
@@ -123,8 +91,6 @@ def inverse_mp(proof, assumption):
     statement = InferenceRule(new_assumptions, new_lines[-1].conclusion)
 
     return DeductiveProof(statement, proof.rules, new_lines)
-
-
 
 
 @lru_cache(maxsize=1)  # Cache the return value of prove_hypothetical_syllogism
