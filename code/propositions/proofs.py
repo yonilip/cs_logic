@@ -182,6 +182,8 @@ def get_substituted_formula(formula, instantiation_map):
     if formula.is_variable_formula():
         if formula.root in instantiation_map.keys():
             formula = instantiation_map[formula.root]
+        else:
+            formula = list(instantiation_map.values())[0]
     elif formula.is_unary_formula():
         formula.first = get_substituted_formula(formula.first, instantiation_map)
     elif formula.is_binary_formula():
@@ -226,25 +228,17 @@ def inline_proof(main_proof: DeductiveProof, lemma_proof: DeductiveProof):
         lemma_proof, as well as via the inference rules used in lemma_proof
         (with duplicates removed) """
     # Task 5.2.2
-    pass
-    '''
-    keep original indexing mapping of rules of main proof
-    add rules from main proof w/o lemma_proof.statement and add rules from lemma_proof w/o adding duplicates and update mapping of indices
-    
-    '''
-    # lemma_proof = deepcopy(lemma_proof)
     idx_of_lemma_rule = main_proof.rules.index(lemma_proof.statement)
     new_rules = [rule for rule in main_proof.rules if str(rule) != str(lemma_proof.statement)]
     new_rules.extend([rule for rule in lemma_proof.rules if rule not in new_rules])
     main_proof_rule_mapping = {i: new_rules.index(rule) if rule in new_rules else None
-                               for i, rule in enumerate(main_proof.rules)}  # key is str of the rule, value is list of [old_rule_idx, new_rule_idx]
+                               for i, rule in enumerate(main_proof.rules)}
     lemma_rule_mapping = {i: new_rules.index(rule) if rule in new_rules else None
                           for i, rule in enumerate(lemma_proof.rules)}
     main_proof_line_mapping = {}
     new_lines = []
     for i, line in enumerate(main_proof.lines):
         if line.rule == idx_of_lemma_rule:
-            # append to lemma proof into here
             inf_rule = InferenceRule([main_proof.lines[l_i].conclusion for l_i in line.justification]
                                      if line.justification else [], line.conclusion)
             adjusted_lemma = prove_instance(lemma_proof, inf_rule)
@@ -260,7 +254,4 @@ def inline_proof(main_proof: DeductiveProof, lemma_proof: DeductiveProof):
                 if line.justification is not None else None
             new_lines.append(DeductiveProof.Line(line.conclusion, line_rule, new_justification))
             main_proof_line_mapping[i] = len(new_lines) - 1  # update line mapping
-
-    res = DeductiveProof(main_proof.statement, new_rules, new_lines)
-    print(res)
-    return res
+    return DeductiveProof(main_proof.statement, new_rules, new_lines)
