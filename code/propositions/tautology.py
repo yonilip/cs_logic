@@ -67,7 +67,7 @@ def prove_in_model_implies_not_helper(formula: Formula, model: dict, assumptions
     statement = InferenceRule(assumptions, formula)
 
     if formula.root == IMPLIES:
-        print("Entering case for formula {0}".format(formula))
+        # print("Entering case for formula {0}".format(formula)) 
         if not evaluate(formula.first, model):
             # I3 : '(~p->(p->q))'
             p = formula.first
@@ -105,7 +105,7 @@ def prove_in_model_implies_not_helper(formula: Formula, model: dict, assumptions
         # Case φ=‘~(φ1→φ2)’
         # use axiom NI to prove. φ1 is True and φ2 is False
         # NI: '(p->(~q->~(p->q)))'
-        print("Entering case for formula {0}".format(formula))
+        # print("Entering case for formula {0}".format(formula)) 
 
         phi_1 = formula.first.first
         phi_2 = formula.first.second
@@ -136,12 +136,11 @@ def prove_in_model_implies_not_helper(formula: Formula, model: dict, assumptions
 
         return proof
 
-
     elif formula.root == NOT and formula.first.root == NOT if hasattr(formula, 'first') else False:
         # Case φ=‘~~ψ’
         # use axiom NN to prove φ from ψ.
         # NN '(p->~~p)'
-        print("Entering case for formula {0}".format(formula))
+        # print("Entering case for formula {0}".format(formula)) 
         psi = formula.first.first
         psi_proof = prove_in_model_implies_not_helper(psi, model, assumptions, rules, lines)
 
@@ -157,18 +156,15 @@ def prove_in_model_implies_not_helper(formula: Formula, model: dict, assumptions
 
     # Case not var
     elif formula.is_unary_formula():
-        print("Entering case for formula {0}".format(formula))
+        # print("Entering case for formula {0}".format(formula)) 
         lines = [DeductiveProof.Line(Formula(NOT, formula.first))]
         return DeductiveProof(statement, rules, lines)
 
     # case var
     elif formula.is_variable_formula():
-        print("Entering case for formula {0}".format(formula))
+        # print("Entering case for formula {0}".format(formula)) `
         lines = [DeductiveProof.Line(Formula(formula.root))]
         return DeductiveProof(statement, rules, lines)
-
-
-
 
 def reduce_assumption(proof_true, proof_false):
     """ Return a proof of the same formula that is proved in both proof_true
