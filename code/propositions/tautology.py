@@ -220,9 +220,9 @@ def ass_to_model(ass):
     model = {}
     for a in ass:
         if is_variable(a.root):
-            model[a.root] = 'true'
+            model[a.root] = True
         else:
-            model[a.first.infix()] = 'false'
+            model[a.first.infix()] = False
     keys = sorted(model.keys())
     model_sorted = {}
     for k in keys:
@@ -235,85 +235,27 @@ def proof_or_counterexample_implies_not(formula):
         have the operators implies and not in it """
     # Task 6.3
     models = list(all_models(formula.variables()))
+    models.reverse()
     for model in models:
         if not evaluate(formula, model):
             return model
 
     iterations = len(formula.variables())
     proofs = [prove_in_model_implies_not(formula, model) for model in models]
-    upper_proofs = []
+    print(proofs)
     for i in range(iterations):
+        upper_proofs = []
 
-        # build proofs from current models
-        for i in range(round(len(proofs) / 2)):
-            p1, p2 = proofs.pop(), proofs.pop()
-            p1_model = ass_to_model(p1.statement.assumptions)
-            p2_model = ass_to_model(p2.statement.assumptions)
-
-            proof_true = prove_in_model_implies_not(formula, p1_model)
-            proof_false = prove_in_model_implies_not(formula, p2_model)
-
-            reduced_proof = reduce_assumption(proof_true, proof_false)
+        while len(proofs) > 1:
+            p2, p1 = proofs.pop(), proofs.pop()
+            reduced_proof = reduce_assumption(p1, p2)
+            assert reduced_proof.is_valid()
             upper_proofs.append(reduced_proof)
 
         proofs = upper_proofs
+        proofs.reverse()
 
-        # models = sorted(new_models)
-    print(proofs[0])
     return proofs[0]
-
-
-    # while models:
-    #     left_model, right_model = models.pop(), models.pop()
-        # reduced_formula = evaluate_or_disprove_pair(formula, left_model, right_model)
-        # if isinstance(reduced_formula, dict):
-        #     return reduced_formula  # This is bad model
-        #
-        # new_models.append(reduced_formula)
-
-def evaluate_or_disprove_model(formula, left_model, right_model):
-    # if one of them disproves formula
-    eval_left = evaluate(formula, left_model)
-    if not eval_left:
-        return left_model
-    eval_right = evaluate(formula, right_model)
-    if not eval_right:
-        return right_model
-
-    # return new formula without phi_n
-    proof_true = prove_in_model_implies_not(formula, left_model)
-    proof_false = prove_in_model_implies_not(formula, right_model)
-
-    reduced_formula = reduce_assumption(proof_true, proof_false)
-
-    return reduced_formula
-
-def parse_tree(formula, root, proof=None):
-    if formula is None and root is None:
-        return None, None, proof
-
-    # already found bad model, returning it
-    if formula is None:
-        return None, root.model, None
-
-    # evaluate model
-    if not evaluate(formula, root.model):
-        return None, root.model
-    model_proof = prove_in_model_implies_not(formula, root.model)
-
-    # if leaf
-    proof = None
-    if root.left is None:
-        proof = model_proof
-
-    # is not leaf
-    else:
-        proof_true = prove_in_model_implies_not(formula, root.left)
-        proof_false = prove_in_model_implies_not(formula, root.right)
-        reduced_formula = reduce_assumption(proof_true, proof_false)
-        proof = model_proof
-
-    return None, None, proof
 
 
 def prove_in_model(formula, model):
