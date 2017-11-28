@@ -52,6 +52,7 @@ def __test_prove_in_model(prover, infixes, rules, debug):
             assert proof.statement.conclusion == f
             assert proof.rules == rules
             # Will be tested with the course staff's implementation of is_valid
+            print(proof)
             assert proof.is_valid()
 
 def test_reduce_assumption(debug=False):
