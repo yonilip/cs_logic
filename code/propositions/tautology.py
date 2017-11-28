@@ -60,7 +60,7 @@ def prove_in_model_implies_not_helper(formula: Formula, model: dict, new_lines, 
             # I3 : '(~p->(p->q))'
             print("Entering case for formula {0}".format(formula))
             not_p = prove_in_model_implies_not(Formula(NOT, formula.first), model)
-            new_lines = not_p.lines
+            new_lines.append(not_p.lines)
             p_q = Formula(IMPLIES, not_p.statement.conclusion,
                           Formula(IMPLIES, not_p.statement.conclusion.first, formula.second))
             new_lines.append(DeductiveProof.Line(p_q, 3, []))
@@ -72,7 +72,7 @@ def prove_in_model_implies_not_helper(formula: Formula, model: dict, new_lines, 
         else:  # I1 : '(p->(q->p))'
             print("Entering case for formula {0}".format(formula))
             phi2 = prove_in_model_implies_not(formula.second, model)
-            new_lines = phi2.lines
+            new_lines.append(phi2.lines)
             our_I1 = Formula(IMPLIES, phi2.statement.conclusion,
                              Formula(IMPLIES, formula.first, phi2.statement.conclusion))
             new_lines.append(DeductiveProof.Line(our_I1, 1, []))
@@ -93,16 +93,18 @@ def prove_in_model_implies_not_helper(formula: Formula, model: dict, new_lines, 
         not_phi2_f = not_phi2.statement.conclusion
         phi2_lines = not_phi2.lines
 
-        new_lines = phi1_lines + phi2_lines
+        old_last_index_new_lines = len(new_lines)
+        new_lines.append(phi1_lines)
         our_NI = Formula(IMPLIES, p,
                          Formula(IMPLIES, not_phi2_f, Formula(NOT, Formula(IMPLIES, p, formula.first.second))))
         new_lines.append(DeductiveProof.Line(our_NI, 4, []))
 
         part_1 = our_NI.second
-        new_lines.append(DeductiveProof.Line(part_1, 0, [len(phi1_lines) - 1, len(new_lines) - 1]))
+        new_lines.append(DeductiveProof.Line(part_1, 0, [old_last_index_new_lines + len(phi1_lines) - 1, len(new_lines) - 1]))
 
+        new_lines.append(phi2_lines)
         part_2 = part_1.second
-        new_lines.append(DeductiveProof.Line(part_2, 0, [len(phi1_lines) + len(phi2_lines) - 1, len(new_lines) - 1]))
+        new_lines.append(DeductiveProof.Line(part_2, 0, [old_last_index_new_lines + len(phi1_lines) + len(phi2_lines) - 1, len(new_lines) - 1]))
         return DeductiveProof(statement, rules, new_lines)
 
 
