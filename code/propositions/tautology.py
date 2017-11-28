@@ -46,6 +46,7 @@ def prove_in_model_implies_not(formula: Formula, model: dict):
     rules = AXIOMATIC_SYSTEM_IMPLIES_NOT
     return prove_in_model_implies_not_helper(formula, model, assumptions, rules, lines)
 
+
 def update_lines(lines, new_lines):
     for line in new_lines:
         if line not in lines:
@@ -177,6 +178,39 @@ def reduce_assumption(proof_true, proof_false):
         coincide, except for the last assumption, where that of proof_false is
         the negation of that of proof_true """
     # Task 6.2
+    R_idx = proof_false.rules.index(AXIOMATIC_SYSTEM_IMPLIES_NOT[-1])
+    lines = []
+    phi_n = proof_true.statement.assumptions[-1]
+    not_phi_n = proof_false.statement.assumptions[-1]
+    phi_c = proof_true.statement.conclusion
+
+    n_s_proof = inverse_mp(proof_true, phi_n)
+    n_s = n_s_proof.statement.conclusion
+    update_lines(lines, n_s_proof.lines)
+    n_s_idx = len(lines) - 1
+
+    not_n_s_proof = inverse_mp(proof_false, not_phi_n)
+    not_n_s = not_n_s_proof.statement.conclusion
+    update_lines(lines, not_n_s_proof.lines)
+    not_n_s_idx = len(lines) - 1
+
+    R_right = Formula(IMPLIES, not_n_s, phi_c)
+
+    # our_R
+    our_R = Formula(IMPLIES, n_s, R_right)
+    lines.append(DeductiveProof.Line(our_R, R_idx, []))
+
+    # MP1
+    lines.append(DeductiveProof.Line(R_right, 0, [n_s_idx, len(lines) - 1]))
+
+    # MP2
+    lines.append(DeductiveProof.Line(phi_c, 0, [not_n_s_idx, len(lines) - 1]))
+
+    assumptions = proof_false.statement.assumptions[:-1]
+    rules = proof_false.rules
+    statement = InferenceRule(assumptions, phi_c)
+
+    return DeductiveProof(statement, rules, lines)
 
 
 def proof_or_counterexample_implies_not(formula):

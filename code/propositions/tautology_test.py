@@ -97,6 +97,7 @@ def test_reduce_assumption(debug=False):
     assert proof.statement.assumptions == proof_true.statement.assumptions[:-1]
     assert proof.rules == rules
     # Will be tested with the course staff's implementation of is_valid
+    print(proof)
     assert proof.is_valid()
 
 # Tests for proof_or_counterexample*** methods
