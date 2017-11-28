@@ -254,3 +254,7 @@ def inline_proof(main_proof: DeductiveProof, lemma_proof: DeductiveProof):
             new_lines.append(DeductiveProof.Line(line.conclusion, line_rule, new_justification))
             main_proof_line_mapping[i] = len(new_lines) - 1  # update line mapping
     return DeductiveProof(main_proof.statement, new_rules, new_lines)
+
+
+# ((p->((~p->~q)->((~p->q)->p)))->((p->((~p->~q)->((~p->q)->p)))->((~p->~q)->((~p->q)->p)))) (Inference Rule 6)
+# ((p->q)->((~p->q)->q))
