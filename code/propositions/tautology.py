@@ -234,7 +234,7 @@ def proof_or_counterexample_implies_not(formula):
         model where formula does not hold. It is assumed that formula may only
         have the operators implies and not in it """
     # Task 6.3
-    models = list(all_models(formula.variables()))
+    models = list(all_models(sorted(formula.variables())))
     for model in models:
         if not evaluate(formula, model):
             return model

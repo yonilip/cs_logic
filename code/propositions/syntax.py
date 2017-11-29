@@ -269,4 +269,4 @@ class Formula:
     def variables(self):
         """ Return the set of atomic propositions (variables) used in self """
         # Task 1.5
-        return sorted(self.vars)
+        return self.vars
