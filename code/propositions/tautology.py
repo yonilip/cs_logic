@@ -235,21 +235,20 @@ def proof_or_counterexample_implies_not(formula):
         have the operators implies and not in it """
     # Task 6.3
     models = list(all_models(formula.variables()))
-    models.reverse()
     for model in models:
         if not evaluate(formula, model):
             return model
 
+    models.reverse()
     iterations = len(formula.variables())
     proofs = [prove_in_model_implies_not(formula, model) for model in models]
-    print(proofs)
+
     for i in range(iterations):
         upper_proofs = []
 
         while len(proofs) > 1:
             p2, p1 = proofs.pop(), proofs.pop()
             reduced_proof = reduce_assumption(p1, p2)
-            assert reduced_proof.is_valid()
             upper_proofs.append(reduced_proof)
 
         proofs = upper_proofs

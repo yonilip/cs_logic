@@ -26,6 +26,11 @@ def test_task6(debug=False):
 def test_task7(debug=False):
     test_model_or_inconsistent(debug)
 
+import time
+
+start = time.time()
+print("Starting test\n\n")
+
 # test_task1(True)
 # test_task2(True)
 test_task3(True)
@@ -33,3 +38,6 @@ test_task3(True)
 # test_task5(True)
 # test_task6(True)
 # test_task7(True)
+end = time.time()
+
+print("\n\nFinished testing in :", end - start)
