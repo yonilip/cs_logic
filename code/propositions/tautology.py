@@ -417,29 +417,42 @@ def prove_in_model_helper(formula: Formula, model: dict, assumptions, rules, lin
         return proof
 
     # case (phi1 | phi2)
-    # elif formula.root == OR:
+    elif formula.root == OR:
+        phi_1, phi_2 = formula.first, formula.second
 
-        # case (phi1 | phi2)
-    # elif formula.root == OR:
-    #     phi_1, phi_2 = formula.first, formula.second
-    #
-    #     # prove phi1, use O1
-    #     if evaluate(phi_1, model):
-    #         phi_1_proof = prove_in_model_helper(phi_1, model, assumptions, rules, lines)
-    #         update_lines(lines, phi_1_proof.lines)
-    #         phi_1_proof_index = len(lines) - 1
-    #
-    #         # O1: (p->(p|q))
-    #         our_O1 = Formula(IMPLIES, phi_1, Formula(OR, phi_1, phi_2))
-    #         lines.append(DeductiveProof.Line(our_O1, O1_idx, []))
-    #         our_O1_idx = len(lines) - 1
-    #
-    #         # mp1: p, p->(p|q) => (p|q)
-    #         lines.append(DeductiveProof.Line(our_O1.second, 0, [phi_1_proof_index, our_O1_idx]))
-    #
-    #         # prove phi2, use O2
-    #         proof = DeductiveProof(statement, rules, lines)
-    #         return proof
+        # prove phi1, use O1
+        if evaluate(phi_1, model):
+            phi_1_proof = prove_in_model_helper(phi_1, model, assumptions, rules, lines)
+            update_lines(lines, phi_1_proof.lines)
+            phi_1_proof_index = len(lines) - 1
+
+            # O1: (p->(p|q))
+            our_O1 = Formula(IMPLIES, phi_1, Formula(OR, phi_1, phi_2))
+            lines.append(DeductiveProof.Line(our_O1, O1_idx, []))
+            our_O1_idx = len(lines) - 1
+
+            # mp1: p, p->(p|q) => (p|q)
+            lines.append(DeductiveProof.Line(our_O1.second, 0, [phi_1_proof_index, our_O1_idx]))
+
+            proof = DeductiveProof(statement, rules, lines)
+            return proof
+
+        # prove phi2, use O2
+        elif evaluate(phi_2, model):
+            phi_2_proof = prove_in_model_helper(phi_2, model, assumptions, rules, lines)
+            update_lines(lines, phi_2_proof.lines)
+            phi_2_proof_index = len(lines) - 1
+
+            # O1: (q->(p|q))
+            our_O2 = Formula(IMPLIES, phi_2, Formula(OR, phi_1, phi_2))
+            lines.append(DeductiveProof.Line(our_O2, O2_idx, []))
+            our_O2_idx = len(lines) - 1
+
+            # mp1: p, p->(p|q) => (p|q)
+            lines.append(DeductiveProof.Line(our_O2.second, 0, [phi_2_proof_index, our_O2_idx]))
+
+            proof = DeductiveProof(statement, rules, lines)
+            return proof
 
 def prove_in_model(formula, model):
     """ Return a proof of formula via AXIOMATIC_SYSTEM from the assumptions
