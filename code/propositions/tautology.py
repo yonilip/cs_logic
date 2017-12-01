@@ -34,19 +34,6 @@ NF = InferenceRule([], Formula.from_infix('~F'))
 AXIOMATIC_SYSTEM = [MP, I1, I2, I3, NI, NN, A, NA1, NA2, O1, O2, NO, T, NF, R]
 A_idx, NA1_idx, NA2_idx, O1_idx, O2_idx, NO_idx, T_idx, NF_idx, R_idx = 6, 7, 8, 9, 10, 11, 12, 13, 14
 
-def prove_in_model_implies_not(formula: Formula, model: dict):
-    """ Return a proof of formula via AXIOMATIC_SYSTEM_IMPLIES_NOT from the
-        assumptions that all variables are valued as in model, with the
-        assumptions being ordered alphabetically by the names of the variables.
-        It is assumed that formula is true in model, and may only have the
-        operators implies and not in it """
-    # Task 6.1
-    lines = []
-    assumptions = [Formula(var) if val else Formula(NOT, Formula(var)) for var, val in sorted(model.items())]
-    rules = AXIOMATIC_SYSTEM_IMPLIES_NOT
-    return prove_in_model_implies_not_helper(formula, model, assumptions, rules, lines)
-
-
 def update_lines(lines, new_lines):
 
     for line in reversed(new_lines):
@@ -59,113 +46,126 @@ def update_lines(lines, new_lines):
 
 
 def prove_in_model_implies_not_helper(formula: Formula, model: dict, assumptions, rules, lines):
-    # cases are (implication, negation of an implication, negation negation of φ)
-    # Case φ=‘(φ1→φ2)’
-    # if  eval(φ1) == F
-    # use axiom I3 to prove
-    # if eval (φ2) == T
-    # use axiom I1 to prove
-    statement = InferenceRule(assumptions, formula)
+    assert False
+#     # cases are (implication, negation of an implication, negation negation of φ)
+#     # Case φ=‘(φ1→φ2)’
+#     # if  eval(φ1) == F
+#     # use axiom I3 to prove
+#     # if eval (φ2) == T
+#     # use axiom I1 to prove
+#     statement = InferenceRule(assumptions, formula)
+#
+#     if formula.root == IMPLIES:
+#         # print("Entering case for formula {0}".format(formula))
+#         if not evaluate(formula.first, model):
+#             # I3 : '(~p->(p->q))'
+#             p = formula.first
+#             not_p_proof = prove_in_model_implies_not_helper(Formula(NOT, p), model, assumptions, rules, lines)
+#             update_lines(lines, not_p_proof.lines)
+#
+#             not_p = not_p_proof.statement.conclusion
+#             q = formula.second
+#             our_I3 = Formula(IMPLIES, not_p, Formula(IMPLIES, p, q))
+#
+#             lines.append(DeductiveProof.Line(our_I3, 3, []))
+#
+#             #     mp:
+#             lines.append(DeductiveProof.Line(our_I3.second, 0, [len(lines) - 2, len(lines) - 1]))
+#             proof = DeductiveProof(statement, rules, lines)
+#             return proof
+#
+#         else:  # I1 : '(p->(q->p))'
+#             phi_1 = formula.first
+#             phi_2 = formula.second
+#
+#             phi_2_proof = prove_in_model_implies_not_helper(phi_2, model, assumptions, rules, lines)
+#             update_lines(lines, phi_2_proof.lines)
+#
+#
+#             our_I1 = Formula(IMPLIES, phi_2, Formula(IMPLIES, phi_1, phi_2))
+#             lines.append(DeductiveProof.Line(our_I1, 1, []))
+#
+#             # mp:
+#             lines.append(DeductiveProof.Line(our_I1.second, 0, [len(lines) - 2, len(lines) - 1]))
+#             proof = DeductiveProof(statement, rules, lines)
+#             return proof
+#
+#     elif formula.root == NOT and formula.first.root == IMPLIES if hasattr(formula, 'first') else False:
+#         # Case φ=‘~(φ1→φ2)’
+#         # use axiom NI to prove. φ1 is True and φ2 is False
+#         # NI: '(p->(~q->~(p->q)))'
+#         # print("Entering case for formula {0}".format(formula))
+#
+#         phi_1 = formula.first.first
+#         phi_2 = formula.first.second
+#         not_phi_2 = Formula(NOT, phi_2)
+#
+#         phi_1_proof = prove_in_model_implies_not_helper(phi_1, model, assumptions, rules, lines)
+#         update_lines(lines, phi_1_proof.lines)
+#         phi_1_index = len(lines) - 1
+#
+#         not_phi_2_proof = prove_in_model_implies_not_helper(not_phi_2, model, assumptions, rules, lines)
+#         update_lines(lines, not_phi_2_proof.lines)
+#         not_phi_2_index = len(lines) - 1
+#
+#         # p, NI --> (p->(~q->~(p->q)))
+#         our_NI = Formula(IMPLIES, phi_1, Formula(IMPLIES, not_phi_2,
+#                                                  Formula(NOT, Formula(IMPLIES,
+#                                                                       phi_1,
+#                                                                       phi_2))))
+#         lines.append(DeductiveProof.Line(our_NI, 4, []))
+#
+#         # mp 1
+#         lines.append(DeductiveProof.Line(our_NI.second, 0, [phi_1_index, len(lines) - 1]))
+#
+#         # mp 2
+#         lines.append(DeductiveProof.Line(our_NI.second.second, 0, [not_phi_2_index, len(lines) - 1]))
+#
+#         proof = DeductiveProof(statement, rules, lines)
+#
+#         return proof
+#
+#     elif formula.root == NOT and formula.first.root == NOT if hasattr(formula, 'first') else False:
+#         # Case φ=‘~~ψ’
+#         # use axiom NN to prove φ from ψ.
+#         # NN '(p->~~p)'
+#         # print("Entering case for formula {0}".format(formula))
+#         psi = formula.first.first
+#         psi_proof = prove_in_model_implies_not_helper(psi, model, assumptions, rules, lines)
+#
+#         update_lines(lines, psi_proof.lines)
+#
+#         our_NN = Formula(IMPLIES, psi, Formula(NOT, Formula(NOT, psi)))
+#         lines.append(DeductiveProof.Line(our_NN, 5, []))
+#
+#         # mp: {psi, our_NN} ---> ~~psi
+#         lines.append(DeductiveProof.Line(our_NN.second, 0, [len(lines) - 2, len(lines) - 1]))
+#         proof = DeductiveProof(statement, rules, lines)
+#         return proof
+#
+#     # Case not var
+#     elif formula.is_unary_formula():
+#         # print("Entering case for formula {0}".format(formula))
+#         lines = [DeductiveProof.Line(Formula(NOT, formula.first))]
+#         return DeductiveProof(statement, rules, lines)
+#
+#     # case var
+#     elif formula.is_variable_formula():
+#         # print("Entering case for formula {0}".format(formula)) `
+#         lines = [DeductiveProof.Line(Formula(formula.root))]
+#         return DeductiveProof(statement, rules, lines)
 
-    if formula.root == IMPLIES:
-        # print("Entering case for formula {0}".format(formula))
-        if not evaluate(formula.first, model):
-            # I3 : '(~p->(p->q))'
-            p = formula.first
-            not_p_proof = prove_in_model_implies_not_helper(Formula(NOT, p), model, assumptions, rules, lines)
-            update_lines(lines, not_p_proof.lines)
-
-            not_p = not_p_proof.statement.conclusion
-            q = formula.second
-            our_I3 = Formula(IMPLIES, not_p, Formula(IMPLIES, p, q))
-
-            lines.append(DeductiveProof.Line(our_I3, 3, []))
-
-            #     mp:
-            lines.append(DeductiveProof.Line(our_I3.second, 0, [len(lines) - 2, len(lines) - 1]))
-            proof = DeductiveProof(statement, rules, lines)
-            return proof
-
-        else:  # I1 : '(p->(q->p))'
-            phi_1 = formula.first
-            phi_2 = formula.second
-
-            phi_2_proof = prove_in_model_implies_not_helper(phi_2, model, assumptions, rules, lines)
-            update_lines(lines, phi_2_proof.lines)
-
-
-            our_I1 = Formula(IMPLIES, phi_2, Formula(IMPLIES, phi_1, phi_2))
-            lines.append(DeductiveProof.Line(our_I1, 1, []))
-
-            # mp:
-            lines.append(DeductiveProof.Line(our_I1.second, 0, [len(lines) - 2, len(lines) - 1]))
-            proof = DeductiveProof(statement, rules, lines)
-            return proof
-
-    elif formula.root == NOT and formula.first.root == IMPLIES if hasattr(formula, 'first') else False:
-        # Case φ=‘~(φ1→φ2)’
-        # use axiom NI to prove. φ1 is True and φ2 is False
-        # NI: '(p->(~q->~(p->q)))'
-        # print("Entering case for formula {0}".format(formula))
-
-        phi_1 = formula.first.first
-        phi_2 = formula.first.second
-        not_phi_2 = Formula(NOT, phi_2)
-
-        phi_1_proof = prove_in_model_implies_not_helper(phi_1, model, assumptions, rules, lines)
-        update_lines(lines, phi_1_proof.lines)
-        phi_1_index = len(lines) - 1
-
-        not_phi_2_proof = prove_in_model_implies_not_helper(not_phi_2, model, assumptions, rules, lines)
-        update_lines(lines, not_phi_2_proof.lines)
-        not_phi_2_index = len(lines) - 1
-
-        # p, NI --> (p->(~q->~(p->q)))
-        our_NI = Formula(IMPLIES, phi_1, Formula(IMPLIES, not_phi_2,
-                                                 Formula(NOT, Formula(IMPLIES,
-                                                                      phi_1,
-                                                                      phi_2))))
-        lines.append(DeductiveProof.Line(our_NI, 4, []))
-
-        # mp 1
-        lines.append(DeductiveProof.Line(our_NI.second, 0, [phi_1_index, len(lines) - 1]))
-
-        # mp 2
-        lines.append(DeductiveProof.Line(our_NI.second.second, 0, [not_phi_2_index, len(lines) - 1]))
-
-        proof = DeductiveProof(statement, rules, lines)
-
-        return proof
-
-    elif formula.root == NOT and formula.first.root == NOT if hasattr(formula, 'first') else False:
-        # Case φ=‘~~ψ’
-        # use axiom NN to prove φ from ψ.
-        # NN '(p->~~p)'
-        # print("Entering case for formula {0}".format(formula))
-        psi = formula.first.first
-        psi_proof = prove_in_model_implies_not_helper(psi, model, assumptions, rules, lines)
-
-        update_lines(lines, psi_proof.lines)
-
-        our_NN = Formula(IMPLIES, psi, Formula(NOT, Formula(NOT, psi)))
-        lines.append(DeductiveProof.Line(our_NN, 5, []))
-
-        # mp: {psi, our_NN} ---> ~~psi
-        lines.append(DeductiveProof.Line(our_NN.second, 0, [len(lines) - 2, len(lines) - 1]))
-        proof = DeductiveProof(statement, rules, lines)
-        return proof
-
-    # Case not var
-    elif formula.is_unary_formula():
-        # print("Entering case for formula {0}".format(formula))
-        lines = [DeductiveProof.Line(Formula(NOT, formula.first))]
-        return DeductiveProof(statement, rules, lines)
-
-    # case var
-    elif formula.is_variable_formula():
-        # print("Entering case for formula {0}".format(formula)) `
-        lines = [DeductiveProof.Line(Formula(formula.root))]
-        return DeductiveProof(statement, rules, lines)
+def prove_in_model_implies_not(formula: Formula, model: dict):
+    """ Return a proof of formula via AXIOMATIC_SYSTEM_IMPLIES_NOT from the
+        assumptions that all variables are valued as in model, with the
+        assumptions being ordered alphabetically by the names of the variables.
+        It is assumed that formula is true in model, and may only have the
+        operators implies and not in it """
+    # Task 6.1
+    lines = []
+    assumptions = [Formula(var) if val else Formula(NOT, Formula(var)) for var, val in sorted(model.items())]
+    rules = AXIOMATIC_SYSTEM_IMPLIES_NOT
+    return prove_in_model_implies_not_helper(formula, model, assumptions, rules, lines)
 
 
 def reduce_assumption(proof_true, proof_false):
@@ -243,12 +243,7 @@ def proof_or_counterexample_implies_not(formula):
 
 
 def prove_in_model_helper(formula: Formula, model: dict, assumptions, rules, lines):
-    # cases are (implication, negation of an implication, negation negation of φ)
-    # Case φ=‘(φ1→φ2)’
-    # if  eval(φ1) == F
-    # use axiom I3 to prove
-    # if eval (φ2) == T
-    # use axiom I1 to prove
+    # Task 4 helper
     statement = InferenceRule(assumptions, formula)
 
     # case ->
@@ -257,7 +252,7 @@ def prove_in_model_helper(formula: Formula, model: dict, assumptions, rules, lin
         if not evaluate(formula.first, model):
             # I3 : '(~p->(p->q))'
             p = formula.first
-            not_p_proof = prove_in_model_implies_not_helper(Formula(NOT, p), model, assumptions, rules, lines)
+            not_p_proof = prove_in_model_helper(Formula(NOT, p), model, assumptions, rules, lines)
             update_lines(lines, not_p_proof.lines)
 
             not_p = not_p_proof.statement.conclusion
@@ -275,7 +270,7 @@ def prove_in_model_helper(formula: Formula, model: dict, assumptions, rules, lin
             phi_1 = formula.first
             phi_2 = formula.second
 
-            phi_2_proof = prove_in_model_implies_not_helper(phi_2, model, assumptions, rules, lines)
+            phi_2_proof = prove_in_model_helper(phi_2, model, assumptions, rules, lines)
             update_lines(lines, phi_2_proof.lines)
 
 
@@ -298,11 +293,11 @@ def prove_in_model_helper(formula: Formula, model: dict, assumptions, rules, lin
         phi_2 = formula.first.second
         not_phi_2 = Formula(NOT, phi_2)
 
-        phi_1_proof = prove_in_model_implies_not_helper(phi_1, model, assumptions, rules, lines)
+        phi_1_proof = prove_in_model_helper(phi_1, model, assumptions, rules, lines)
         update_lines(lines, phi_1_proof.lines)
         phi_1_index = len(lines) - 1
 
-        not_phi_2_proof = prove_in_model_implies_not_helper(not_phi_2, model, assumptions, rules, lines)
+        not_phi_2_proof = prove_in_model_helper(not_phi_2, model, assumptions, rules, lines)
         update_lines(lines, not_phi_2_proof.lines)
         not_phi_2_index = len(lines) - 1
 
@@ -330,7 +325,7 @@ def prove_in_model_helper(formula: Formula, model: dict, assumptions, rules, lin
         # NN '(p->~~p)'
         # print("Entering case for formula {0}".format(formula))
         psi = formula.first.first
-        psi_proof = prove_in_model_implies_not_helper(psi, model, assumptions, rules, lines)
+        psi_proof = prove_in_model_helper(psi, model, assumptions, rules, lines)
 
         update_lines(lines, psi_proof.lines)
 
@@ -339,6 +334,38 @@ def prove_in_model_helper(formula: Formula, model: dict, assumptions, rules, lin
 
         # mp: {psi, our_NN} ---> ~~psi
         lines.append(DeductiveProof.Line(our_NN.second, 0, [len(lines) - 2, len(lines) - 1]))
+        proof = DeductiveProof(statement, rules, lines)
+        return proof
+
+    # case ~ (phi1 | phi 2)
+    elif formula.root == NOT and formula.first.root == OR:
+        # disprove phi_1,phi_2 then use NO
+        phi_1 = formula.first.first
+        phi_2 = formula.first.second
+        not_phi_1 = Formula(NOT, phi_1)
+        not_phi_2 = Formula(NOT, phi_2)
+
+        not_phi_1_proof = prove_in_model_helper(not_phi_1, model, assumptions, rules, lines)
+        update_lines(lines, not_phi_1_proof.lines)
+        not_phi_1_proof_index = len(lines) - 1
+
+        not_phi_2_proof = prove_in_model_helper(not_phi_2, model, assumptions, rules, lines)
+        update_lines(lines, not_phi_2_proof.lines)
+        not_phi_2_proof_index = len(lines) - 1
+
+        # NO: ~p->(~q->~(p|q)))
+        our_NO = Formula(IMPLIES, not_phi_1, Formula(IMPLIES,
+                                                not_phi_2,
+                                                Formula(NOT, Formula(OR, phi_1, phi_2))))
+        lines.append(DeductiveProof.Line(our_NO, NO_idx, []))
+        our_NO_idx = len(lines) - 1
+
+        # mp1: ~p, ~p->(~q->~(p|q))) => (~q->~(p|q)))
+        lines.append(DeductiveProof.Line(our_NO.second, 0, [not_phi_1_proof_index, our_NO_idx]))
+
+        # mp2: ~p, ~p->(~q->~(p|q))) => (~q->~(p|q)))
+        lines.append(DeductiveProof.Line(our_NO.second.second, 0, [not_phi_2_proof_index, len(lines) - 1]))
+
         proof = DeductiveProof(statement, rules, lines)
         return proof
 
@@ -392,6 +419,27 @@ def prove_in_model_helper(formula: Formula, model: dict, assumptions, rules, lin
     # case (phi1 | phi2)
     # elif formula.root == OR:
 
+        # case (phi1 | phi2)
+    # elif formula.root == OR:
+    #     phi_1, phi_2 = formula.first, formula.second
+    #
+    #     # prove phi1, use O1
+    #     if evaluate(phi_1, model):
+    #         phi_1_proof = prove_in_model_helper(phi_1, model, assumptions, rules, lines)
+    #         update_lines(lines, phi_1_proof.lines)
+    #         phi_1_proof_index = len(lines) - 1
+    #
+    #         # O1: (p->(p|q))
+    #         our_O1 = Formula(IMPLIES, phi_1, Formula(OR, phi_1, phi_2))
+    #         lines.append(DeductiveProof.Line(our_O1, O1_idx, []))
+    #         our_O1_idx = len(lines) - 1
+    #
+    #         # mp1: p, p->(p|q) => (p|q)
+    #         lines.append(DeductiveProof.Line(our_O1.second, 0, [phi_1_proof_index, our_O1_idx]))
+    #
+    #         # prove phi2, use O2
+    #         proof = DeductiveProof(statement, rules, lines)
+    #         return proof
 
 def prove_in_model(formula, model):
     """ Return a proof of formula via AXIOMATIC_SYSTEM from the assumptions
