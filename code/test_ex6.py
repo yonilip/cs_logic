@@ -31,12 +31,12 @@ import time
 start = time.time()
 print("Starting test\n\n")
 
-# test_task1(True)
-# test_task2(True)
-# test_task3(True)
-# test_task4(True)
-# test_task5(True)
-# test_task6(True)
+test_task1(True)
+test_task2(True)
+test_task3(True)
+test_task4(True)
+test_task5(True)
+test_task6(True)
 test_task7(True)
 end = time.time()
 
