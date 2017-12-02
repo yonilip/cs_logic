@@ -371,7 +371,48 @@ def prove_in_model_helper(formula: Formula, model: dict, assumptions, rules, lin
         proof = DeductiveProof(statement, rules, lines)
         return proof
 
-    # Case ~
+    # case ~ (phi1 & phi 2)
+    elif formula.root == NOT and formula.first.root == AND:
+        phi_1, phi_2 = formula.first.first, formula.first.second
+        not_phi_1, not_phi_2 = Formula(NOT, phi_1), Formula(NOT, phi_2)
+
+        # prove not_phi1, use NA1
+        if evaluate(not_phi_1, model):
+            not_phi_1_proof = prove_in_model_helper(not_phi_1, model, assumptions, rules, lines)
+            update_lines(lines, not_phi_1_proof.lines)
+            not_phi_1_proof_index = len(lines) - 1
+
+            # NA1 = '(~p->~(p&q))'
+            our_NA1 = Formula(IMPLIES, not_phi_1, Formula(NOT,
+                                                          Formula(AND, phi_1, phi_2)))
+            lines.append(DeductiveProof.Line(our_NA1, NA1_idx, []))
+            our_NA1_idx = len(lines) - 1
+
+            # mp: ~p, ~p->~(p&q) => ~(p&q)
+            lines.append(DeductiveProof.Line(our_NA1.second, 0, [not_phi_1_proof_index, our_NA1_idx]))
+
+            proof = DeductiveProof(statement, rules, lines)
+            return proof
+
+        # prove not_phi2, use NA2
+        elif evaluate(not_phi_2, model):
+            not_phi_2_proof = prove_in_model_helper(not_phi_2, model, assumptions, rules, lines)
+            update_lines(lines, not_phi_2_proof.lines)
+            not_phi_2_proof_index = len(lines) - 1
+
+            # NA2 = InferenceRule([], Formula.from_infix('(~q->~(p&q))'))
+            our_NA2 = Formula(IMPLIES, not_phi_2, Formula(NOT,
+                                                          Formula(AND, phi_1, phi_2)))
+            lines.append(DeductiveProof.Line(our_NA2, NA2_idx, []))
+            our_NA2_idx = len(lines) - 1
+
+            # mp: ~q, ~q->~(p&q) => ~(p&q)
+            lines.append(DeductiveProof.Line(our_NA2.second, 0, [not_phi_2_proof_index, our_NA2_idx]))
+
+            proof = DeductiveProof(statement, rules, lines)
+            return proof
+
+    # Case ~p
     elif formula.is_unary_formula():
         # print("Entering case for formula {0}".format(formula))
         lines = [DeductiveProof.Line(Formula(NOT, formula.first))]
