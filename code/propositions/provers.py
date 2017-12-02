@@ -76,13 +76,13 @@ def inverse_mp(proof, assumption):
             part_2 = Formula(IMPLIES, Formula(IMPLIES, p, q), Formula(IMPLIES, p, r))
             line_by_I2 = DeductiveProof.Line(Formula(IMPLIES, part_1, part_2), 2, [])
             new_lines.append(line_by_I2)
-            for i, l2 in enumerate(new_lines):
+            for i, l2 in reversed(list(enumerate(new_lines))):
                 if l2.conclusion == part_1:
                     break
             first_MP = DeductiveProof.Line(part_2, 0, [i, len(new_lines) - 1])
             new_lines.append(first_MP)
 
-            for i, l2 in enumerate(new_lines):
+            for i, l2 in reversed(list(enumerate(new_lines))):
                 if l2.conclusion == Formula(IMPLIES, p, q):
                     break
             second_MP = DeductiveProof.Line(Formula(IMPLIES, p, r), 0, [i, len(new_lines) - 1])
