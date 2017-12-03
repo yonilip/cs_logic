@@ -242,6 +242,7 @@ def prove_in_model_helper(formula: Formula, model: dict, assumptions, rules, lin
 
     # case ->
     if formula.root == IMPLIES:
+        # print("Entering case for formula {0}".format(formula))
         if not evaluate(formula.first, model):
             # I3 : '(~p->(p->q))'
             p = formula.first
@@ -279,6 +280,7 @@ def prove_in_model_helper(formula: Formula, model: dict, assumptions, rules, lin
         # Case φ=‘~(φ1→φ2)’
         # use axiom NI to prove. φ1 is True and φ2 is False
         # NI: '(p->(~q->~(p->q)))'
+        # print("Entering case for formula {0}".format(formula))
 
         phi_1 = formula.first.first
         phi_2 = formula.first.second
@@ -309,23 +311,6 @@ def prove_in_model_helper(formula: Formula, model: dict, assumptions, rules, lin
 
         return proof
 
-    # case ~~
-    elif formula.root == NOT and formula.first.root == NOT if hasattr(formula, 'first') else False:
-        # Case φ=‘~~ψ’
-        # use axiom NN to prove φ from ψ.
-        # NN '(p->~~p)'
-        psi = formula.first.first
-        psi_proof = prove_in_model_helper(psi, model, assumptions, rules, lines)
-
-        update_lines(lines, psi_proof.lines)
-
-        our_NN = Formula(IMPLIES, psi, Formula(NOT, Formula(NOT, psi)))
-        lines.append(DeductiveProof.Line(our_NN, 5, []))
-
-        # mp: {psi, our_NN} ---> ~~psi
-        lines.append(DeductiveProof.Line(our_NN.second, 0, [len(lines) - 2, len(lines) - 1]))
-        proof = DeductiveProof(statement, rules, lines)
-        return proof
 
     # case ~ (phi1 | phi 2)
     elif formula.root == NOT and formula.first.root == OR:
@@ -402,17 +387,19 @@ def prove_in_model_helper(formula: Formula, model: dict, assumptions, rules, lin
 
     # Case ~p
     elif formula.is_unary_formula():
-        lines = [DeductiveProof.Line(Formula(NOT, formula.first))]
+        # print("Entering case for formula {0}".format(formula))
+        lines = [DeductiveProof.Line(formula, NF_idx, [])]
         return DeductiveProof(statement, rules, lines)
 
     # case var
     elif formula.is_variable_formula():
+        # print("Entering case for formula {0}".format(formula)) `
         lines = [DeductiveProof.Line(Formula(formula.root))]
         return DeductiveProof(statement, rules, lines)
 
     # case T
     elif formula.root == 'T':
-        lines = [DeductiveProof.Line(Formula(formula.root))]
+        lines = [DeductiveProof.Line(formula, T_idx, [])]
         return DeductiveProof(statement, rules, lines)
 
     # case (phi1 & phi2)
