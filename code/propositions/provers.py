@@ -4,7 +4,6 @@
     File name: code/propositions/provers.py """
 
 from functools import lru_cache
-
 from propositions.syntax import *
 from propositions.proofs import *
 
@@ -47,6 +46,35 @@ def prove_implies_self():
     return DeductiveProof(statement, rules, lines)
 
 
+def case_imply_self(imply_self, new_lines_idx):
+    lines = deepcopy(imply_self.lines)
+    for line in lines:
+        if line.justification is not None:
+            line.justification = [new_lines_idx + j for j in line.justification]
+    return lines
+
+
+def case_not_mp_assump(line, new_lines_idx, assumption):
+    line_by_I1_conc = Formula(IMPLIES, line.conclusion,
+                              Formula(IMPLIES, assumption, line.conclusion))
+    line_by_I1 = DeductiveProof.Line(line_by_I1_conc, 1, [])
+    line_by_MP_conc = Formula(IMPLIES, assumption, line.conclusion)
+    line_by_MP = DeductiveProof.Line(line_by_MP_conc, 0, [new_lines_idx, new_lines_idx + 1])
+    return [line, line_by_I1, line_by_MP]
+
+
+def case_mp_assump(lines, assumption, line, new_lines_idx, map_lines):
+    p = assumption
+    q = lines[line.justification[0]].conclusion
+    r = line.conclusion
+    part_1 = Formula(IMPLIES, p, Formula(IMPLIES, q, r))
+    part_2 = Formula(IMPLIES, Formula(IMPLIES, p, q), Formula(IMPLIES, p, r))
+    line_by_I2 = DeductiveProof.Line(Formula(IMPLIES, part_1, part_2), 2, [])
+    first_MP = DeductiveProof.Line(part_2, 0, [map_lines[line.justification[1]], new_lines_idx])
+    second_MP = DeductiveProof.Line(Formula(IMPLIES, p, r), 0, [map_lines[line.justification[0]], new_lines_idx + 1])
+    return [line_by_I2, first_MP, second_MP]
+
+
 def inverse_mp(proof, assumption):
     """ Return a valid deductive proof for '(assumption->conclusion)', where
         conclusion is the conclusion of proof, from the assumptions of proof
@@ -54,39 +82,21 @@ def inverse_mp(proof, assumption):
     # Task 5.3
     new_assumptions = [a for a in proof.statement.assumptions if a != assumption]
     imply_self = prove_instance(prove_implies_self(), InferenceRule([], Formula(IMPLIES, assumption, assumption)))
+    imply_self_last_line_idx = len(imply_self.lines) - 1
     new_lines = imply_self.lines
+    map_lines = {}
+    new_lines_idx = len(new_lines)
 
-    for line in proof.lines:
-        rule_num = line.rule if line.rule is not None else -1
+    for i, line in enumerate(proof.lines):
         if line.conclusion == assumption:
+            map_lines.update({i: imply_self_last_line_idx})
             continue
-        elif line.conclusion in new_assumptions or rule_num != 0:
-            new_lines.append(line)
-            line_by_I1_conc = Formula(IMPLIES, line.conclusion, Formula(IMPLIES, assumption, line.conclusion))
-            line_by_I1 = DeductiveProof.Line(line_by_I1_conc, 1, [])
-            new_lines.append(line_by_I1)
-            line_by_MP_conc = Formula(IMPLIES, assumption, line.conclusion)
-            line_by_MP = DeductiveProof.Line(line_by_MP_conc, 0, [len(new_lines) - 2, len(new_lines) - 1])
-            new_lines.append(line_by_MP)
+        elif line.rule is None or line.rule != 0:
+            new_lines += case_not_mp_assump(line, new_lines_idx, assumption)
         else:
-            p = assumption
-            q = proof.lines[line.justification[0]].conclusion
-            r = line.conclusion
-            part_1 = Formula(IMPLIES, p, Formula(IMPLIES, q, r))
-            part_2 = Formula(IMPLIES, Formula(IMPLIES, p, q), Formula(IMPLIES, p, r))
-            line_by_I2 = DeductiveProof.Line(Formula(IMPLIES, part_1, part_2), 2, [])
-            new_lines.append(line_by_I2)
-            for i, l2 in reversed(list(enumerate(new_lines))):
-                if l2.conclusion == part_1:
-                    break
-            first_MP = DeductiveProof.Line(part_2, 0, [i, len(new_lines) - 1])
-            new_lines.append(first_MP)
-
-            for i, l2 in reversed(list(enumerate(new_lines))):
-                if l2.conclusion == Formula(IMPLIES, p, q):
-                    break
-            second_MP = DeductiveProof.Line(Formula(IMPLIES, p, r), 0, [i, len(new_lines) - 1])
-            new_lines.append(second_MP)
+            new_lines += case_mp_assump(proof.lines, assumption, line, new_lines_idx, map_lines)
+        new_lines_idx = len(new_lines)
+        map_lines.update({i: new_lines_idx - 1})
 
     statement = InferenceRule(new_assumptions, new_lines[-1].conclusion)
 
