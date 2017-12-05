@@ -118,7 +118,7 @@ class Term:
         """ Parse a term from the prefix of a given string. Return a pair: the
             parsed term, and the unparsed remainder of the string """
         # Task 7.3.1
-        if not s:
+        if not s:  # base case for 0-nary functions / relations
             return [None, '']
         while s[0] == ',':
             s = s[1:]
@@ -128,9 +128,9 @@ class Term:
             lpar = s.find('(')
             rpar = get_idx_matching_r_par(s, '(', ')')
             root = s[:lpar]
-            result_inner = Term.parse_prefix(s[lpar + 1: rpar])
-            args = [result_inner[0]]
-            residue = result_inner[1]
+            inner = Term.parse_prefix(s[lpar + 1: rpar])
+            args = [inner[0]] if inner[0] is not None else []
+            residue = inner[1]
             while residue:
                 left, right = Term.parse_prefix(residue)
                 residue = right
@@ -302,6 +302,7 @@ class Formula:
         """ Return a first-order formula parsed from its given string
             representation """
         # Task 7.4.2
+        return Formula.parse_prefix(s)[0]
 
     def free_variables(self):
         """ Return the set of variables that are free in this formula """
