@@ -159,11 +159,12 @@ class Term:
     @staticmethod
     def variables_helper(term, variables: list):
         if is_constant(term.root):
-            return []
+            return variables
         if is_variable(term.root):
-            return [term.root]
+            variables.append(term.root)
+            return variables
         for arg in term.arguments:
-            variables += Term.variables_helper(arg, variables)
+            variables = Term.variables_helper(arg, variables)
         return variables
 
     def variables(self):
@@ -304,9 +305,43 @@ class Formula:
         # Task 7.4.2
         return Formula.parse_prefix(s)[0]
 
+    @staticmethod
+    def free_variables_recurse(variables: list, term: Term, quantified_vars: list):
+        if is_constant(term.root):
+            pass
+        elif is_variable(term.root):
+            if term.root not in quantified_vars:
+                variables.append(term.root)
+        elif is_function(term.root):
+            for arg in term.arguments:
+                variables = Formula.free_variables_recurse(variables, arg, quantified_vars)
+        return variables
+
+    @staticmethod
+    def formula_free_variables(formula, free_variables, quantified_vars):
+        if is_relation(formula.root):
+            for arg in formula.arguments:
+                Formula.free_variables_recurse(free_variables, arg, quantified_vars)
+
+        if is_binary(formula.root):
+            Formula.formula_free_variables(formula.first, free_variables, quantified_vars)
+            Formula.formula_free_variables(formula.second, free_variables, quantified_vars)
+
+        if is_equality(formula.root):
+            Formula.free_variables_recurse(free_variables, formula.first, quantified_vars)
+            Formula.free_variables_recurse(free_variables, formula.second, quantified_vars)
+
+        if is_quantifier(formula.root):
+            quantified_vars.append(formula.variable)
+            Formula.formula_free_variables(formula.predicate, free_variables, quantified_vars)
+
+
     def free_variables(self):
         """ Return the set of variables that are free in this formula """
         # Task 7.6
+        free_variables = []
+        Formula.formula_free_variables(self, free_variables, [])
+        return set(free_variables)
 
     def functions(self):
         """ Return a set of pairs (function_name, arity) for all function names
