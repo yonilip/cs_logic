@@ -62,7 +62,7 @@ def test_is_model_of(debug):
         result = model.is_model_of(formulas)
         if debug:
             print('... is said', '' if result else 'not', 'to satisfy',
-                  formulas)
+                  formulas, "expected result: ", expected_result)
         assert result == expected_result
     formula = '(F(z,a)->z=b)'
     model = Model({'a', 'b'},

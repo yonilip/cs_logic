@@ -42,5 +42,5 @@ def test_task9(debug=False):
 # test_task5(True)
 # test_task6(True)
 # test_task7(True)
-test_task8(True)
-# test_task9(True)
+# test_task8(True)
+test_task9(True)

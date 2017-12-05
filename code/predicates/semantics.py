@@ -3,6 +3,7 @@
     by Gonczarowski and Nisan.
     File name: code/predicates/semantics.py """
 
+from itertools import permutations
 from predicates.syntax import *
 
 
@@ -81,3 +82,21 @@ class Model:
             be satisfied for every assignment of elements of the universe to
             the free variables """
         # Task 7.9
+        for formula_str in formulae_repr:
+            formula = Formula.parse(formula_str)
+            free_vars = list(formula.free_variables())
+
+            all_universe_perm = list(permutations(self.universe, len(free_vars)))
+            from pprint import pprint
+            print(all_universe_perm)
+            for perm in all_universe_perm:
+                assignment = {}
+                for i in range(len(perm)):
+                    var = free_vars[i]
+                    assignment[var] = perm[i]
+                if not self.evaluate_formula(formula, assignment):
+                    return False
+            # print(formula)
+            # print(assignment)
+
+        return True
