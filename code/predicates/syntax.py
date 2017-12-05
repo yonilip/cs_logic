@@ -96,17 +96,24 @@ class Term:
         """ Parse a term from the prefix of a given string. Return a pair: the
             parsed term, and the unparsed remainder of the string """
         # Task 7.3.1
-
+        while s[0] == ',':
+            s = s[1:]
         if len(s) == 1:
             return [Term(s), '']
         if is_function(s[0]):
             lpar = s.find('(')
             rpar = get_idx_matching_r_par(s)
             root = s[:lpar]
-            args = []
-            while None:
-                Term.parse_prefix(s[lpar + 1: rpar])[0]
-            return [Term(root, args), s[rpar +1:]]
+            result_inner = Term.parse_prefix(s[lpar + 1: rpar])
+            args = [result_inner[0]]
+            residue = result_inner[1]
+            while residue:
+                left, right = Term.parse_prefix(result_inner[1])
+                residue = right
+                args.append(left)
+            res = [Term(root, args), s[rpar + 1:]]
+            return res
+
         if is_constant(s[0]):
             for i in range(1, len(s)):
                 if not is_constant(s[i]):
@@ -122,6 +129,7 @@ class Term:
     def parse(s):
         """ Return a term parsed from its given string representation """
         # Task 7.3.2
+
 
     def variables(self):
         """ Return the set of variables in this term """

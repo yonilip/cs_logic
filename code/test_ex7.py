@@ -13,7 +13,7 @@ def test_task2(debug=False):
     test_formula_repr(debug)
 
 def test_task3(debug=False):
-    test_term_parse_prefix(debug)
+    # test_term_parse_prefix(debug)
     test_term_parse(debug)
 
 def test_task4(debug=False):
