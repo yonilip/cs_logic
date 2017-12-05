@@ -47,6 +47,17 @@ def is_variable(s):  # DONT EDIT
     return s[0] >= 'u' and s[0] <= 'z' and s.isalnum()
 
 
+def get_idx_matching_r_par(s):
+    counter = 0
+    for i in range(len(s)):
+        if s[i] == '(':
+            counter += 1
+        if s[i] == ')':
+            counter -= 1
+            if counter == 0:
+                return i
+
+
 class Term:
     """ A term in a first order logical formula, composed from constant names
         and variable names, and function names applied to them """
@@ -81,10 +92,31 @@ class Term:
         return hash(str(self))
 
     @staticmethod
-    def parse_prefix(s):
+    def parse_prefix(s: str):
         """ Parse a term from the prefix of a given string. Return a pair: the
             parsed term, and the unparsed remainder of the string """
         # Task 7.3.1
+
+        if len(s) == 1:
+            return [Term(s), '']
+        if is_function(s[0]):
+            lpar = s.find('(')
+            rpar = get_idx_matching_r_par(s)
+            root = s[:lpar]
+            args = []
+            while None:
+                Term.parse_prefix(s[lpar + 1: rpar])[0]
+            return [Term(root, args), s[rpar +1:]]
+        if is_constant(s[0]):
+            for i in range(1, len(s)):
+                if not is_constant(s[i]):
+                    break
+            return [Term(s[:i]), s[i:]]
+        if is_variable(s[0]):
+            for i in range(1, len(s)):
+                if not is_variable(s[i]):
+                    break
+            return [Term(s[:i]), s[i:]]
 
     @staticmethod
     def parse(s):
