@@ -108,7 +108,7 @@ class Term:
             args = [result_inner[0]]
             residue = result_inner[1]
             while residue:
-                left, right = Term.parse_prefix(result_inner[1])
+                left, right = Term.parse_prefix(residue)
                 residue = right
                 args.append(left)
             res = [Term(root, args), s[rpar + 1:]]
@@ -131,9 +131,21 @@ class Term:
         # Task 7.3.2
         return Term.parse_prefix(s)[0]
 
+    @staticmethod
+    def variables_helper(term, variables : list):
+        if is_constant(term.root):
+            return []
+        if is_variable(term.root):
+            return [term.root]
+        for arg in term.arguments:
+            variables += Term.variables_helper(arg, variables)
+        return variables
+
     def variables(self):
         """ Return the set of variables in this term """
         # Task 7.5
+        variables = Term.variables_helper(self, [])
+        return set(variables)
 
     def functions(self):
         """ Return a set of pairs (function_name, arity) for all function names
