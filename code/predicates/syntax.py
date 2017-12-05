@@ -138,13 +138,13 @@ class Term:
 
         if is_constant(s[0]):
             for i in range(1, len(s)):
-                if not is_constant(s[i]):
+                if not is_constant(s[:i + 1]):
                     return [Term(s[:i]), s[i:]]
             return [Term(s), '']
 
         if is_variable(s[0]):
             for i in range(1, len(s)):
-                if not is_variable(s[i]):
+                if not is_variable(s[:i + 1]):
                     return [Term(s[:i]), s[i:]]
             return [Term(s), '']
 
