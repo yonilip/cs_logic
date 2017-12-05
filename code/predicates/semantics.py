@@ -26,6 +26,15 @@ class Model:
             get their value from the given assignment """
         assert term.variables().issubset(assignment.keys())
         # Task 7.7
+        if is_constant(term.root):
+            return self.meaning[term.root]
+        if is_function(term.root):
+            args = []
+            for arg in term.arguments:
+                args.append(self.evaluate_term(arg, assignment))
+            return self.meaning[term.root][tuple(args)]
+        if is_variable(term.root):
+            return assignment[term.root]
 
     def evaluate_formula(self, formula, assignment={}):
         """ Return the value of the given formula in this model, where
