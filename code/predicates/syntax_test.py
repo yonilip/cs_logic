@@ -9,6 +9,7 @@ def test_term_repr(debug=False):
     if debug:
         print('Testing representation of the term f(s(0),x)')
     term = Term('f', [Term('s', [Term('0')]), Term('x')])
+    str(term)
     assert str(term) == 'f(s(0),x)'
 
 def test_term_parse_prefix(debug=False):

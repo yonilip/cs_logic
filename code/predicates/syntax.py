@@ -65,6 +65,11 @@ class Term:
     def __repr__(self):
         """ Return the usual (functional) representation of self """
         # Task 7.1
+        if is_constant(self.root) or is_variable(self.root):
+            return self.root
+        elif is_function(self.root):
+            inner_terms = ','.join(str(x) for x in self.arguments)
+            return self.root + "(" + inner_terms + ")"
 
     def __eq__(self, other):  # DONT EDIT
         return str(self) == str(other)
@@ -140,6 +145,17 @@ class Formula:
         """ Return the usual (infix for operators and equality, functional for
             other relations) representation of self """
         # Task 7.2
+        if is_relation(self.root):
+            inner_terms = ','.join(str(x) for x in self.arguments)
+            return self.root + '(' + inner_terms + ')'
+        elif is_equality(self.root):
+            return str(self.first) + '=' + str(self.second)
+        elif is_quantifier(self.root):
+            return self.root + self.variable + '[' + str(self.predicate) + ']'
+        elif is_unary(self.root):
+            return self.root + str(self.first)
+        elif is_binary(self.root):
+            return '(' + str(self.first) + self.root + str(self.second) + ')'
 
     def __eq__(self, other):  # DONT EDIT
         return str(self) == str(other)
