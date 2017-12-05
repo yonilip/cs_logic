@@ -47,15 +47,37 @@ def is_variable(s):  # DONT EDIT
     return s[0] >= 'u' and s[0] <= 'z' and s.isalnum()
 
 
-def get_idx_matching_r_par(s):
+def get_idx_matching_r_par(s, left, right):
     counter = 0
     for i in range(len(s)):
-        if s[i] == '(':
+        if s[i] == left:
             counter += 1
-        if s[i] == ')':
+        if s[i] == right:
             counter -= 1
             if counter == 0:
                 return i
+
+
+def get_index_of_binary_operator(s):
+    """
+    :param s: formula
+    :return: returns the index of the binary operator between the two sub-formulae
+    """
+    parenthesis_counter = 0  # add 1 for ( and subtract 1 for )
+    for i in range(len(s)):
+        if s[i] == "(":
+            parenthesis_counter += 1
+        if s[i] == ")":
+            parenthesis_counter -= 1
+        if not parenthesis_counter:
+            if is_binary(s[i]):
+                return i, i
+            if is_binary(s[i:i + 2]):
+                return i, i + 1
+            if is_binary(s[i:i + 3]):
+                return i, i + 2
+            if is_binary(s[i:i + 4]):
+                return i, i + 3
 
 
 class Term:
@@ -102,7 +124,7 @@ class Term:
             return [Term(s), '']
         if is_function(s[0]):
             lpar = s.find('(')
-            rpar = get_idx_matching_r_par(s)
+            rpar = get_idx_matching_r_par(s, '(', ')')
             root = s[:lpar]
             result_inner = Term.parse_prefix(s[lpar + 1: rpar])
             args = [result_inner[0]]
@@ -119,6 +141,7 @@ class Term:
                 if not is_constant(s[i]):
                     return [Term(s[:i]), s[i:]]
             return [Term(s), '']
+
         if is_variable(s[0]):
             for i in range(1, len(s)):
                 if not is_variable(s[i]):
@@ -132,7 +155,7 @@ class Term:
         return Term.parse_prefix(s)[0]
 
     @staticmethod
-    def variables_helper(term, variables : list):
+    def variables_helper(term, variables: list):
         if is_constant(term.root):
             return []
         if is_variable(term.root):
@@ -224,6 +247,53 @@ class Formula:
             Return a pair: the parsed formula, and unparsed remainder of the
             string """
         # Task 7.4.1
+        if is_unary(s[0]):
+            left, right = Formula.parse_prefix(s[1:])
+            return [Formula(s[0], left), right]
+        if s[0] == '(':  # binary cases
+            right_par = get_idx_matching_r_par(s, '(', ')')
+            residue = s[right_par + 1:]
+            inner = s[1:right_par]
+            l_op_idx, r_op_idx = get_index_of_binary_operator(inner)
+            if l_op_idx == r_op_idx:  # cases &, |
+                operator = inner[l_op_idx]
+                left_formula = Formula.parse_prefix(inner[:l_op_idx])[0]
+                right_formula = Formula.parse_prefix(inner[l_op_idx + 1:])[0]
+            else:
+                operator = inner[l_op_idx:r_op_idx + 1]
+                left_formula = Formula.parse_prefix(inner[:l_op_idx])[0]
+                right_formula = Formula.parse_prefix(inner[r_op_idx + 1:])[0]
+            result = [Formula(operator, left_formula, right_formula), residue]
+            return result
+
+        if is_quantifier(s[0]):
+            left_par = s.find('[')
+            right_par = get_idx_matching_r_par(s, '[', ']')
+            term = s[1:left_par]
+            formula, residue = Formula.parse_prefix(s[left_par + 1:right_par])
+            return [Formula(s[0], term, formula), s[right_par + 1:]]
+        if is_variable(s[0]) or is_constant(s[0]) or is_function(s[0]):
+            equal_idx = s.find('=')
+            if equal_idx == -1:  # case not equality, just term
+                return Term.parse_prefix(s)
+            # case terms between equality
+            left_term, left_residue = Term.parse_prefix(s[:equal_idx])
+            right_term, right_residue = Term.parse_prefix(s[equal_idx + 1:])
+            return [Formula('=', left_term, right_term), right_residue]
+
+        if is_relation(s[0]):
+            left_par = s.find('(')
+            right_par = get_idx_matching_r_par(s, '(', ')')
+            root = s[:left_par]
+            inner = Term.parse_prefix(s[left_par + 1: right_par])
+            args = [inner[0]]
+            residue = inner[1]
+            while residue:
+                left, right = Term.parse_prefix(residue)
+                residue = right
+                args.append(left)
+            res = [Formula(root, args), s[right_par + 1:]]
+            return res
 
     @staticmethod
     def parse(s):

@@ -18,7 +18,7 @@ def test_task3(debug=False):
 
 def test_task4(debug=False):
     test_formula_parse_prefix(debug)
-    test_formula_parse(debug)
+    # test_formula_parse(debug)
 
 def test_task5(debug=False):
     test_variables(debug)
@@ -37,8 +37,8 @@ def test_task9(debug=False):
 
 # test_task1(True)
 # test_task2(True)
-test_task3(True)
-# test_task4(True)
+# test_task3(True)
+test_task4(True)
 # test_task5(True)
 # test_task6(True)
 # test_task7(True)
