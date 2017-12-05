@@ -118,6 +118,8 @@ class Term:
         """ Parse a term from the prefix of a given string. Return a pair: the
             parsed term, and the unparsed remainder of the string """
         # Task 7.3.1
+        if not s:
+            return [None, '']
         while s[0] == ',':
             s = s[1:]
         if len(s) == 1:
@@ -286,7 +288,7 @@ class Formula:
             right_par = get_idx_matching_r_par(s, '(', ')')
             root = s[:left_par]
             inner = Term.parse_prefix(s[left_par + 1: right_par])
-            args = [inner[0]]
+            args = [inner[0]] if inner[0] is not None else []
             residue = inner[1]
             while residue:
                 left, right = Term.parse_prefix(residue)
