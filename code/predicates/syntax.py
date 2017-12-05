@@ -117,19 +117,19 @@ class Term:
         if is_constant(s[0]):
             for i in range(1, len(s)):
                 if not is_constant(s[i]):
-                    break
-            return [Term(s[:i]), s[i:]]
+                    return [Term(s[:i]), s[i:]]
+            return [Term(s), '']
         if is_variable(s[0]):
             for i in range(1, len(s)):
                 if not is_variable(s[i]):
-                    break
-            return [Term(s[:i]), s[i:]]
+                    return [Term(s[:i]), s[i:]]
+            return [Term(s), '']
 
     @staticmethod
     def parse(s):
         """ Return a term parsed from its given string representation """
         # Task 7.3.2
-
+        return Term.parse_prefix(s)[0]
 
     def variables(self):
         """ Return the set of variables in this term """
