@@ -331,10 +331,12 @@ class Formula:
             Formula.free_variables_recurse(free_variables, formula.first, quantified_vars)
             Formula.free_variables_recurse(free_variables, formula.second, quantified_vars)
 
+        if is_unary(formula.root):
+            Formula.formula_free_variables(formula.first, free_variables, quantified_vars)
+
         if is_quantifier(formula.root):
             quantified_vars.append(formula.variable)
             Formula.formula_free_variables(formula.predicate, free_variables, quantified_vars)
-
 
     def free_variables(self):
         """ Return the set of variables that are free in this formula """
