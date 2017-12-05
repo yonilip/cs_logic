@@ -42,6 +42,37 @@ class Model:
             given assignment """
         assert formula.free_variables().issubset(assignment.keys())
         # Task 7.8
+        if is_relation(formula.root):
+            args = []
+            for arg in formula.arguments:
+                args.append(self.evaluate_term(arg, assignment))
+            return tuple(args) in self.meaning[formula.root]
+        if is_equality(formula.root):
+            return self.evaluate_term(formula.first, assignment) == \
+                   self.evaluate_term(formula.second, assignment)
+        if is_quantifier(formula.root):
+            assignment = dict(assignment)
+            results = []
+            for elem in self.universe:
+                assignment[formula.variable] = elem
+                results.append(self.evaluate_formula(formula.predicate, assignment))
+            if formula.root == 'A':
+                return all(results)
+            if formula.root == 'E':
+                return any(results)
+
+        if is_binary(formula.root):
+            if formula.root == '&':
+                return self.evaluate_formula(formula.first, assignment) and \
+                       self.evaluate_formula(formula.second, assignment)
+            if formula.root == '|':
+                return self.evaluate_formula(formula.first, assignment) or \
+                       self.evaluate_formula(formula.second, assignment)
+            if formula.root == '->':
+                return (not self.evaluate_formula(formula.first, assignment)) or \
+                       self.evaluate_formula(formula.second, assignment)
+        if is_unary(formula.root):
+            return not self.evaluate_formula(formula.first, assignment)
 
     def is_model_of(self, formulae_repr):
         """ Return whether self a model of the formulae represented by the
