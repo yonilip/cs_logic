@@ -6,6 +6,7 @@
 from predicates.syntax import *
 from predicates.semantics import *
 from predicates.util import *
+from copy import deepcopy
 
 def replace_functions_with_relations_in_model(model):
     """ Return a new model obtained from the given model by replacing every
@@ -16,6 +17,21 @@ def replace_functions_with_relations_in_model(model):
         capitalized """
     assert type(model) is Model
     # Task 8.2
+    new_meaning = {}
+    for k, v in model.meaning.items():
+        if not is_function(k):
+            new_meaning[k] = v
+
+        else:
+            new_relation_name = k.title()
+
+            new_values = []
+            for source, target in v.items():
+                new_values.append((target,) + source)
+
+            new_meaning[new_relation_name] = set(new_values)
+
+    return Model(model.universe, new_meaning)
 
 def replace_relations_with_functions_in_model(model, original_functions):
     """ Return a new model original_model with function names
