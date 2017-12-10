@@ -23,7 +23,7 @@ def replace_functions_with_relations_in_model(model):
             new_meaning[k] = v
 
         else:
-            new_relation_name = k.title()
+            new_relation_name = k[0].upper() + k[1:]
 
             new_values = []
             for source, target in v.items():
@@ -40,6 +40,25 @@ def replace_relations_with_functions_in_model(model, original_functions):
         or None if no such original_model exists """
     assert type(model) is Model
     # Task 8.3
+    new_meaning = {}
+    for k, v in model.meaning.items():
+        new_function_name = k[0].lower() + k[1:]
+        if not is_relation(k) or new_function_name not in original_functions:
+            new_meaning[k] = v
+
+        else:
+            new_function_values = {}
+            for value in v:
+                new_function_values[value[1:]] = value[0]
+
+            new_meaning[new_function_name] = new_function_values
+
+    original_model = Model(model.universe, new_meaning)
+    original_model_reversed = replace_functions_with_relations_in_model(deepcopy(original_model))
+
+    if model.meaning == original_model_reversed.meaning:
+        return original_model
+    return None
 
 def compile_term(term):
     """ Return a list of steps that result from compiling the given term,
