@@ -173,10 +173,22 @@ class Term:
         variables = Term.variables_helper(self, [])
         return set(variables)
 
+    @staticmethod
+    def functions_helper(term, functions: list):
+        if is_function(term.root):
+            functions.append((term.root, len(term.arguments)))
+            for arg in term.arguments:
+                if is_function(arg.root):
+                    functions = Term.functions_helper(arg, functions)
+            return functions
+        return functions
+
     def functions(self):
         """ Return a set of pairs (function_name, arity) for all function names
             that appear in this term """
         # Task 8.1.1
+        functions = Term.functions_helper(self, [])
+        return set(functions)
 
     def substitute_variables(self, substitution_map):
         """ Return a term obtained from this term where all the occurrences of
@@ -345,15 +357,66 @@ class Formula:
         Formula.formula_free_variables(self, free_variables, [])
         return set(free_variables)
 
+    @staticmethod
+    def functions_helper(formula, functions: list):
+        if is_function(formula.root):
+            functions.append((formula.root, len(formula.arguments)))
+            for arg in formula.arguments:
+                Formula.functions_helper(arg, functions)
+
+        elif is_relation(formula.root):
+            for term in formula.arguments:
+                Term.functions_helper(term, functions)
+
+        elif is_equality(formula.root) or is_binary(formula.root):
+            Formula.functions_helper(formula.first, functions)
+            Formula.functions_helper(formula.second, functions)
+
+        elif is_unary(formula.root):
+            Formula.functions_helper(formula.first, functions)
+
+        if is_quantifier(formula.root):
+            Formula.functions_helper(formula.predicate, functions)
+
+
     def functions(self):
         """ Return a set of pairs (function_name, arity) for all function names
             that appear in this formula """
         # Task 8.1.2
+        functions = []
+        Formula.functions_helper(self, functions)
+        return set(functions)
+
+
+    @staticmethod
+    def relations_helper(formula, relations: list):
+        if is_relation(formula.root):
+            relations.append((formula.root, len(formula.arguments)))
+
+        elif is_function(formula.root):
+            for arg in formula.arguments:
+                Formula.relations_helper(arg, relations)
+
+
+        elif is_equality(formula.root) or is_binary(formula.root):
+            Formula.relations_helper(formula.first, relations)
+            Formula.relations_helper(formula.second, relations)
+
+        elif is_unary(formula.root):
+            Formula.relations_helper(formula.first, relations)
+
+        if is_quantifier(formula.root):
+            Formula.relations_helper(formula.predicate, relations)
+
 
     def relations(self):
         """ Return a set of pairs (relation_name, arity) for all relation names
             that appear in this formula """
         # Task 8.1.3
+        relations = []
+        Formula.relations_helper(self, relations)
+        return set(relations)
+
 
     def substitute_variables(self, substitution_map):
         """ Return a first-order formula obtained from this formula where all
