@@ -25,3 +25,5 @@ fresh_variable_name_generator = __prefix_with_index_sequence_generator('z')
     next(fresh_constant_name_generator)
     will return 'c2', and so on. """
 fresh_constant_name_generator = __prefix_with_index_sequence_generator('c')
+
+fresh_variable_x_gen = __prefix_with_index_sequence_generator('x')

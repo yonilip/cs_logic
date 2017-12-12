@@ -196,6 +196,38 @@ def replace_functions_with_relations_in_formula(formula):
     return replace_functions_with_relations_in_formula_helper(formula)
 
 
+def create_exists_formula(function: str, arity: int):
+    args = [next(fresh_variable_x_gen) for _ in range(arity)]
+    function_with_args = function + '(' + ','.join(args) + ')'
+    function_with_args = Term.parse(function_with_args)
+    z = next(fresh_variable_name_generator)
+    equality_formula = Formula('=', Term(z), function_with_args)
+    new_relation = get_new_relation_from_equality(equality_formula)
+    exists_formula = Formula('E', z, new_relation)
+    for arg in reversed(args):
+        exists_formula = Formula('A', arg, exists_formula)
+    return exists_formula
+
+
+
+def create_singularity_formula(function, arity):
+    args = [next(fresh_variable_x_gen) for _ in range(arity)]
+    function_with_args = function + '(' + ','.join(args) + ')'
+    function_with_args = Term.parse(function_with_args)
+    z1, z2 = Term(next(fresh_variable_name_generator)), Term(next(fresh_variable_name_generator))
+    equality_formula_1 = Formula('=', z1, function_with_args)
+    equality_formula_2 = Formula('=', z2, function_with_args)
+
+    new_R_1 = get_new_relation_from_equality(equality_formula_1)
+    new_R_2 = get_new_relation_from_equality(equality_formula_2)
+    and_formula = Formula('&', new_R_1, new_R_2)
+    implies_formula = Formula('->', and_formula, Formula('=', z1, z2))
+    singularity_formula = Formula('A', z1.root, Formula('A', z2.root, implies_formula))
+    for arg in reversed(args):
+        singularity_formula = Formula('A', arg, singularity_formula)
+    return singularity_formula
+
+
 def replace_functions_with_relations_in_formulae(formulae):
     """ Return a list of function-free formulae (as strings) that is equivalent
         to the given formulae list (also of strings) that may contain function
@@ -216,6 +248,17 @@ def replace_functions_with_relations_in_formulae(formulae):
     for formula in formulae:
         assert type(formula) is str
     # task 8.6
+    formulae_as_formula = [Formula.parse(s) for s in formulae]
+    result = []
+    for formula in formulae_as_formula:
+        replaced_formula = replace_functions_with_relations_in_formula(formula)
+        result.append(str(replaced_formula))
+        for function, arity in formula.functions():
+            exists_formula = create_exists_formula(function, arity)
+            singularity_formula = create_singularity_formula(function, arity)
+            exists_and_singular = Formula('&', exists_formula, singularity_formula)
+            result.append(str(exists_and_singular))
+    return result
 
 
 def replace_equality_with_SAME(formulae):
