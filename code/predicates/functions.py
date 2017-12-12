@@ -75,6 +75,27 @@ def replace_relations_with_functions_in_model(model, original_functions):
     return original_model if verify_model_is_original(original_model) else None
 
 
+def compile_term_helper(f: Term, steps: list):
+    if all(not is_function(g.root) for g in f.arguments):
+        new_var = Term(next(fresh_variable_name_generator))
+        step = Formula('=', new_var, f)
+        steps.append(step)
+        return new_var
+
+    list_inner_new_args = []
+    for g in f.arguments:
+        if not is_function(g.root):
+            list_inner_new_args.append(g)
+        else:
+            z = compile_term_helper(g, steps)
+            list_inner_new_args.append(z)
+
+    new_var = Term(next(fresh_variable_name_generator))
+    steps.append(Formula('=', new_var, Term(f.root, list_inner_new_args)))
+    return new_var
+
+
+
 def compile_term(term):
     """ Return a list of steps that result from compiling the given term,
         whose root is a function invocation (possibly with nested function
@@ -89,7 +110,9 @@ def compile_term(term):
         step should evaluate to the value of the given term """
     assert type(term) is Term and is_function(term.root)
     # Task 8.4
-
+    steps = []
+    compile_term_helper(term, steps)
+    return steps
 
 def replace_functions_with_relations_in_formula(formula):
     """ Return a function-free analog of the given formula. Every k-ary

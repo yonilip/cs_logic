@@ -127,7 +127,7 @@ def test_replace_functions_with_relations_in_formula(debug):
                   '...')
         new_formula = replace_functions_with_relations_in_formula(formula)
         if debug:
-            print('... got', formula)
+            print('... got', new_formula)
         for model,validity in [[valid_model,True], [invalid_model,False]]:
             # Will be tested with the course staff's implementation of
             # is_model_of
