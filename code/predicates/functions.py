@@ -8,6 +8,7 @@ from predicates.semantics import *
 from predicates.util import *
 from copy import deepcopy
 from itertools import product
+from collections import deque
 
 
 def replace_functions_with_relations_in_model(model):
@@ -76,11 +77,11 @@ def replace_relations_with_functions_in_model(model, original_functions):
 
 
 def compile_term_helper(f: Term, steps: list):
-    if all(not is_function(g.root) for g in f.arguments):
-        new_var = Term(next(fresh_variable_name_generator))
-        step = Formula('=', new_var, f)
-        steps.append(step)
-        return new_var
+    # if all(not is_function(g.root) for g in f.arguments):
+    #     new_var = Term(next(fresh_variable_name_generator))
+    #     step = Formula('=', new_var, f)
+    #     steps.append(step)
+    #     return new_var
 
     list_inner_new_args = []
     for g in f.arguments:
@@ -93,7 +94,6 @@ def compile_term_helper(f: Term, steps: list):
     new_var = Term(next(fresh_variable_name_generator))
     steps.append(Formula('=', new_var, Term(f.root, list_inner_new_args)))
     return new_var
-
 
 
 def compile_term(term):
@@ -114,6 +114,71 @@ def compile_term(term):
     compile_term_helper(term, steps)
     return steps
 
+
+def get_new_relation_from_equality(equality: Formula):
+    z = equality.first
+    old_func = equality.second
+    old_func_name = old_func.root
+    new_name = old_func_name[0].upper() + old_func_name[1:]
+    return Formula(new_name, [z] + old_func.arguments)
+
+
+def create_quantify_implies(all_steps: deque, new_R: Formula):
+    if not all_steps:
+        return new_R
+    head = all_steps.popleft()
+    z = head.first
+    replaced_func = get_new_relation_from_equality(head)
+    if not all_steps:
+        rhs_implies = new_R
+    else:
+        rhs_implies = create_quantify_implies(all_steps, new_R)
+    inner_formula = Formula('->', replaced_func, rhs_implies)
+    return Formula('A', z.root, inner_formula)
+
+
+def replace_functions_with_relations_in_formula_helper(formula: Formula):
+    if is_equality(formula.root):
+        phi_1 = formula.first
+        phi_2 = formula.second
+        if is_function(phi_1.root):
+            phi_1_steps = compile_term(phi_1)
+        else:
+            phi_1_steps = []
+        if is_function(phi_2.root):
+            phi_2_steps = compile_term(phi_2)
+        else:
+            phi_2_steps = []
+
+        lhs = phi_1_steps[-1].first if phi_1_steps else phi_1
+        rhs = phi_2_steps[-1].first if phi_2_steps else phi_2
+        new_R = Formula('=', lhs, rhs)
+        return create_quantify_implies(deque(phi_1_steps + phi_2_steps), new_R)
+
+    elif is_relation(formula.root):
+        all_steps = []
+        for term in formula.arguments:
+            steps = compile_term(term) if is_function(term.root) else [term]
+            all_steps.append(steps)
+
+        new_args = [steps[-1].first if is_equality(steps[-1].root) else steps[-1] for steps in all_steps]
+        new_R = Formula(formula.root, new_args)
+
+        all_steps = [step for steps in all_steps for step in steps if is_equality(step.root)]  # flatten out
+        return create_quantify_implies(deque(all_steps), new_R)
+
+    elif is_unary(formula.root):
+        return Formula(formula.root,
+                       replace_functions_with_relations_in_formula_helper(formula.first))
+    elif is_binary(formula.root):
+        return Formula(formula.root,
+                       replace_functions_with_relations_in_formula_helper(formula.first),
+                       replace_functions_with_relations_in_formula_helper(formula.second))
+    elif is_quantifier(formula.root):
+        return Formula(formula.root, formula.variable,
+                       replace_functions_with_relations_in_formula_helper(formula.predicate))
+
+
 def replace_functions_with_relations_in_formula(formula):
     """ Return a function-free analog of the given formula. Every k-ary
         function that is used in the given formula should be replaced with a
@@ -128,6 +193,7 @@ def replace_functions_with_relations_in_formula(formula):
         k-tuple of the other arguments """
     assert type(formula) is Formula
     # Task 8.5
+    return replace_functions_with_relations_in_formula_helper(formula)
 
 
 def replace_functions_with_relations_in_formulae(formulae):

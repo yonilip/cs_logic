@@ -378,7 +378,6 @@ class Formula:
         if is_quantifier(formula.root):
             Formula.functions_helper(formula.predicate, functions)
 
-
     def functions(self):
         """ Return a set of pairs (function_name, arity) for all function names
             that appear in this formula """
@@ -386,7 +385,6 @@ class Formula:
         functions = []
         Formula.functions_helper(self, functions)
         return set(functions)
-
 
     @staticmethod
     def relations_helper(formula, relations: list):
@@ -396,7 +394,6 @@ class Formula:
         elif is_function(formula.root):
             for arg in formula.arguments:
                 Formula.relations_helper(arg, relations)
-
 
         elif is_equality(formula.root) or is_binary(formula.root):
             Formula.relations_helper(formula.first, relations)
@@ -408,7 +405,6 @@ class Formula:
         if is_quantifier(formula.root):
             Formula.relations_helper(formula.predicate, relations)
 
-
     def relations(self):
         """ Return a set of pairs (relation_name, arity) for all relation names
             that appear in this formula """
@@ -416,7 +412,6 @@ class Formula:
         relations = []
         Formula.relations_helper(self, relations)
         return set(relations)
-
 
     def substitute_variables(self, substitution_map):
         """ Return a first-order formula obtained from this formula where all
