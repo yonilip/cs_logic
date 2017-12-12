@@ -7,6 +7,8 @@ from predicates.syntax import *
 from predicates.semantics import *
 from predicates.util import *
 from copy import deepcopy
+from itertools import product
+
 
 def replace_functions_with_relations_in_model(model):
     """ Return a new model obtained from the given model by replacing every
@@ -33,6 +35,19 @@ def replace_functions_with_relations_in_model(model):
 
     return Model(model.universe, new_meaning)
 
+
+def verify_model_is_original(original_model: Model):
+    functions = [f for f in original_model.meaning if is_function(f)]
+    aritys = [len(list(original_model.meaning[f].keys())[0]) for f in functions]
+
+    for f, arity in zip(functions, aritys):
+        all_arg_combinations = list(product(original_model.universe, repeat=arity))
+        for args in all_arg_combinations:
+            if original_model.meaning[f].get(args) is None:
+                return False
+    return True
+
+
 def replace_relations_with_functions_in_model(model, original_functions):
     """ Return a new model original_model with function names
         original_functions such that:
@@ -49,16 +64,16 @@ def replace_relations_with_functions_in_model(model, original_functions):
         else:
             new_function_values = {}
             for value in v:
+                if new_function_values.get(value[1:]) is not None:  # verify each key has exactly one value
+                    return None
                 new_function_values[value[1:]] = value[0]
-
             new_meaning[new_function_name] = new_function_values
 
     original_model = Model(model.universe, new_meaning)
-    original_model_reversed = replace_functions_with_relations_in_model(deepcopy(original_model))
 
-    if model.meaning == original_model_reversed.meaning:
-        return original_model
-    return None
+    # verify function gets all possible keys
+    return original_model if verify_model_is_original(original_model) else None
+
 
 def compile_term(term):
     """ Return a list of steps that result from compiling the given term,
@@ -75,6 +90,7 @@ def compile_term(term):
     assert type(term) is Term and is_function(term.root)
     # Task 8.4
 
+
 def replace_functions_with_relations_in_formula(formula):
     """ Return a function-free analog of the given formula. Every k-ary
         function that is used in the given formula should be replaced with a
@@ -89,6 +105,7 @@ def replace_functions_with_relations_in_formula(formula):
         k-tuple of the other arguments """
     assert type(formula) is Formula
     # Task 8.5
+
 
 def replace_functions_with_relations_in_formulae(formulae):
     """ Return a list of function-free formulae (as strings) that is equivalent
@@ -110,7 +127,8 @@ def replace_functions_with_relations_in_formulae(formulae):
     for formula in formulae:
         assert type(formula) is str
     # task 8.6
-        
+
+
 def replace_equality_with_SAME(formulae):
     """ Return a list of equality-free formulae (as strings) that is equivalent
         to the given formulae list (also of strings) that may contain the
@@ -124,13 +142,15 @@ def replace_equality_with_SAME(formulae):
     for formula in formulae:
         assert type(formula) is str
     # Task 8.7
-        
+
+
 def add_SAME_as_equality(model):
     """ Return a new model obtained from the given model by adding the relation
         SAME that behaves like equality """
     assert type(model) is Model
     # Task 8.8
-    
+
+
 def make_equality_as_SAME(model):
     """ Return a new model where equality is made to coincide with the
         reflexive, symmetric, transitive, and respected by all relations,
