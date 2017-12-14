@@ -209,7 +209,6 @@ def create_exists_formula(function: str, arity: int):
     return exists_formula
 
 
-
 def create_singularity_formula(function, arity):
     args = [next(fresh_variable_x_gen) for _ in range(arity)]
     function_with_args = function + '(' + ','.join(args) + ')'
@@ -261,6 +260,29 @@ def replace_functions_with_relations_in_formulae(formulae):
     return result
 
 
+def same_for_n_nary(rel_name, arity):
+    new_x_vars = [next(fresh_variable_name_generator) for _ in range(arity)]
+    new_y_vars = [next(fresh_variable_name_generator) for _ in range(arity)]
+
+    all_same_list = []
+    for i in range(len(new_x_vars)):
+        all_same_list.append(Formula.parse_same('SAME({0},{1})'.format(new_x_vars[i], new_y_vars[i])))
+
+    all_same_formula = all_same_list.pop()
+    while all_same_list:
+        new_same = all_same_list.pop()
+        all_same_formula = Formula('&', all_same_formula, new_same)
+
+    left_R = Formula(rel_name, [Term(x) for x in new_x_vars])
+    right_R = Formula(rel_name, [Term(y) for y in new_y_vars])
+    last_implies = Formula('->', left_R, right_R)
+    final_formula = Formula('->', all_same_formula, last_implies)
+
+    for v in new_x_vars + new_y_vars:
+        final_formula = Formula('A', v, final_formula)
+    return final_formula
+
+
 def replace_equality_with_SAME(formulae):
     """ Return a list of equality-free formulae (as strings) that is equivalent
         to the given formulae list (also of strings) that may contain the
@@ -274,6 +296,19 @@ def replace_equality_with_SAME(formulae):
     for formula in formulae:
         assert type(formula) is str
     # Task 8.7
+    SAME_formulae = [Formula.parse_same(s) for s in formulae]
+    reflexivity_str = 'Ax[SAME(x,x)]'
+    symmetry_str = 'Ax[Ay[(SAME(x,y)->SAME(y,x))&(SAME(y,x)->SAME(x,y))]]'
+    trans_str = 'Ax[Ay[Az[((SAME(x,y)&SAME(y,z))->SAME(x,z))]]]'
+    equivalence_relation = [reflexivity_str, symmetry_str, trans_str]
+
+    all_relations = set()
+    for formula in SAME_formulae:
+        all_relations |= set((name, arity) for name, arity in formula.relations() if name != 'SAME')
+    for rel_name, arity in all_relations:
+            SAME_formulae.append(same_for_n_nary(rel_name, arity))
+
+    return equivalence_relation + [str(f) for f in SAME_formulae]
 
 
 def add_SAME_as_equality(model):

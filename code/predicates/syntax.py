@@ -311,11 +311,72 @@ class Formula:
             return res
 
     @staticmethod
+    def parse_same_prefix(s):
+        """ Parse a first-order formula from the prefix of a given string.
+            Return a pair: the parsed formula, and unparsed remainder of the
+            string """
+        # Task 7.4.1
+        if is_unary(s[0]):
+            left, right = Formula.parse_same_prefix(s[1:])
+            return [Formula(s[0], left), right]
+        if s[0] == '(':  # binary cases
+            right_par = get_idx_matching_r_par(s, '(', ')')
+            residue = s[right_par + 1:]
+            inner = s[1:right_par]
+            l_op_idx, r_op_idx = get_index_of_binary_operator(inner)
+            if l_op_idx == r_op_idx:  # cases &, |
+                operator = inner[l_op_idx]
+                left_formula = Formula.parse_same_prefix(inner[:l_op_idx])[0]
+                right_formula = Formula.parse_same_prefix(inner[l_op_idx + 1:])[0]
+            else:
+                operator = inner[l_op_idx:r_op_idx + 1]
+                left_formula = Formula.parse_same_prefix(inner[:l_op_idx])[0]
+                right_formula = Formula.parse_same_prefix(inner[r_op_idx + 1:])[0]
+            result = [Formula(operator, left_formula, right_formula), residue]
+            return result
+
+        if is_quantifier(s[0]):
+            left_par = s.find('[')
+            right_par = get_idx_matching_r_par(s, '[', ']')
+            term = s[1:left_par]
+            formula, residue = Formula.parse_same_prefix(s[left_par + 1:right_par])
+            return [Formula(s[0], term, formula), s[right_par + 1:]]
+        if is_variable(s[0]) or is_constant(s[0]) or is_function(s[0]):
+            equal_idx = s.find('=')
+            if equal_idx == -1:  # case not equality, just term
+                return Term.parse_same_prefix(s)
+            # case terms between equality
+            left_term, left_residue = Term.parse_prefix(s[:equal_idx])
+            right_term, right_residue = Term.parse_prefix(s[equal_idx + 1:])
+            return [Formula('SAME', [left_term, right_term]), right_residue]
+
+        if is_relation(s[0]):
+            left_par = s.find('(')
+            right_par = get_idx_matching_r_par(s, '(', ')')
+            root = s[:left_par]
+            inner = Term.parse_prefix(s[left_par + 1: right_par])
+            args = [inner[0]] if inner[0] is not None else []
+            residue = inner[1]
+            while residue:
+                left, right = Term.parse_prefix(residue)
+                residue = right
+                args.append(left)
+            res = [Formula(root, args), s[right_par + 1:]]
+            return res
+
+    @staticmethod
     def parse(s):
         """ Return a first-order formula parsed from its given string
             representation """
         # Task 7.4.2
         return Formula.parse_prefix(s)[0]
+
+    @staticmethod
+    def parse_same(s):
+        """ Return a first-order formula parsed from its given string
+            representation """
+        # Task 7.4.2
+        return Formula.parse_same_prefix(s)[0]
 
     @staticmethod
     def free_variables_recurse(variables: list, term: Term, quantified_vars: list):
