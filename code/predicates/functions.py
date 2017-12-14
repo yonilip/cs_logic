@@ -11,6 +11,18 @@ from itertools import product
 from collections import deque
 
 
+def __prefix_with_index_sequence_generator(prefix):
+    """ A generator for a sequence of the form 'z1', 'z2', 'z3', ..., where the
+        prefix 'z' is customizable """
+    i = 0
+    while True:
+        i = i + 1
+        yield prefix + str(i)
+
+
+fresh_variable_x_gen = __prefix_with_index_sequence_generator('x')
+
+
 def replace_functions_with_relations_in_model(model):
     """ Return a new model obtained from the given model by replacing every
         function meaning with the corresponding relation meaning (i.e.,
@@ -306,7 +318,7 @@ def replace_equality_with_SAME(formulae):
     for formula in SAME_formulae:
         all_relations |= set((name, arity) for name, arity in formula.relations() if name != 'SAME')
     for rel_name, arity in all_relations:
-            SAME_formulae.append(same_for_n_nary(rel_name, arity))
+        SAME_formulae.append(same_for_n_nary(rel_name, arity))
 
     return equivalence_relation + [str(f) for f in SAME_formulae]
 
