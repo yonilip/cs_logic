@@ -345,3 +345,45 @@ def make_equality_as_SAME(model):
         there are no function meanings in the given model """
     assert type(model) is Model
     # Task 8.9
+    same_groups = model.meaning['SAME']
+    if not same_groups:
+        return model
+
+    new_model = Model(model.universe, {})
+
+    # Get equivalence classes
+    equivalence_classes = []
+    for group in same_groups:
+        is_new_ec = True
+        for ec in equivalence_classes:
+            if not set(group).isdisjoint(ec):
+                ec.update(group)
+                is_new_ec = False
+
+        if is_new_ec:
+            equivalence_classes.append(set(group))
+
+    # Update universe to representative ec elements
+    for ec in equivalence_classes:
+        for element in list(ec)[1:]:
+            new_model.universe = tuple(x for x in new_model.universe if x != element)
+
+    # Create new_model meaning
+    for term, value in model.meaning.items():
+        if term == 'SAME':
+            continue
+
+        # remove ec elements from existing relations
+        if is_relation(term):
+            new_model.meaning[term] = set()
+            for rel_group in value:
+                new_rel_group = tuple(x for x in rel_group if x in new_model.universe)
+                if new_rel_group:
+                    new_model.meaning[term].add(new_rel_group)
+
+        # set new ec representative for terms
+        for ec in equivalence_classes:
+            if value in ec:
+                new_model.meaning[term] = list(ec)[0]
+
+    return new_model
