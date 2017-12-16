@@ -328,6 +328,8 @@ def add_SAME_as_equality(model):
         SAME that behaves like equality """
     assert type(model) is Model
     # Task 8.8
+    model.meaning['SAME'] = set([(obj, obj) for obj in model.universe])
+    return model
 
 
 def make_equality_as_SAME(model):
