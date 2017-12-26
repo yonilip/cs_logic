@@ -5,7 +5,7 @@
 
 from propositions.syntax import Formula as PropositionalFormula
 from predicates.util import *
-
+from copy import deepcopy
 
 def is_unary(s):  # DONT EDIT
     """ Is s a unary operator? """
@@ -190,6 +190,21 @@ class Term:
         functions = Term.functions_helper(self, [])
         return set(functions)
 
+    @staticmethod
+    def substitute_recurse(term, substitution_map):
+        if is_constant(term.root) or is_variable(term.root):
+            if term.root in substitution_map.keys():
+                term = substitution_map[term.root]
+
+        elif is_function(term.root):
+            for i in range(len(term.arguments)):
+                term.arguments[i] = Term.substitute_recurse(term.arguments[i], substitution_map)
+
+        else:
+            raise Exception("substitute_recurse called with wrong argument type")
+
+        return term
+
     def substitute(self, substitution_map):
         """ Return a term obtained from this term where all the occurrences of
             each constant name or variable name element_name that appears as a
@@ -199,6 +214,11 @@ class Term:
             assert (is_constant(element_name) or is_variable(element_name)) and \
                    type(substitution_map[element_name]) is Term
         # Task 9.1
+        if not substitution_map:
+            return deepcopy(self)
+        return Term.substitute_recurse(deepcopy(self), substitution_map)
+
+
 
 
 class Formula:
@@ -466,6 +486,32 @@ class Formula:
         Formula.relations_helper(self, relations)
         return set(relations)
 
+    @staticmethod
+    def substitute_helper(formula, substitution_map: dict, bound_vars: list):
+        root = formula.root
+
+        if is_relation(root):  # Populate self.root and self.arguments
+            for i in range(len(formula.arguments)):
+                if formula.arguments[i] not in bound_vars:
+                    formula.arguments[i] = formula.arguments[i].substitute(substitution_map)
+
+        elif is_equality(root):  # Populate self.first and self.second
+            if formula.first not in bound_vars:
+                formula.first = formula.first.substitute(substitution_map)
+            if formula.second not in bound_vars:
+                formula.second = formula.second.substitute(substitution_map)
+
+        elif is_quantifier(root):  # Populate self.variable and self.predicate
+            new_bound_vars = bound_vars + [formula.variable]
+            formula.predicate = Formula.substitute_helper(formula.predicate, substitution_map, new_bound_vars)
+        elif is_unary(root):  # Populate self.first
+            formula.first = Formula.substitute_helper(formula.first, substitution_map, bound_vars)
+        else:  # Populate self.first and self.second
+            formula.first = Formula.substitute_helper(formula.first, substitution_map, bound_vars)
+            formula.second = Formula.substitute_helper(formula.second, substitution_map, bound_vars)
+
+        return formula
+
     def substitute(self, substitution_map):
         """ Return a first-order formula obtained from this formula where all
             occurrences of each constant name element_name and all *free*
@@ -476,6 +522,10 @@ class Formula:
             assert (is_constant(element_name) or is_variable(element_name)) and \
                    type(substitution_map[element_name]) is Term
         # Task 9.2
+        if not substitution_map:
+            return deepcopy(self)
+        else:
+            return Formula.substitute_helper(deepcopy(self), substitution_map, [])
 
 
     def propositional_skeleton(self):
