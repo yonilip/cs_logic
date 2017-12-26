@@ -86,12 +86,14 @@ class Schema:
         elif is_unary(root):
             formula.first = Schema.instantiate_formula_helper(formula.first, constants_and_variables_instantiation_map,
                                                               relations_instantiation_map, bound_variables)
+            return formula
         elif is_binary(root):
             formula.first = Schema.instantiate_formula_helper(formula.first, constants_and_variables_instantiation_map,
                                                               relations_instantiation_map, bound_variables)
             formula.second = Schema.instantiate_formula_helper(formula.second,
                                                                constants_and_variables_instantiation_map,
                                                                relations_instantiation_map, bound_variables)
+            return formula
 
         formula = formula.substitute(constants_and_variables_instantiation_map)
         return formula
@@ -185,6 +187,27 @@ class Schema:
             assert type(variable) is str and \
                    type(instantiation_map[variable]) is str
         # Task 9.4
+
+        dcv = {}
+        dr = {}
+        for k, v in instantiation_map.items():
+            if is_constant(k) or is_variable(k):
+                term = Term.parse(v)
+                dcv[k] = term
+                if k not in self.templates:
+                    return None
+            elif is_relation(k[0]):
+                k_formula = Formula.parse(k)
+                v_formula = Formula.parse(v)
+                if k_formula.root not in self.templates:
+                    return None
+                dr[k_formula.root] = ([str(a) for a in k_formula.arguments], v_formula)
+
+        try:
+            formula = Schema.instantiate_formula(self.formula, dcv, dr, set())
+        except Schema.BoundVariableError:
+            formula = None
+        return formula
 
 
 class Proof:
