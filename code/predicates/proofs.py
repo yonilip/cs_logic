@@ -49,6 +49,54 @@ class Schema:
             self.relation_name = relation_name
 
     @staticmethod
+    def instantiate_formula_helper(formula: Formula, constants_and_variables_instantiation_map: dict,
+                                   relations_instantiation_map: dict, bound_variables: set):
+        root = formula.root
+
+        if is_relation(root):
+            if root in relations_instantiation_map.keys():
+                for i in range(len(formula.arguments)):
+                    formula.arguments[i] = formula.arguments[i].substitute(constants_and_variables_instantiation_map)
+
+                formal_parameters, new_formula = relations_instantiation_map[formula.root]
+                shared_bound_vars = \
+                    set(formal_parameters).union(new_formula.free_variables()).intersection(bound_variables)
+                if shared_bound_vars:
+                    for s in shared_bound_vars:
+                        raise Schema.BoundVariableError(s, new_formula.root)  # TODO verify
+
+                inner_substitution = {}
+                for i, param in enumerate(formal_parameters):
+                    inner_substitution[param] = formula.arguments[i]
+                formula = new_formula.substitute(inner_substitution)
+                return formula
+            else:
+                pass  # regular change of consts and vars
+
+        elif is_equality(root):
+            pass
+        elif is_quantifier(root):
+            if formula.variable in constants_and_variables_instantiation_map.keys():
+                formula.variable = constants_and_variables_instantiation_map[formula.variable].root
+            formula.predicate = Schema.instantiate_formula_helper(formula.predicate,
+                                                                  constants_and_variables_instantiation_map,
+                                                                  relations_instantiation_map,
+                                                                  bound_variables.union(set(formula.variable)))
+            return formula
+        elif is_unary(root):
+            formula.first = Schema.instantiate_formula_helper(formula.first, constants_and_variables_instantiation_map,
+                                                              relations_instantiation_map, bound_variables)
+        elif is_binary(root):
+            formula.first = Schema.instantiate_formula_helper(formula.first, constants_and_variables_instantiation_map,
+                                                              relations_instantiation_map, bound_variables)
+            formula.second = Schema.instantiate_formula_helper(formula.second,
+                                                               constants_and_variables_instantiation_map,
+                                                               relations_instantiation_map, bound_variables)
+
+        formula = formula.substitute(constants_and_variables_instantiation_map)
+        return formula
+
+    @staticmethod
     def instantiate_formula(formula, constants_and_variables_instantiation_map,
                             relations_instantiation_map, bound_variables):
         """ Return the Formula resulting in simultaneously making the following
@@ -97,6 +145,10 @@ class Schema:
         for variable in bound_variables:
             assert is_variable(variable)
         # Task 9.3
+        formula = deepcopy(formula)
+        return Schema.instantiate_formula_helper(formula, constants_and_variables_instantiation_map,
+                                                 relations_instantiation_map, bound_variables)
+
 
     def instantiate(self, instantiation_map):
         """ Return the first-order formula obtained by applying the mapping
