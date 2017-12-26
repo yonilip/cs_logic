@@ -190,23 +190,15 @@ class Term:
         functions = Term.functions_helper(self, [])
         return set(functions)
 
-    def substitute_variables(self, substitution_map):
+    def substitute(self, substitution_map):
         """ Return a term obtained from this term where all the occurrences of
-            each variable v that appears in the dictionary substitution_map are
-            replaced with the term substitution_map[v] """
-        for variable in substitution_map:
-            assert is_variable(variable) and \
-                   type(substitution_map[variable]) is Term
+            each constant name or variable name element_name that appears as a
+            key in the dictionary substitution_map are replaced with the term
+            substitution_map[element_name] """
+        for element_name in substitution_map:
+            assert (is_constant(element_name) or is_variable(element_name)) and \
+                   type(substitution_map[element_name]) is Term
         # Task 9.1
-
-    def substitute_constants(self, substitution_map):
-        """ Return a term obtained from this formula where all the occurrences
-            of each constant c that appears in the dictionary substitution_map
-            are replaced with the term substitution_map[v] """
-        for constant in substitution_map:
-            assert is_constant(constant) and \
-                   type(substitution_map[constant]) is Term
-        # Ex12
 
 
 class Formula:
@@ -474,24 +466,17 @@ class Formula:
         Formula.relations_helper(self, relations)
         return set(relations)
 
-    def substitute_variables(self, substitution_map):
+    def substitute(self, substitution_map):
         """ Return a first-order formula obtained from this formula where all
-            the free occurrences of each variable v that appears in the
-            dictionary substitution_map are replaced with the term
-            substitution_map[v] """
-        for variable in substitution_map:
-            assert is_variable(variable) and \
-                   type(substitution_map[variable]) is Term
+            occurrences of each constant name element_name and all *free*
+            occurrences of each variable name element_name for element_name
+            that appears as a key in the dictionary substitution_map are
+            replaced with substitution_map[element_name] """
+        for element_name in substitution_map:
+            assert (is_constant(element_name) or is_variable(element_name)) and \
+                   type(substitution_map[element_name]) is Term
         # Task 9.2
 
-    def substitute_constants(self, substitution_map):
-        """ Return a first-order formula obtained from this formula where all
-            the occurrences of each constant c that appears in the dictionary
-            substitution_map are replaced with the term substitution_map[v] """
-        for constant in substitution_map:
-            assert is_constant(constant) and \
-                   type(substitution_map[constant]) is Term
-        # Ex12
 
     def propositional_skeleton(self):
         """ Return a PropositionalFormula that is the skeleton of this one.
