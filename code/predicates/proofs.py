@@ -4,6 +4,7 @@
     File name: code/predicates/proofs.py """
 
 from predicates.syntax import *
+from propositions.semantics import is_tautology
 
 class Schema:
     """ A schema of first-order formulae. A schema is given by an object of
@@ -260,7 +261,7 @@ class Proof:
         for line in self.lines:
             s = s + str(line) + "\n"
         return s
-        
+
     def verify_a_justification(self, line):
         """ Returns whether the line with the given number is a valid
             instantiation of an assumption/axiom given in its justification via
@@ -275,6 +276,13 @@ class Proof:
             assert type(variable) is str and \
                    type(justification[2][variable]) is str
         # Task 9.5
+        formula_to_check = self.lines[line].formula
+        instantiation_map = justification[2]
+        for assumption_schema in self.assumptions:
+            instantiated_formula = assumption_schema.instantiate(instantiation_map)
+            if formula_to_check == instantiated_formula:
+                return True
+        return False
 
     def verify_t_justification(self, line):
         """ Returns whether the line with the given number is a tautology """
@@ -283,6 +291,8 @@ class Proof:
         assert justification[0] == 'T'
         assert len(justification) == 1
         # Task 9.7
+        propositional_formula = self.lines[line].formula.propositional_skeleton()
+        return is_tautology(propositional_formula)  # from propositions.semantics
 
     def verify_mp_justification(self, line):
         """ Returns whether the line with the given number is validly obtained
@@ -296,6 +306,19 @@ class Proof:
         assert type(justification[2]) == int
         # Task 9.8
 
+        if justification[1] > line or justification[2] > line:
+            return False
+
+        f1, f2 = self.lines[line - 2].formula, self.lines[line - 1].formula
+        if f2.root == '->':
+            p, p_implies_q = f1, f2
+        elif f1.root == '->':
+            p, p_implies_q = f2, f1
+        else:
+            return False
+
+        return str(p) == str(p_implies_q.first) and str(self.lines[line].formula) == str(p_implies_q.second)
+
     def verify_ug_justification(self, line):
         """ Returns whether the line with the given number a valid universal
             generalization of a previous line given in its justification """
@@ -305,6 +328,12 @@ class Proof:
         assert len(justification) == 2
         assert type(justification[1]) == int
         # Task 9.9
+        if justification[1] > line:
+            return False
+        phi = self.lines[justification[1]].formula
+        formula_to_check = self.lines[line].formula
+        return formula_to_check.root == 'A' and formula_to_check.predicate == phi
+
 
     def verify_justification(self, line):
         """ Returns whether the line with the given number is validly justified

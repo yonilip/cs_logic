@@ -219,8 +219,6 @@ class Term:
         return Term.substitute_recurse(deepcopy(self), substitution_map)
 
 
-
-
 class Formula:
     """ A Formula in first-order logic """
 
@@ -527,10 +525,50 @@ class Formula:
         else:
             return Formula.substitute_helper(deepcopy(self), substitution_map, [])
 
+    @staticmethod
+    def get_and_update_new_name_if_needed(formula, name_map: dict):
+        formula_key = str(formula)
+        if formula_key in name_map.keys():
+            return name_map[formula_key]
+        else:
+            new_name = next(fresh_variable_name_generator)
+            name_map[formula_key] = new_name
+            return new_name
+
+    @staticmethod
+    def skeletonize_formula(formula, name_map: dict):
+        if is_relation(formula.root) or is_quantifier(formula.root):
+            root = Formula.get_and_update_new_name_if_needed(formula, name_map)
+            return PropositionalFormula(root)
+
+        elif is_equality(formula.root):
+            first = Formula.skeletonize_formula(formula.first, name_map)
+            second = Formula.skeletonize_formula(formula.second, name_map)
+            root = Formula.get_and_update_new_name_if_needed(formula, name_map)
+            return PropositionalFormula(root, first, second)
+
+        elif is_binary(formula.root):
+            first = Formula.skeletonize_formula(formula.first, name_map)
+            second = Formula.skeletonize_formula(formula.second, name_map)
+            return PropositionalFormula(formula.root, first, second)
+
+        elif is_unary(formula.root):
+            first = Formula.skeletonize_formula(formula.first, name_map)
+            return PropositionalFormula(formula.root, first)
+        else:
+            return None
 
     def propositional_skeleton(self):
         """ Return a PropositionalFormula that is the skeleton of this one.
             The variables in the propositional formula will have the names
             z1,z2,... (obtained by calling next(fresh_variable_name_generator)),
             starting from left to right """
-        # Task 9.5
+        # Task 9.6
+        skeleton = Formula.skeletonize_formula(self, {})
+        if is_binary(skeleton.root):
+            propositional_formula = PropositionalFormula(skeleton.root, skeleton.first, skeleton.second)
+        elif is_unary(skeleton.root) or is_relation(skeleton.root):
+            propositional_formula = PropositionalFormula(skeleton.root, skeleton.first)
+        else:
+            propositional_formula = PropositionalFormula(skeleton.root)
+        return propositional_formula
