@@ -51,7 +51,7 @@ class Schema:
 
     @staticmethod
     def instantiate_formula_helper(formula: Formula, constants_and_variables_instantiation_map: dict,
-                                   relations_instantiation_map: dict, bound_variables: set):
+                                   relations_instantiation_map: dict, bound_variables: set, former_qvar=None):
         root = formula.root
 
         if is_relation(root):
@@ -62,8 +62,11 @@ class Schema:
                 formal_parameters, new_formula = relations_instantiation_map[formula.root]
                 shared_bound_vars = \
                     set(formal_parameters).union(new_formula.free_variables()).intersection(bound_variables)
+
                 if shared_bound_vars:
                     for s in shared_bound_vars:
+                        if s == constants_and_variables_instantiation_map.get(former_qvar):
+                            continue
                         raise Schema.BoundVariableError(s, new_formula.root)  # TODO verify
 
                 inner_substitution = {}
@@ -77,12 +80,13 @@ class Schema:
         elif is_equality(root):
             pass
         elif is_quantifier(root):
+            former_var = formula.variable
             if formula.variable in constants_and_variables_instantiation_map.keys():
                 formula.variable = constants_and_variables_instantiation_map[formula.variable].root
             formula.predicate = Schema.instantiate_formula_helper(formula.predicate,
                                                                   constants_and_variables_instantiation_map,
                                                                   relations_instantiation_map,
-                                                                  bound_variables.union(set(formula.variable)))
+                                                                  bound_variables.union(set(formula.variable)), former_var)
             return formula
         elif is_unary(root):
             formula.first = Schema.instantiate_formula_helper(formula.first, constants_and_variables_instantiation_map,
