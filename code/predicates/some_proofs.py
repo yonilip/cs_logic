@@ -5,6 +5,7 @@
 
 from predicates.prover import *
 
+
 def lovers_proof(print_as_proof_forms=False):
     """ Return a proof that from assumptions (in addition to Prover.AXIOMS):
         1) Everybody loves somebody and
@@ -23,10 +24,11 @@ def lovers_proof(print_as_proof_forms=False):
     step_4 = prover.add_universal_instantiation('Az[Ay[(Loves(x,y)->Loves(z,x))]]', step_2, 'x')
     step_5 = prover.add_universal_instantiation('Ay[(Loves(x,y)->Loves(z,x))]', step_4, 'z')
     step_6 = prover.add_universal_instantiation('(Loves(x,y)->Loves(z,x))', step_5, 'y')
-    # step_7 = prover.
-    step_7 = prover.add_existential_derivation('Loves(z,x)', step_3, step_6)
+    # step_7 = prover.add_ug()
+    step_7 = prover.add_existential_derivation('Loves(z,x)', step_3, step_5)
 
     return prover.proof
+
 
 def homework_proof(print_as_proof_forms=False):
     """ Return a proof that from the assumptions (in addition to Prover.AXIOMS):
@@ -40,10 +42,25 @@ def homework_proof(print_as_proof_forms=False):
                      'Ex[(Homework(x)&Reading(x))]'],
                     'Ex[(Reading(x)&~Fun(x))]', print_as_proof_forms)
     # Task 10.5
+    step_1 = prover.add_assumption('~Ex[(Homework(x)&Fun(x))]')
+    step_2 = prover.add_assumption('Ex[(Homework(x)&Reading(x))]')
+    step_3 = prover.add_instantiated_assumption('((Homework(x)&Fun(x))->Ex[(Homework(x)&Fun(x))])', Prover.EI,
+                                                {'R(v)': '(Homework(v)&Fun(v))', 'c': 'x'})
+    step_4 = prover.add_tautological_inference('(~Ex[(Homework(x)&Fun(x))]->~(Homework(x)&Fun(x)))', [step_3])
+    step_5 = prover.add_mp('~(Homework(x)&Fun(x))', step_1, step_4)
+    step_6 = prover.add_tautological_inference('(Homework(x)->~Fun(x))', [step_5])
+    step_7 = prover.add_instantiated_assumption('((Reading(x)&~Fun(x))->Ex[(Reading(x)&~Fun(x))])', Prover.EI,
+                                                {'R(v)': '(Reading(v)&~Fun(v))', 'c': 'x'})
+
+    step_8 = prover.add_tautological_inference('((Homework(x)&Reading(x))->(Reading(x)&~Fun(x)))', [step_6, step_7])
+    step_9 = prover.add_existential_derivation('(Reading(x)&~Fun(x))', step_2, step_8)
+    step_9 = prover.add_tautological_inference('Ex[(Reading(x)&~Fun(x))]', [step_7, step_8])
     return prover.proof
-    
+
+
 GROUP_AXIOMS = ['plus(0,x)=x', 'plus(minus(x),x)=0',
                 'plus(plus(x,y),z)=plus(x,plus(y,z))']
+
 
 def unique_zero_proof(print_as_proof_forms=False):
     """ Return a proof that from the group axioms (in addition to Prover.AXIOMS)
@@ -54,11 +71,13 @@ def unique_zero_proof(print_as_proof_forms=False):
     # Task 10.10
     return prover.proof
 
+
 FIELD_AXIOMS = GROUP_AXIOMS + ['plus(x,y)=plus(y,x)', 'times(x,1)=x',
                                'times(x,y)=times(y,x)',
                                'times(times(x,y),z)=times(x,times(y,z))',
                                '(~x=0->Ey[times(y,x)=1])',
                                'times(x,plus(y,z))=plus(times(x,y),times(x,z))']
+
 
 def multiply_zero_proof(print_as_proof_forms=False):
     """ Return a proof that from the field axioms (in addition to Prover.AXIOMS)
@@ -69,10 +88,12 @@ def multiply_zero_proof(print_as_proof_forms=False):
     # Task 10.11
     return prover.proof
 
+
 PEANO_AXIOMS = ['(s(x)=s(y)->x=y)', '(~x=0->Ey[s(y)=x])', '~s(x)=0',
                 'plus(x,0)=x', 'plus(x,s(y))=s(plus(x,y))', 'times(x,0)=0',
                 'times(x,s(y))=plus(times(x,y),x)',
                 Schema('((R(0)&Ax[(R(x)->R(s(x)))])->Ax[R(x)])', 'R')]
+
 
 def peano_zero_proof(print_as_proof_forms=False):
     """ Return a proof that from the Peano axioms (in addition to Prover.AXIOMS)
@@ -83,7 +104,9 @@ def peano_zero_proof(print_as_proof_forms=False):
     # Task 10.12
     return prover.proof
 
+
 COMPREHENSION_AXIOM = Schema('Ey[Ax[((In(x,y)->R(x))&(R(x)->In(x,y)))]]', {'R'})
+
 
 def russell_paradox_proof(print_as_proof_forms=False):
     """ Return a proof that from the axiom schema of (unrestricted)

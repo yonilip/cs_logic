@@ -195,7 +195,8 @@ class Prover:
 
         assumption = Formula('->', Formula('&', forall_implies, exists), Formula.parse(statement))
         R_v = str(exists.predicate.substitute({exists.variable: Term('v')}))
-        step2 = self.add_instantiated_assumption(assumption, Prover.ES, {'R(v)': R_v, 'Q()': statement})
+        step2 = self.add_instantiated_assumption(assumption, Prover.ES, {'R(v)': R_v, 'Q()': statement,
+                                                                         'x': exists.variable})
 
         step3 = self.add_tautological_inference(str(implies.second), [line1, step1, step2])
 
