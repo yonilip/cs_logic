@@ -24,11 +24,11 @@ def lovers_proof(print_as_proof_forms=False):
     step_4 = prover.add_universal_instantiation('Az[Ay[(Loves(x,y)->Loves(z,x))]]', step_2, 'x')
     step_5 = prover.add_universal_instantiation('Ay[(Loves(x,y)->Loves(z,x))]', step_4, 'z')
     step_6 = prover.add_universal_instantiation('(Loves(x,y)->Loves(z,x))', step_5, 'y')
-    # step_7 = prover.add_ug()
-    step_7 = prover.add_existential_derivation('Loves(z,x)', step_3, step_5)
+    step_7 = prover.add_existential_derivation('Loves(z,x)', step_3, step_6)
+    step_8 = prover.add_ug('Az[Loves(z,x)]', step_7)
+    step_9 = prover.add_ug('Ax[Az[Loves(z,x)]]', step_8)
 
     return prover.proof
-
 
 def homework_proof(print_as_proof_forms=False):
     """ Return a proof that from the assumptions (in addition to Prover.AXIOMS):
@@ -56,11 +56,9 @@ def homework_proof(print_as_proof_forms=False):
     step_9 = prover.add_existential_derivation('(Reading(x)&~Fun(x))', step_2, step_8)
     step_9 = prover.add_tautological_inference('Ex[(Reading(x)&~Fun(x))]', [step_7, step_8])
     return prover.proof
-
-
+    
 GROUP_AXIOMS = ['plus(0,x)=x', 'plus(minus(x),x)=0',
                 'plus(plus(x,y),z)=plus(x,plus(y,z))']
-
 
 def unique_zero_proof(print_as_proof_forms=False):
     """ Return a proof that from the group axioms (in addition to Prover.AXIOMS)
@@ -70,7 +68,6 @@ def unique_zero_proof(print_as_proof_forms=False):
     prover = Prover(GROUP_AXIOMS + ['plus(a,c)=a'], 'c=0', print_as_proof_forms)
     # Task 10.10
     return prover.proof
-
 
 FIELD_AXIOMS = GROUP_AXIOMS + ['plus(x,y)=plus(y,x)', 'times(x,1)=x',
                                'times(x,y)=times(y,x)',
