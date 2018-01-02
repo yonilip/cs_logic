@@ -161,6 +161,34 @@ class Prover:
             number of the (new) line in this proof containing conclusion is
             returned """
         # Task 10.2
+        step1, step2 = line_numbers[0], line_numbers[1]
+        a_b = self.proof.lines[step1].formula
+        b_c = self.proof.lines[step2].formula
+        a_c_str = '(' + str(a_b.first) + "->" + str(b_c.second) + ')'
+
+        step3 = self.add_tautology('(' + str(a_b) + '->(' + str(b_c) + '->' + a_c_str + '))')
+        step4 = self.add_mp('(' + str(b_c) + '->' + conclusion + ')', step1, step3)
+        step5 = self.add_mp(conclusion, step2, step4)
+        return step5
+
+        # step5 = prover.add_tautology(
+        #     '((Greek(x)->Human(x))  ->  ((Human(x)->Mortal(x)) -> (Greek(x)->Mortal(x))))')
+        # step6 = prover.add_mp('((Human(x)->Mortal(x))->(Greek(x)->Mortal(x)))', step2, step5)
+        # step7 = prover.add_mp('(Greek(x)->Mortal(x))', step4, step6)
+
+
+
+        # for current_step in range(0, len(line_numbers)-1):
+        #     a_b = self.proof.lines[current_step].formula
+        #     b_c = self.proof.lines[current_step + 1].formula
+        #     a_c_str = '(' + str(a_b) + "->" + str(b_c.second) + ')'
+        #
+        #     step1 = self.add_tautology('(' + str(a_b) + '->(' + str(b_c) + '->' + a_c_str + '))')
+        #     step2 = self.add_mp('(' + str(b_c) + '->' + conclusion + ')', current_step, step1)
+        #     # step3 = self.add_mp(conclusion, step2, step4)
+        #
+        # return step2
+
 
     def add_existential_derivation(self, statement, line1, line2):
         """ Add a sequence of validly justified lines to the proof being
