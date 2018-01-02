@@ -309,7 +309,7 @@ class Proof:
         if justification[1] > line or justification[2] > line:
             return False
 
-        f1, f2 = self.lines[line - 2].formula, self.lines[line - 1].formula
+        f1, f2 = self.lines[justification[1]].formula, self.lines[justification[2]].formula
         if f2.root == '->':
             p, p_implies_q = f1, f2
         elif f1.root == '->':
