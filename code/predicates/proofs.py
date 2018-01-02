@@ -51,7 +51,7 @@ class Schema:
 
     @staticmethod
     def instantiate_formula_helper(formula: Formula, constants_and_variables_instantiation_map: dict,
-                                   relations_instantiation_map: dict, bound_variables: set, former_qvar=None):
+                                   relations_instantiation_map: dict, bound_variables: set, quantified_var=None):
         root = formula.root
 
         if is_relation(root):
@@ -60,18 +60,26 @@ class Schema:
                     formula.arguments[i] = formula.arguments[i].substitute(constants_and_variables_instantiation_map)
 
                 formal_parameters, new_formula = relations_instantiation_map[formula.root]
-                shared_bound_vars = \
-                    set(formal_parameters).union(new_formula.free_variables()).intersection(bound_variables)
+                # shared_bound_vars = \
+                #     set(formal_parameters).union(new_formula.free_variables().difference({quantified_var})).intersection(bound_variables)
+                #
+                # if shared_bound_vars:
+                #     for s in shared_bound_vars:
+                #         # if s == constants_and_variables_instantiation_map.get(former_qvar):
+                #         #     continue
+                #         raise Schema.BoundVariableError(s, new_formula.root)  # TODO verify
 
-                if shared_bound_vars:
-                    for s in shared_bound_vars:
-                        if s == constants_and_variables_instantiation_map.get(former_qvar):
-                            continue
-                        raise Schema.BoundVariableError(s, new_formula.root)  # TODO verify
+                if new_formula.free_variables().difference(set(formal_parameters)).intersection(bound_variables):
+                    for s in new_formula.free_variables().intersection(bound_variables):
+                        raise Schema.BoundVariableError(s, new_formula.root)
 
                 inner_substitution = {}
                 for i, param in enumerate(formal_parameters):
                     inner_substitution[param] = formula.arguments[i]
+                    if param in bound_variables or new_formula.free_variables().intersection(bound_variables):
+                        if param == quantified_var:
+                            continue
+                        raise Schema.BoundVariableError(param, new_formula.root)
                 formula = new_formula.substitute(inner_substitution)
                 return formula
             else:
@@ -81,12 +89,14 @@ class Schema:
             pass
         elif is_quantifier(root):
             former_var = formula.variable
+            q_var = None
             if formula.variable in constants_and_variables_instantiation_map.keys():
                 formula.variable = constants_and_variables_instantiation_map[formula.variable].root
+                q_var = formula.variable
             formula.predicate = Schema.instantiate_formula_helper(formula.predicate,
                                                                   constants_and_variables_instantiation_map,
                                                                   relations_instantiation_map,
-                                                                  bound_variables.union(set(formula.variable)), former_var)
+                                                                  bound_variables.union(set(formula.variable)), q_var)
             return formula
         elif is_unary(root):
             formula.first = Schema.instantiate_formula_helper(formula.first, constants_and_variables_instantiation_map,
