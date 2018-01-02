@@ -20,6 +20,7 @@ class Prover:
     RX = Schema('c=c', {'c'})
     ME = Schema('(c=d->(R(c)->R(d)))', {'c','d','R'})
     AXIOMS = [UI, EI, US, ES, RX, ME]
+    AXIOMS_IDX = {"UI": 0, "EI": 1, "US": 2, "ES": 3, "RX": 4, "ME": 5}
 
     def __init__(self, assumptions, conclusion, print_as_proof_forms=False):
         """ Constructs a new Prover. Each element in assumptions may either be
@@ -39,7 +40,7 @@ class Prover:
                             if type(conclusion) is str else conclusion, [])
         self.print_as_proof_forms = print_as_proof_forms
         if self.print_as_proof_forms:
-            print("Starting Proof")
+            print("\nStarting Proof")
             print("Assumptions: AXIOMS +", assumptions)
             print("Conclusion:", self.proof.conclusion)
 
@@ -137,6 +138,20 @@ class Prover:
             'Az[f(x,h(w))=g(z,h(w))]'. The number of the (new) line in this
             proof containing instantiation is returned """
         # Task 10.1
+        step1 = line_number
+        step1_formula = self.proof.lines[line_number].formula
+        if step1_formula.root != 'A':
+            raise Exception("Not a valid UI instance.")
+
+        x = step1_formula.variable
+        R_v = str(step1_formula.predicate.substitute({str(x): Term('v')}))
+        mp_str = "(" + str(step1_formula) + "->" + instantiation + ")"
+        substitution_map = {'R(v)': R_v, 'x': x, 'c': term}
+
+        step2 = self.add_instantiated_assumption(mp_str, Prover.UI, substitution_map)
+        step3 = self.add_mp(instantiation, step1, step2)
+
+        return step3
 
     def add_tautological_inference(self, conclusion, line_numbers):
         """ Add a sequence of validly justified lines to the proof being
