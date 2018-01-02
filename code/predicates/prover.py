@@ -185,6 +185,21 @@ class Prover:
             'cond(x)->statement' (where x is not free is statement). The number
             of the (new) line in this proof containing statement is returned """
         # Task 10.3
+        # line1 - Ex[phi(x)]
+        # line2 - (phi(x)->statement)
+        exists = self.proof.lines[line1].formula
+        implies = self.proof.lines[line2].formula
+        forall_implies = Formula('A', exists.variable, implies)
+
+        step1 = self.add_ug(forall_implies, line2)
+
+        assumption = Formula('->', Formula('&', forall_implies, exists), Formula.parse(statement))
+        R_v = str(exists.predicate.substitute({exists.variable: Term('v')}))
+        step2 = self.add_instantiated_assumption(assumption, Prover.ES, {'R(v)': R_v, 'Q()': statement})
+
+        step3 = self.add_tautological_inference(str(implies.second), [line1, step1, step2])
+
+        return step3
 
     def add_flipped_equality(self, flipped, line_number):
         """ Add a sequence of validly justified lines to the proof being
