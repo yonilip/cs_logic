@@ -201,6 +201,7 @@ class Prover:
 
         return step3
 
+
     def add_flipped_equality(self, flipped, line_number):
         """ Add a sequence of validly justified lines to the proof being
             constructed, where the formula of the last line is flipped,
