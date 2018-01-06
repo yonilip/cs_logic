@@ -210,6 +210,15 @@ class Prover:
             the formula in line line_numer in this proof is 'd=c'. The number
             of the (new) line in this proof containing flipped is returned """
         # Task 10.6
+        formula = Formula.parse(flipped)
+        d, c = str(formula.first), str(formula.second)
+        step1 = self.add_instantiated_assumption('('+c+'='+d+'->(' + c + '=' + c + '->' + d+'='+c + '))',
+                                                 Prover.ME, {'c': c, 'd': d, 'R(v)': 'v='+c})
+        step2 = self.add_mp('(' + c + '=' + c + '->' + d+'='+c + ')', line_number, step1)
+        step3 = self.add_instantiated_assumption(c + '=' + c, Prover.RX, {'c': c})
+        step4 = self.add_mp(d + '=' + c, step2, step3)
+
+        return step4
 
     def add_free_instantiation(self, instantiation, line_number,
                                substitution_map):
