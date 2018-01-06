@@ -267,7 +267,6 @@ class Prover:
 
         return ug_step
 
-
     def add_substituted_equality(self, substituted, line_number,
                                  term_with_free_v):
         """ Add a sequence of validly justified lines to the proof being
@@ -286,7 +285,7 @@ class Prover:
 
         c_sub_str = str(Term.parse(term_with_free_v).substitute({'v': c}))
 
-        ia_str = '('+ c_str + '=' + d_str + '->(' + c_sub_str + '=' + c_sub_str + '->' + substituted + '))'
+        ia_str = '(' + c_str + '=' + d_str + '->(' + c_sub_str + '=' + c_sub_str + '->' + substituted + '))'
         sub_map = {'c': c_str, 'd': d_str, 'R(v)': c_sub_str + '=' + term_with_free_v}
         step_me = self.add_instantiated_assumption(ia_str, Prover.ME, sub_map)
 
@@ -295,6 +294,7 @@ class Prover:
         step_t = self.add_tautological_inference(substituted, [line_number, step_me, step_rx])
 
         return step_t
+
 
     def _add_chained_two_equalities(self, line1, line2):
         """ Add a sequence of validly justified lines to the proof being
@@ -307,14 +307,21 @@ class Prover:
             (new) line in this proof containing the chained equality is
             returned """
         # Task 10.9.1
-        c = str(self.proof.lines[line1].formula.first)
-        a1 = self.proof.lines[line1].formula.second
-        a2 = self.proof.lines[line2].formula.first
-        d = str(self.proof.lines[line2].formula.second)
-        #
-        c_eq_d = c + '=' + d
-        return self.add_tautological_inference(c_eq_d, [line1, line2])
-        # first_me = self.add_instantiated_assumption()
+        line1_formula = self.proof.lines[line1].formula
+        line2_formula = self.proof.lines[line2].formula
+
+        a = str(line1_formula.first)
+        b = str(line1_formula.second)
+        c = str(line2_formula.second)
+
+        a_eq_c = a + '=' + c
+        ia_str = '({form2}->({form1}->{a_eq_c}))'.format(form2=str(line2_formula), form1=str(line1_formula),
+                                                         a_eq_c=a_eq_c)
+        me = self.add_instantiated_assumption(ia_str, Prover.ME, {'c': b, 'd': c, 'R(v)': a + '=v'})
+        mp = self.add_mp('({form1}->{a_eq_c})'.format(form1=str(line1_formula), a_eq_c=a_eq_c),
+                         line2,
+                         me)
+        return self.add_mp(a_eq_c, line1, mp)
 
     def add_chained_equality(self, chained, line_numbers):
         """ Add a sequence of validly justified lines to the proof being
@@ -327,7 +334,7 @@ class Prover:
             if line_numbers=[7,3,9], then chained should be 'a=0'. The number of
             the (new) line in this proof containing substituted is returned """
         # Task 10.9.2
-        current_line = line_numbers[:1]
+        current_line = line_numbers[0]
         line_numbers = line_numbers[1:]
         for next_eq_line in line_numbers:
             current_line = self._add_chained_two_equalities(current_line, next_eq_line)

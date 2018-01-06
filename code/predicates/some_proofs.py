@@ -5,7 +5,6 @@
 
 from predicates.prover import *
 
-
 def lovers_proof(print_as_proof_forms=False):
     """ Return a proof that from assumptions (in addition to Prover.AXIOMS):
         1) Everybody loves somebody and
@@ -74,6 +73,26 @@ def unique_zero_proof(print_as_proof_forms=False):
         to be printed in real time as it is being constructed """
     prover = Prover(GROUP_AXIOMS + ['plus(a,c)=a'], 'c=0', print_as_proof_forms)
     # Task 10.10
+    zero_ax = prover.add_assumption('plus(0,x)=x')
+    neg_ax = prover.add_assumption('plus(minus(x),x)=0')
+    associativity_ax = prover.add_assumption('plus(plus(x,y),z)=plus(x,plus(y,z))')
+
+    step_1 = prover.add_assumption('plus(a,c)=a')
+    step_2 = prover.add_substituted_equality('plus(minus(a),plus(a,c))=plus(minus(a),a)', step_1, 'plus(minus(a),v)')
+
+    step_3 = prover.add_free_instantiation('plus(plus(minus(a),a),c)=plus(minus(a),plus(a,c))', associativity_ax, {'x': 'minus(a)', 'y': 'a', 'z': 'c'})
+    step_4 = prover.add_flipped_equality('plus(minus(a),plus(a,c))=plus(plus(minus(a),a),c)', step_3)
+    step_5 = prover.add_flipped_equality('plus(minus(a),a)=plus(minus(a),plus(a,c))', step_2)
+    step_6 = prover.add_chained_equality('plus(minus(a),a)=plus(plus(minus(a),a),c)', [step_5, step_4])
+    step_7 = prover.add_flipped_equality('plus(plus(minus(a),a),c)=plus(minus(a),a)', step_6)
+
+    step_8 = prover.add_free_instantiation('plus(minus(a),a)=0', neg_ax, {'x': 'a'})
+
+    # step_9 = prover.add_free_instantiation('plus(0,c)=0', step_7, {'plus(minus(a),a)': '0'})
+    step_10 = prover.add_free_instantiation('plus(0,c)=c', zero_ax, {'x': 'c'})
+
+
+
     return prover.proof
 
 FIELD_AXIOMS = GROUP_AXIOMS + ['plus(x,y)=plus(y,x)', 'times(x,1)=x',
@@ -110,7 +129,6 @@ def peano_zero_proof(print_as_proof_forms=False):
 
 
 COMPREHENSION_AXIOM = Schema('Ey[Ax[((In(x,y)->R(x))&(R(x)->In(x,y)))]]', {'R'})
-
 
 def russell_paradox_proof(print_as_proof_forms=False):
     """ Return a proof that from the axiom schema of (unrestricted)
