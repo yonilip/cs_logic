@@ -247,10 +247,9 @@ class Prover:
             cur_formula = self.proof.lines[ug_step].formula
             v_z_term = z_mapping[v]
             cur_formula = cur_formula.predicate.substitute({v: v_z_term})
-            ui_step = self.add_universal_instantiation(str(cur_formula), ug_step, str(v_z_term))
+            ug_step = self.add_universal_instantiation(str(cur_formula), ug_step, str(v_z_term))
 
         # map z to actual value
-        ug_step = ui_step
         for k, v in z_mapping.items():
             cur_formula = self.proof.lines[ug_step].formula
             ug_string = 'A' + str(v) + '[' + str(cur_formula) + ']'
@@ -259,9 +258,14 @@ class Prover:
             cur_formula = self.proof.lines[ug_step].formula
             v_z_term = Term.parse(substitution_map[k])
             cur_formula = cur_formula.predicate.substitute({str(v): v_z_term})
-            ui_step = self.add_universal_instantiation(str(cur_formula), ug_step, str(v_z_term))
+            ug_step = self.add_universal_instantiation(str(cur_formula), ug_step, str(v_z_term))
 
-        return ui_step
+        last_line_formula = str(self.proof.lines[ug_step].formula)
+        if last_line_formula != instantiation:
+            raise Exception("Last line of add_free_instantiation is not instantiation: " +
+                            last_line_formula + " i: " + instantiation)
+
+        return ug_step
 
     def add_substituted_equality(self, substituted, line_number,
                                  term_with_free_v):
@@ -275,6 +279,7 @@ class Prover:
             is 'v+7', then substituted should be 'g(x)+7=h(y)+7'. The number of
             the (new) line in this proof containing substituted is returned """
         # Task 10.8
+
 
     def _add_chained_two_equalities(self, line1, line2):
         """ Add a sequence of validly justified lines to the proof being
