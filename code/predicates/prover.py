@@ -202,7 +202,6 @@ class Prover:
 
         return step3
 
-
     def add_flipped_equality(self, flipped, line_number):
         """ Add a sequence of validly justified lines to the proof being
             constructed, where the formula of the last line is flipped,
@@ -232,6 +231,38 @@ class Prover:
             instantiation should be 'Az[f(x,h(w))=g(z,h(w))]'. The number of the
             (new) line in this proof containing instantiation is returned """
         # Task 10.7
+        variables = substitution_map.keys()
+
+        z_mapping = {}
+        for variable in variables:
+            z_mapping[variable] = Term(next(fresh_variable_name_generator))
+
+        # map variable to z
+        ug_step = line_number
+        for v in variables:
+            cur_formula = self.proof.lines[ug_step].formula
+            ug_string = 'A' + v + '[' + str(cur_formula) + ']'
+            ug_step = self.add_ug(ug_string, ug_step)
+
+            cur_formula = self.proof.lines[ug_step].formula
+            v_z_term = z_mapping[v]
+            cur_formula = cur_formula.predicate.substitute({v: v_z_term})
+            ui_step = self.add_universal_instantiation(str(cur_formula), ug_step, str(v_z_term))
+
+        # map z to actual value
+        ug_step = ui_step
+        for k, v in z_mapping.items():
+            cur_formula = self.proof.lines[ug_step].formula
+            ug_string = 'A' + str(v) + '[' + str(cur_formula) + ']'
+            ug_step = self.add_ug(ug_string, ug_step)
+
+            cur_formula = self.proof.lines[ug_step].formula
+            v_z_term = Term.parse(substitution_map[k])
+            cur_formula = cur_formula.predicate.substitute({str(v): v_z_term})
+            ui_step = self.add_universal_instantiation(str(cur_formula), ug_step, str(v_z_term))
+
+        return ui_step
+
     def add_substituted_equality(self, substituted, line_number,
                                  term_with_free_v):
         """ Add a sequence of validly justified lines to the proof being
