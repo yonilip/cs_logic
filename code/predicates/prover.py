@@ -307,6 +307,14 @@ class Prover:
             (new) line in this proof containing the chained equality is
             returned """
         # Task 10.9.1
+        c = str(self.proof.lines[line1].formula.first)
+        a1 = self.proof.lines[line1].formula.second
+        a2 = self.proof.lines[line2].formula.first
+        d = str(self.proof.lines[line2].formula.second)
+        #
+        c_eq_d = c + '=' + d
+        return self.add_tautological_inference(c_eq_d, [line1, line2])
+        # first_me = self.add_instantiated_assumption()
 
     def add_chained_equality(self, chained, line_numbers):
         """ Add a sequence of validly justified lines to the proof being
@@ -319,3 +327,8 @@ class Prover:
             if line_numbers=[7,3,9], then chained should be 'a=0'. The number of
             the (new) line in this proof containing substituted is returned """
         # Task 10.9.2
+        current_line = line_numbers[:1]
+        line_numbers = line_numbers[1:]
+        for next_eq_line in line_numbers:
+            current_line = self._add_chained_two_equalities(current_line, next_eq_line)
+        return current_line
