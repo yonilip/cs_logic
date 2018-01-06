@@ -52,9 +52,16 @@ def homework_proof(print_as_proof_forms=False):
     step_7 = prover.add_instantiated_assumption('((Reading(x)&~Fun(x))->Ex[(Reading(x)&~Fun(x))])', Prover.EI,
                                                 {'R(v)': '(Reading(v)&~Fun(v))', 'c': 'x'})
 
-    step_8 = prover.add_tautological_inference('((Homework(x)&Reading(x))->(Reading(x)&~Fun(x)))', [step_6, step_7])
-    step_9 = prover.add_existential_derivation('(Reading(x)&~Fun(x))', step_2, step_8)
-    step_9 = prover.add_tautological_inference('Ex[(Reading(x)&~Fun(x))]', [step_7, step_8])
+    step_8 = prover.add_tautological_inference('((Homework(x)&Reading(x))->Ex[(Reading(x)&~Fun(x))])', [step_6, step_7])
+
+    step_9 = prover.add_ug('Ax[((Homework(x)&Reading(x))->Ex[(Reading(x)&~Fun(x))])]', step_8)
+    Q = 'Ex[(Reading(x)&~Fun(x))]'
+    R_x = '(Homework(x)&Reading(x))'
+    es_string = '((Ax[(' + R_x + '->' + Q + ')]&Ex[' + R_x + '])->' + Q + ')'
+    step_10 = prover.add_instantiated_assumption(es_string, Prover.ES,
+                                                 {'R(v)': '(Homework(v)&Reading(v))', 'Q()': Q})
+    step_11 = prover.add_tautological_inference(Q, [step_9, step_2, step_10])
+
     return prover.proof
     
 GROUP_AXIOMS = ['plus(0,x)=x', 'plus(minus(x),x)=0',
