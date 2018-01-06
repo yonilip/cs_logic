@@ -267,6 +267,7 @@ class Prover:
 
         return ug_step
 
+
     def add_substituted_equality(self, substituted, line_number,
                                  term_with_free_v):
         """ Add a sequence of validly justified lines to the proof being
@@ -279,7 +280,21 @@ class Prover:
             is 'v+7', then substituted should be 'g(x)+7=h(y)+7'. The number of
             the (new) line in this proof containing substituted is returned """
         # Task 10.8
+        formula = self.proof.lines[line_number].formula
+        c, d = formula.first, formula.second
+        c_str, d_str = str(c), str(d)
 
+        c_sub_str = str(Term.parse(term_with_free_v).substitute({'v': c}))
+
+        ia_str = '('+ c_str + '=' + d_str + '->(' + c_sub_str + '=' + c_sub_str + '->' + substituted + '))'
+        sub_map = {'c': c_str, 'd': d_str, 'R(v)': c_sub_str + '=' + term_with_free_v}
+        step_me = self.add_instantiated_assumption(ia_str, Prover.ME, sub_map)
+
+        step_rx = self.add_instantiated_assumption(c_sub_str + '=' + c_sub_str, Prover.RX, {'c': c_sub_str})
+
+        step_t = self.add_tautological_inference(substituted, [line_number, step_me, step_rx])
+
+        return step_t
 
     def _add_chained_two_equalities(self, line1, line2):
         """ Add a sequence of validly justified lines to the proof being
