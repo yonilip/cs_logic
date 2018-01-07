@@ -62,7 +62,7 @@ def homework_proof(print_as_proof_forms=False):
     step_11 = prover.add_tautological_inference(Q, [step_9, step_2, step_10])
 
     return prover.proof
-    
+
 GROUP_AXIOMS = ['plus(0,x)=x', 'plus(minus(x),x)=0',
                 'plus(plus(x,y),z)=plus(x,plus(y,z))']
 
@@ -123,11 +123,11 @@ def multiply_zero_proof(print_as_proof_forms=False):
     return prover.proof
 
 
+
 PEANO_AXIOMS = ['(s(x)=s(y)->x=y)', '(~x=0->Ey[s(y)=x])', '~s(x)=0',
                 'plus(x,0)=x', 'plus(x,s(y))=s(plus(x,y))', 'times(x,0)=0',
                 'times(x,s(y))=plus(times(x,y),x)',
                 Schema('((R(0)&Ax[(R(x)->R(s(x)))])->Ax[R(x)])', 'R')]
-
 
 def peano_zero_proof(print_as_proof_forms=False):
     """ Return a proof that from the Peano axioms (in addition to Prover.AXIOMS)
@@ -137,6 +137,7 @@ def peano_zero_proof(print_as_proof_forms=False):
     prover = Prover(PEANO_AXIOMS, 'plus(0,x)=x', print_as_proof_forms)
     # Task 10.12
     return prover.proof
+
 
 
 COMPREHENSION_AXIOM = Schema('Ey[Ax[((In(x,y)->R(x))&(R(x)->In(x,y)))]]', {'R'})
@@ -149,4 +150,21 @@ def russell_paradox_proof(print_as_proof_forms=False):
         constructed """
     prover = Prover([COMPREHENSION_AXIOM], '(z=z&~z=z)', print_as_proof_forms)
     # Task 10.13
+    conclusion = '(z=z&~z=z)'
+    contradiction = '((In(x,y)->~In(x,x))&(~In(x,x)->In(x,y)))'
+    step0 = prover.add_instantiated_assumption('Ey[Ax[' + contradiction + ']]', COMPREHENSION_AXIOM,
+                                               {'R(v)': '~In(v,v)'})
+
+    contradiction_y = '((In(y,y)->~In(y,y))&(~In(y,y)->In(y,y)))'
+    ui_dict = {'R(v)': '((In(v,y)->~In(v,v))&(~In(v,v)->In(v,y)))', 'x': 'x', 'c': 'y'}
+    ui_string = '(Ax[{c_x}]->{c_y})'.format(c_x=contradiction, c_y=contradiction_y)
+    step1 = prover.add_instantiated_assumption(ui_string, Prover.UI, ui_dict)
+
+    step2 = prover.add_tautology('({c_y}->{conc})'.format(c_y=contradiction_y, conc=conclusion))
+
+    step3 = prover.add_tautological_inference('(Ax[{c_x}]->{conc})'.format(c_x=contradiction, conc=conclusion),
+                                              [step1, step2])
+
+    step4 = prover.add_existential_derivation(conclusion, step0, step3)
+
     return prover.proof
