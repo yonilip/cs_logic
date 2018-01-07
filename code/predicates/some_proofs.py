@@ -87,12 +87,13 @@ def unique_zero_proof(print_as_proof_forms=False):
     step_7 = prover.add_flipped_equality('plus(plus(minus(a),a),c)=plus(minus(a),a)', step_6)
 
     step_8 = prover.add_free_instantiation('plus(minus(a),a)=0', neg_ax, {'x': 'a'})
-
-    # step_9 = prover.add_free_instantiation('plus(0,c)=0', step_7, {'plus(minus(a),a)': '0'})
-    step_10 = prover.add_free_instantiation('plus(0,c)=c', zero_ax, {'x': 'c'})
-
-
-
+    step_9 = prover.add_chained_equality('plus(plus(minus(a),a),c)=0', [step_7, step_8])
+    step_10 = prover.add_substituted_equality('plus(plus(minus(a),a),c)=plus(0,c)', step_8, 'plus(v,c)')
+    step_11 = prover.add_free_instantiation('plus(0,c)=c', zero_ax, {'x': 'c'})
+    step_12 = prover.add_chained_equality('plus(plus(minus(a),a),c)=c', [step_10, step_11])
+    step_13 = prover.add_flipped_equality('0=plus(plus(minus(a),a),c)', step_9)
+    step_14 = prover.add_chained_equality('0=c', [step_13, step_12])
+    step_15 = prover.add_flipped_equality('c=0', step_14)
     return prover.proof
 
 FIELD_AXIOMS = GROUP_AXIOMS + ['plus(x,y)=plus(y,x)', 'times(x,1)=x',
@@ -109,6 +110,16 @@ def multiply_zero_proof(print_as_proof_forms=False):
         being constructed """
     prover = Prover(FIELD_AXIOMS, 'times(0,x)=0', print_as_proof_forms)
     # Task 10.11
+    step_1 = prover.add_assumption('plus(0,x)=x')
+    step_2 = prover.add_free_instantiation('plus(0,0)=0', step_1, {'x': '0'})
+    step_3 = prover.add_substituted_equality('times(x,plus(0,0))=times(x,0)', step_2, 'times(x,v)')
+    step_4 = prover.add_assumption('times(x,plus(y,z))=plus(times(x,y),times(x,z))')
+    step_5 = prover.add_free_instantiation('times(x,plus(0,0))=plus(times(x,0),times(x,0))', step_4, {'x':'x', 'y': '0', 'z': '0'})
+    step_6 = prover.add_flipped_equality('times(x,0)=times(x,plus(0,0))', step_3)
+    step_7 = prover.add_chained_equality('times(x,0)=plus(times(x,0),times(x,0))', [step_6, step_5])
+
+
+
     return prover.proof
 
 
