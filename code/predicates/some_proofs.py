@@ -139,7 +139,14 @@ def multiply_zero_proof(print_as_proof_forms=False):
     step_14 = prover.add_assumption('plus(plus(x,y),z)=plus(x,plus(y,z))')
     step_15 = prover.add_free_instantiation('plus(plus(minus(times(x,0)),times(x,0)),times(x,0))=plus(minus(times(x,0)),plus(times(x,0),times(x,0)))', step_14, {'x': 'minus(times(x,0))', 'y': 'times(x,0)', 'z': 'times(x,0)'})
     step_16 = prover.add_flipped_equality('plus(minus(times(x,0)),plus(times(x,0),times(x,0)))=plus(plus(minus(times(x,0)),times(x,0)),times(x,0))', step_15)
+    step_17 = prover.add_chained_equality('plus(minus(times(x,0)),times(x,0))=times(x,0)', [step_8, step_16, step_13])
+    step_18 = prover.add_flipped_equality('times(x,0)=plus(minus(times(x,0)),times(x,0))', step_17)
 
+    step_19 = prover.add_chained_equality('times(x,0)=0', [step_18, step_10])
+
+    step_20 = prover.add_assumption('times(x,y)=times(y,x)')
+    step_21 = prover.add_free_instantiation('times(0,x)=times(x,0)', step_20, {'x': '0', 'y': 'x'})
+    step_22 = prover.add_chained_equality('times(0,x)=0', [step_21, step_19])
     return prover.proof
 
 
