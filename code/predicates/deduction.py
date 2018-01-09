@@ -20,13 +20,49 @@ def inverse_mp(proof, assumption, print_as_proof_forms=False):
     assert Schema(assumption) in proof.assumptions
     assert proof.assumptions[:len(Prover.AXIOMS)] == Prover.AXIOMS
     # Task 11.1
-    prover = Prover(proof.assumptions[:len(Prover.AXIOMS)],
-                    '({assumption}->{conclusion})'.format(assumption=assumption, conclusion=proof.conclusion),
+    # oa = original assumption
+    oa = assumption
+    prover = Prover(proof.assumptions,
+                    '({oa}->{conclusion})'.format(oa=oa, conclusion=proof.conclusion),
                     print_as_proof_forms)
-    for proof_assumption in
-    assumption_line = prover.add_tautology('({assumption}->{assumption})'.format(assumption=assumption))
 
+    oa_line = prover.add_tautology('({oa}->{oa})'.format(oa=oa))
 
+    line_map = {}
+
+    for i in range(len(proof.lines)):
+        old_line = proof.lines[i]
+        psi = old_line.formula
+
+        # psi = original assumption
+        if str(psi) == oa:
+            line_map[i] = oa_line
+            continue
+
+        # cae assumption
+        elif old_line.justification[0] == 'A':
+            line = prover.add_instantiated_assumption(psi, prover.proof.assumptions[old_line.justification[1]], old_line.justification[2])
+
+            line = prover.add_tautological_inference('({oa}->{psi})'.format(oa=oa, psi=str(psi)),
+                                                                [oa_line, line])
+            line_map[i] = line
+
+        # case tautology
+        elif old_line.justification[0] == 'T':
+            line = prover.add_tautology('({oa}->{assumption})'.format(oa=oa, assumption=str(old_line.formula)))
+            line_map[i] = line
+
+        # case mp
+        elif old_line.justification[0] == 'MP':
+            q = psi.second.second
+            lines = [line_map[old_line.justification[1]], line_map[old_line.justification[2]]]
+            line = prover.add_tautological_inference('({oa}->{q})'.format(oa=oa, q=str(q)), lines)
+            line_map[i] = line
+
+        else:
+            print(line)
+
+            # print(prover.proof.lines[-1])
     return prover.proof
 
 def proof_by_contradiction(proof, assumption, print_as_proof_forms=False):
