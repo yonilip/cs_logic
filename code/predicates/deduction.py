@@ -49,15 +49,33 @@ def inverse_mp(proof, assumption, print_as_proof_forms=False):
 
         # case tautology
         elif old_line.justification[0] == 'T':
-            line = prover.add_tautology('({oa}->{assumption})'.format(oa=oa, assumption=str(old_line.formula)))
+            line = prover.add_tautology('({oa}->{psi})'.format(oa=oa, psi=str(psi)))
             line_map[i] = line
 
-        # case mp
+        # case mp. psi = (a, a->b, b)
         elif old_line.justification[0] == 'MP':
-            q = psi.second.second
             lines = [line_map[old_line.justification[1]], line_map[old_line.justification[2]]]
-            line = prover.add_tautological_inference('({oa}->{q})'.format(oa=oa, q=str(q)), lines)
+            oa__q = '({oa}->{psi})'.format(oa=oa, psi=str(psi))
+            line = prover.add_tautological_inference(oa__q, lines)
             line_map[i] = line
+            # TODO if fails here might need to get oa -> q
+
+        # case UG
+        elif old_line.justification[0] == 'UG':
+            p = psi.predicate
+            # Add UG
+            oa__p_line = line_map[old_line.justification[1]]
+            oa__p = prover.proof.lines[oa__p_line].formula
+            x = psi.variable
+            line = prover.add_ug('A{x}[{oa__p}]'.format(x=x, oa__p=str(oa__p)), oa__p_line)
+
+            assert str(oa__p.first) == str(oa) and str(oa__p.second) == str(p)
+            # Add US
+            ug_str = str(prover.proof.lines[line].formula)
+            us_str = '(A{x}[({oa}->{p})]->({oa}->A{x}[{p}]))'.format(ug=ug_str, x=x, oa=oa, p=str(p))
+            substitution_map = {'Q': oa, 'R(v)': str(p.substitute({x: Term('v')})), 'x': x}
+            # Schema: (Ax[(Q()->R(x))]->(Q()->Ax[R(x)])) [templates: {'Q', 'R', 'x'}]
+            line = prover.add_instantiated_assumption(us_str, Prover.US, substitution_map)
 
         else:
             print(line)
