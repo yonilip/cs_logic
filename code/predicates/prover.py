@@ -171,7 +171,7 @@ class Prover:
 
         # MP each part of the tautology
         for i in range(len(line_numbers)):
-            print(tautology.second, line_numbers[i], current_step)
+            # print(tautology.second, line_numbers[i], current_step)
             current_step = self.add_mp(tautology.second, line_numbers[i], current_step)
             tautology = tautology.second
 
@@ -211,11 +211,12 @@ class Prover:
         # Task 10.6
         formula = Formula.parse(flipped)
         d, c = str(formula.first), str(formula.second)
-        step1 = self.add_instantiated_assumption('('+c+'='+d+'->(' + c + '=' + c + '->' + d+'='+c + '))',
+        step1 = self.add_instantiated_assumption('('+c+'='+d+'->(' + c + '=' + c + '->' + d + '=' + c + '))',
                                                  Prover.ME, {'c': c, 'd': d, 'R(v)': 'v='+c})
-        step2 = self.add_mp('(' + c + '=' + c + '->' + d+'='+c + ')', line_number, step1)
+        # step_rx = self.add_instantiated_assumption()
         step3 = self.add_instantiated_assumption(c + '=' + c, Prover.RX, {'c': c})
-        step4 = self.add_mp(d + '=' + c, step2, step3)
+        step2 = self.add_mp('(' + c + '=' + c + '->' + d+'='+c + ')', line_number, step1)
+        step4 = self.add_mp(d + '=' + c, step3, step2)
 
         return step4
 
@@ -338,4 +339,5 @@ class Prover:
         line_numbers = line_numbers[1:]
         for next_eq_line in line_numbers:
             current_line = self._add_chained_two_equalities(current_line, next_eq_line)
+
         return current_line
