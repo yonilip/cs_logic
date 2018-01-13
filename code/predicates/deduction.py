@@ -22,7 +22,8 @@ def inverse_mp(proof, assumption, print_as_proof_forms=False):
     # Task 11.1
     # oa = original assumption
     oa = assumption
-    prover = Prover(proof.assumptions,
+    new_assumptions = [a for a in proof.assumptions if str(a.formula) != oa]
+    prover = Prover(new_assumptions,
                     '({oa}->{conclusion})'.format(oa=oa, conclusion=proof.conclusion),
                     print_as_proof_forms)
 
@@ -41,10 +42,10 @@ def inverse_mp(proof, assumption, print_as_proof_forms=False):
 
         # cae assumption
         elif old_line.justification[0] == 'A':
-            line = prover.add_instantiated_assumption(psi, prover.proof.assumptions[old_line.justification[1]], old_line.justification[2])
+            a_idx = new_assumptions.index(proof.assumptions[old_line.justification[1]])
+            line = prover.add_instantiated_assumption(psi, prover.proof.assumptions[a_idx], old_line.justification[2])
 
-            line = prover.add_tautological_inference('({oa}->{psi})'.format(oa=oa, psi=str(psi)),
-                                                                [oa_line, line])
+            line = prover.add_tautological_inference('({oa}->{psi})'.format(oa=oa, psi=str(psi)), [oa_line, line])
             line_map[i] = line
 
         # case tautology
@@ -67,20 +68,21 @@ def inverse_mp(proof, assumption, print_as_proof_forms=False):
             oa__p_line = line_map[old_line.justification[1]]
             oa__p = prover.proof.lines[oa__p_line].formula
             x = psi.variable
-            line = prover.add_ug('A{x}[{oa__p}]'.format(x=x, oa__p=str(oa__p)), oa__p_line)
+            ug_str = 'A{x}[{oa__p}]'.format(x=x, oa__p=str(oa__p))
+            ug_line = prover.add_ug(ug_str, oa__p_line)
 
             assert str(oa__p.first) == str(oa) and str(oa__p.second) == str(p)
             # Add US
-            ug_str = str(prover.proof.lines[line].formula)
-            us_str = '(A{x}[({oa}->{p})]->({oa}->A{x}[{p}]))'.format(ug=ug_str, x=x, oa=oa, p=str(p))
-            substitution_map = {'Q': oa, 'R(v)': str(p.substitute({x: Term('v')})), 'x': x}
-            # Schema: (Ax[(Q()->R(x))]->(Q()->Ax[R(x)])) [templates: {'Q', 'R', 'x'}]
-            line = prover.add_instantiated_assumption(us_str, Prover.US, substitution_map)
+            ug_str = str(prover.proof.lines[ug_line].formula)
+            us_str = '({ug_str}->({oa}->A{x}[{p}]))'.format(ug_str=ug_str, x=x, oa=oa, p=str(p))
+            substitution_map = {'Q()': oa, 'R(v)': str(p.substitute({x: Term('v')})), 'x': x}
+            us_line = prover.add_instantiated_assumption(us_str, Prover.US, substitution_map)
+            mp_line = prover.add_mp('({oa}->A{x}[{p}])'.format(oa=oa, x=x, p=str(p)), ug_line, us_line)
+            line_map[i] = mp_line
 
         else:
             print(line)
 
-            # print(prover.proof.lines[-1])
     return prover.proof
 
 def proof_by_contradiction(proof, assumption, print_as_proof_forms=False):
