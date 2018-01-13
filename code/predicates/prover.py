@@ -296,7 +296,6 @@ class Prover:
 
         return step_t
 
-
     def _add_chained_two_equalities(self, line1, line2):
         """ Add a sequence of validly justified lines to the proof being
             constructed, where the formula of the last line is an equality of

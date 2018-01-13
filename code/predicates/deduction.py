@@ -82,8 +82,8 @@ def inverse_mp(proof, assumption, print_as_proof_forms=False):
 
         else:
             print(line)
-
     return prover.proof
+
 
 def proof_by_contradiction(proof, assumption, print_as_proof_forms=False):
     """ Takes a proof, whose first six assumptions/axioms are Prover.AXIOMS, of
@@ -99,3 +99,22 @@ def proof_by_contradiction(proof, assumption, print_as_proof_forms=False):
     assert Schema(assumption) in proof.assumptions
     assert proof.assumptions[:len(Prover.AXIOMS)] == Prover.AXIOMS
     # Task 11.2
+
+    new_assumptions = [a for a in proof.assumptions if str(a.formula) != assumption]
+    conclusion = '~{}'.format(assumption)
+
+    deducted_proof = inverse_mp(proof, assumption)
+    prover = Prover(new_assumptions, conclusion)
+
+    ded_proof_last_line = prover.add_proof(deducted_proof.conclusion, deducted_proof)
+
+    lhs = prover.proof.lines[ded_proof_last_line].formula.first
+    rhs = prover.proof.lines[ded_proof_last_line].formula.second
+
+    taut_line = prover.add_tautology('(({lhs}->{rhs})->(~{rhs}->~{lhs}))'.format(rhs=rhs, lhs=lhs))
+    mp_line = prover.add_mp('(~{rhs}->~{lhs})'.format(rhs=rhs, lhs=lhs), ded_proof_last_line, taut_line)
+    not_contradiction = prover.add_tautology(Formula('~', proof.conclusion))
+    conclusion_line = prover.add_mp(conclusion, not_contradiction, mp_line)
+
+    return prover.proof
+
