@@ -36,11 +36,31 @@ def is_quantifier_free(formula):
     """ Return whether the given formula contains any quantifiers """
     assert type(formula) is Formula
     # Task 11.3.1
+    root = formula.root
+    if is_quantifier(root):
+        return False
+    elif is_unary(root):
+        return is_quantifier_free(formula.first)
+    elif is_binary(root):
+        if not is_quantifier_free(formula.first) or not is_quantifier_free(formula.second):
+            return False
+
+    return True
+
 
 def is_in_prenex_normal_form(formula):
     """ Return whether the given formula is in prenex normal form """
     assert type(formula) is Formula
     # Task 11.3.2
+    if is_quantifier_free(formula):
+        return True
+    # Quantifier exists somewhere in formula
+    else:
+        if not is_quantifier(formula.root):
+            return False
+        else:
+            return is_in_prenex_normal_form(formula.predicate)
+    return True
 
 def make_quantified_variables_unique(formula):
     """ Takes a formula and returns a pair: an equivalent formula with the
