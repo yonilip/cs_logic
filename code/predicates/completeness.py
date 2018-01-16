@@ -13,7 +13,6 @@ from predicates.prenex import *
 from predicates.util import *
 
 
-
 def is_closed(sentences, constants):
     """ Return whether the given set of sentences closed with respect to the
         given set of constant names """
@@ -151,6 +150,25 @@ def find_unsatisfied_quantifier_free_sentence(sentences, constants, model,
     assert unsatisfied in sentences
     assert not model.evaluate_formula(unsatisfied)
     # Task 12.2
+
+    constants_term = {Term(c) for c in constants}
+    all_vars = []
+    exists_vars = []
+    inner_sent = unsatisfied
+    while is_quantifier(inner_sent.root):
+        if inner_sent.root == 'A':
+            all_vars.append(inner_sent.variable)
+        else:
+            exists_vars.append(inner_sent.variable)
+        inner_sent = inner_sent.predicate
+
+    for all_tups in product(constants_term, repeat=len(all_vars + exists_vars)):
+
+        sub_map = {z[0]: z[1] for z in zip(all_vars + exists_vars, all_tups)}
+        sub_sent = inner_sent.substitute(sub_map)
+        if not model.evaluate_formula(sub_sent):
+            if sub_sent in sentences:
+                return sub_sent
 
 
 def get_primitives(quantifier_free):
