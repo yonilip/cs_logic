@@ -216,11 +216,12 @@ def model_or_inconsistent(sentences, constants):
         all_relations_and_constants.update(get_relations_and_constants(sentence))
     model_meaning = {c: c for c in constants}
 
-    for relation, c_tup in all_relations_and_constants:
-        if relation[0] != '~' and all(c in constants for c in c_tup):
-            if not model_meaning.get(relation):
-                model_meaning[relation] = set()
-            model_meaning[relation].add(c_tup)
+    for sentence in sentences:
+        if not is_relation(sentence.root):
+            continue
+        if not model_meaning.get(sentence.root):
+            model_meaning[sentence.root] = set()
+        model_meaning[sentence.root].add(tuple(sentence.arguments))
 
     model = Model(constants, model_meaning)
 
@@ -236,27 +237,30 @@ def model_or_inconsistent(sentences, constants):
     primitives = get_primitives(q_free_unsatisfied)
     H = set()
 
-    for sentence in sentences:
-        for phi in primitives:
-            not_phi = Formula('~', phi)
-        if phi == sentence:
+    # for sentence in sentences:
+    #     for phi in primitives:
+    #     if phi == sentence:
+    #         H.add(str(phi))
+    #     if not_phi == sentence:
+    #         H.add(str(not_phi))
+    for phi in primitives:
+        if phi in sentences:
             H.add(str(phi))
-            break
-        if not_phi == sentence:
-            H.add(str(phi))
-            break
+        else:
+            H.add(str('~{}'.format(phi)))
     # H.add(str(q_free_unsatisfied))
     # H.add(str(unsatisfied))
 
     conclusion = '({}&~{})'.format(str(q_free_unsatisfied), str(q_free_unsatisfied))
 
-    prover = Prover(H, conclusion)
+    prover = Prover(list(H) + [str(q_free_unsatisfied)], conclusion)
     lines = []
     for phi in H:
         lines.append(prover.add_assumption(phi))
     neg_line = prover.add_tautological_inference('~{}'.format(q_free_unsatisfied), lines)
-    lines.append(neg_line)
-    last_line = prover.add_tautological_inference(conclusion, lines)
+    qline = prover.add_assumption(str(q_free_unsatisfied))
+
+    last_line = prover.add_tautological_inference(conclusion, [neg_line, qline])
 
     return prover.proof
 
