@@ -171,6 +171,26 @@ def find_unsatisfied_quantifier_free_sentence(sentences, constants, model,
                 return sub_sent
 
 
+def get_primitives_helper(formula: Formula, relations: set):
+    if is_relation(formula.root):
+        # relations.add((formula.root, tuple(term.root for term in formula.arguments)))
+        relations.add(Formula(formula.root, formula.arguments))
+
+    elif is_function(formula.root):
+        for arg in formula.arguments:
+            get_primitives_helper(arg, relations)
+
+    elif is_equality(formula.root) or is_binary(formula.root):
+        get_primitives_helper(formula.first, relations)
+        get_primitives_helper(formula.second, relations)
+
+    elif is_unary(formula.root) and is_relation(formula.first.root):
+        get_primitives_helper(formula.first, relations)
+
+    if is_quantifier(formula.root):
+        get_primitives_helper(formula.predicate, relations)
+
+
 def get_primitives(quantifier_free):
     """ Return a set containing the primitive formulae (i.e., relation
         instantiations) that appear in the given quantifier-free formula. For
@@ -179,6 +199,9 @@ def get_primitives(quantifier_free):
     assert type(quantifier_free) is Formula and \
            is_quantifier_free(quantifier_free)
     # Task 12.3.1
+    primitives = set()
+    get_primitives_helper(quantifier_free, primitives)
+    return primitives
 
 
 def model_or_inconsistent(sentences, constants):
@@ -188,6 +211,55 @@ def model_or_inconsistent(sentences, constants):
         sentences as assumptions """
     assert is_closed(sentences, constants)
     # Task 12.3.2
+    all_relations_and_constants = set()
+    for sentence in sentences:
+        all_relations_and_constants.update(get_relations_and_constants(sentence))
+    model_meaning = {c: c for c in constants}
+
+    for relation, c_tup in all_relations_and_constants:
+        if relation[0] != '~' and all(c in constants for c in c_tup):
+            if not model_meaning.get(relation):
+                model_meaning[relation] = set()
+            model_meaning[relation].add(c_tup)
+
+    model = Model(constants, model_meaning)
+
+    unsatisfied = None
+    for sentence in sentences:
+        if not model.evaluate_formula(sentence):
+            unsatisfied = sentence
+            break
+    if not unsatisfied:
+        return model
+
+    q_free_unsatisfied = find_unsatisfied_quantifier_free_sentence(sentences, constants, model, unsatisfied)
+    primitives = get_primitives(q_free_unsatisfied)
+    H = set()
+
+    for sentence in sentences:
+        for phi in primitives:
+            not_phi = Formula('~', phi)
+        if phi == sentence:
+            H.add(str(phi))
+            break
+        if not_phi == sentence:
+            H.add(str(phi))
+            break
+    # H.add(str(q_free_unsatisfied))
+    # H.add(str(unsatisfied))
+
+    conclusion = '({}&~{})'.format(str(q_free_unsatisfied), str(q_free_unsatisfied))
+
+    prover = Prover(H, conclusion)
+    lines = []
+    for phi in H:
+        lines.append(prover.add_assumption(phi))
+    neg_line = prover.add_tautological_inference('~{}'.format(q_free_unsatisfied), lines)
+    lines.append(neg_line)
+    last_line = prover.add_tautological_inference(conclusion, lines)
+
+    return prover.proof
+
 
 
 def combine_contradictions(proof_true, proof_false):
