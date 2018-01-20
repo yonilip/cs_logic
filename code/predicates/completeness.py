@@ -325,6 +325,20 @@ def eliminate_universal_instance_assumption(proof, constant):
     return new_proof.proof
 
 
+def universally_close_helper(sentence: Formula, constants: set, added_sentences: set):
+    if not is_quantifier(sentence.root):
+        return
+
+    if sentence.root == 'E':
+        return universally_close_helper(sentence.predicate, constants, added_sentences)
+    elif sentence.root == 'A':
+        for c in constants:
+            new_sentence = deepcopy(sentence.predicate).substitute({sentence.variable: c})
+            added_sentences.add(new_sentence)
+            universally_close_helper(new_sentence, constants, added_sentences)
+        return
+
+
 def universally_close(sentences, constants):
     """ Return a set of sentences that contains the given set of
         prenex-normal-form sentences and is universally closed with respect to
@@ -337,6 +351,15 @@ def universally_close(sentences, constants):
     for constant in constants:
         assert is_constant(constant)
     # Task 12.6
+    term_constants = {Term(c) for c in constants}
+
+    new_sentences = deepcopy(sentences)
+    for sentence in sentences:
+        added_sentences = set()
+        universally_close_helper(sentence, term_constants, added_sentences)
+        new_sentences.update(added_sentences)
+
+    return new_sentences
 
 def is_relation_with_variable(s):
     return s.find('(') != -1 and is_relation(s[:s.find('(')])
