@@ -427,17 +427,16 @@ def eliminate_existential_witness_assumption(proof, constant):
            proof.assumptions[-2].formula.predicate.substitute(
                {proof.assumptions[-2].formula.variable: Term(constant)})
     # Task 12.8
-    contradiction = '(R(x)&~R(x))'
-    phi_assumption = proof.assumptions[-1]
-
+    contradiction = '(R(y)&~R(y))'
     # add phi proof
     proof = replace_constant(proof, constant)
+    proof = eliminate_universal_instance_assumption(proof, constant)
+
     # prover = Prover(proof.assumptions, contradiction)
     # proof_line = prover.add_proof(proof.conclusion, proof)
 
     # create not phi proof
     phi = str(proof.assumptions[-1].formula)
-    exists_phi = proof.assumptions[-2].formula
     not_phi_proof = proof_by_contradiction(proof, phi)
     not_phi = str(not_phi_proof.conclusion)
 
@@ -448,19 +447,24 @@ def eliminate_existential_witness_assumption(proof, constant):
     # use tautology to create contradiction
     taut_str = '({not_phi}->({phi}->{contradiction}))'.format(not_phi=not_phi, phi=phi, contradiction=contradiction)
     taut_line = prover.add_tautology(taut_str)
+    phi_implies_cont_str = '({phi}->{contradiction})'.format(phi=phi, contradiction=contradiction)
+    phi_implies_cont_line = prover.add_tautological_inference(phi_implies_cont_str, [not_phi_line, taut_line])
+
+    ug_str = 'Azz[{phi_implies_cont_str}]'.format(phi_implies_cont_str=phi_implies_cont_str)
+    ug_line = prover.add_ug(ug_str, phi_implies_cont_line)
+
+    exists_phi_str = 'Ezz[{phi}]'.format(phi=phi)
+    exists_phi_subed_line = prover.add_instantiated_assumption(exists_phi_str, proof.assumptions[1], {'x': 'zz'})
 
     # prove tautology via ES
-    es_str = {}
-    es_dict = {'x','Q','R'}
+    es_str = '(({ug}&{exists_phi})->{contradiction})'.format(ug=ug_str, exists_phi=exists_phi_str,
+                                                             contradiction=contradiction)
+    es_dict = {'x': 'zz', 'Q()': contradiction, 'R(v)': Formula.parse(phi).substitute({constant: Term('v')})}
     es_line = prover.add_instantiated_assumption(es_str, Prover.ES, es_dict)
-    step3 = prover_true.add_instantiated_assumption(
-        '((Ax[(~R(x)->(Q()&~Q()))]&Ex[~R(x)])->(Q()&~Q()))', Prover.ES,
-        {'R(v)':'~R(v)', 'Q()':'(Q()&~Q())'})
-    ES = Schema('((Ax[(R(x)->Q())] & Ex[R(x)])->Q())', {'x','Q','R'})
-
-
-
-
+    # step3 = prover_true.add_instantiated_assumption(
+    #     '((Ax[(~R(x)->(Q()&~Q()))]&Ex[~R(x)])->(Q()&~Q()))', Prover.ES,
+    #     {'R(v)':'~R(v)', 'Q()':'(Q()&~Q())'})
+    # ES = Schema('((Ax[(R(x)->Q())] & Ex[R(x)])->Q())', {'x','Q','R'})
 
     return proof
 
