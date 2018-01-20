@@ -259,6 +259,7 @@ def model_or_inconsistent(sentences, constants):
     return prover.proof
 
 
+
 def combine_contradictions(proof_true, proof_false):
     """ Given two proofs of contradictions from two lists of assumptions that
         differ only in the last assumption, where the last assumption of
@@ -364,6 +365,7 @@ def universally_close(sentences, constants):
 def is_relation_with_variable(s):
     return s.find('(') != -1 and is_relation(s[:s.find('(')])
 
+
 def replace_constant(proof, constant, variable='zz'):
     """ Given a proof, a constant name that (potentially) appears in the
         assumptions and/or proof, and a variable name that does not appear
@@ -425,6 +427,42 @@ def eliminate_existential_witness_assumption(proof, constant):
            proof.assumptions[-2].formula.predicate.substitute(
                {proof.assumptions[-2].formula.variable: Term(constant)})
     # Task 12.8
+    contradiction = '(R(x)&~R(x))'
+    phi_assumption = proof.assumptions[-1]
+
+    # add phi proof
+    proof = replace_constant(proof, constant)
+    # prover = Prover(proof.assumptions, contradiction)
+    # proof_line = prover.add_proof(proof.conclusion, proof)
+
+    # create not phi proof
+    phi = str(proof.assumptions[-1].formula)
+    exists_phi = proof.assumptions[-2].formula
+    not_phi_proof = proof_by_contradiction(proof, phi)
+    not_phi = str(not_phi_proof.conclusion)
+
+    # add not phi proof
+    prover = Prover(not_phi_proof.assumptions, contradiction)
+    not_phi_line = prover.add_proof(not_phi_proof.conclusion, not_phi_proof)
+
+    # use tautology to create contradiction
+    taut_str = '({not_phi}->({phi}->{contradiction}))'.format(not_phi=not_phi, phi=phi, contradiction=contradiction)
+    taut_line = prover.add_tautology(taut_str)
+
+    # prove tautology via ES
+    es_str = {}
+    es_dict = {'x','Q','R'}
+    es_line = prover.add_instantiated_assumption(es_str, Prover.ES, es_dict)
+    step3 = prover_true.add_instantiated_assumption(
+        '((Ax[(~R(x)->(Q()&~Q()))]&Ex[~R(x)])->(Q()&~Q()))', Prover.ES,
+        {'R(v)':'~R(v)', 'Q()':'(Q()&~Q())'})
+    ES = Schema('((Ax[(R(x)->Q())] & Ex[R(x)])->Q())', {'x','Q','R'})
+
+
+
+
+
+    return proof
 
 
 def existentially_close(sentences, constants):
