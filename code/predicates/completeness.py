@@ -338,6 +338,8 @@ def universally_close(sentences, constants):
         assert is_constant(constant)
     # Task 12.6
 
+def is_relation_with_variable(s):
+    return s.find('(') != -1 and is_relation(s[:s.find('(')])
 
 def replace_constant(proof, constant, variable='zz'):
     """ Given a proof, a constant name that (potentially) appears in the
@@ -351,6 +353,35 @@ def replace_constant(proof, constant, variable='zz'):
     assert is_variable(variable)
     assert type(proof) is Proof
     # Task 12.7
+    sub_map = {constant: Term(variable)}
+
+    # perform replacement for each assumption
+    for i in range(len(proof.assumptions)):
+        proof.assumptions[i].formula = proof.assumptions[i].formula.substitute(sub_map)
+
+    # perform replacement for each line
+    for i in range(len(proof.lines)):
+        proof.lines[i].formula = proof.lines[i].formula.substitute(sub_map)
+
+        # perform replacement for justification line
+        just = proof.lines[i].justification
+        mutable_just = list(just)
+        for j in range(len(just)):
+            obj = just[j]
+            if type(obj) == dict:
+                mutable_dict = {}
+                for k, v in obj.items():
+                    if is_relation_with_variable(k):
+                        mutable_dict.update({k: str(Formula.parse(v).substitute(sub_map))})
+                    else:
+                        mutable_dict.update({k: str(Term.parse(v).substitute(sub_map))})
+                mutable_just[j] = mutable_dict
+                proof.lines[i].justification = tuple(mutable_just)
+
+    # perform replacement for conclusion
+    proof.conclusion = proof.conclusion.substitute(sub_map)
+
+    return proof
 
 
 def eliminate_existential_witness_assumption(proof, constant):
