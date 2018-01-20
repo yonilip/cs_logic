@@ -4,6 +4,7 @@
     File name: code/predicates/completeness.py """
 
 from itertools import product, chain
+from copy import deepcopy
 
 from predicates.syntax import *
 from predicates.semantics import *
@@ -305,6 +306,23 @@ def eliminate_universal_instance_assumption(proof, constant):
            proof.assumptions[-2].formula.predicate.substitute(
                {proof.assumptions[-2].formula.variable: Term(constant)})
     # Task 12.5
+    p1 = proof_by_contradiction(proof, str(proof.assumptions[-1].formula))
+
+    universal_assmp = p1.assumptions[-1]
+    var_to_replace = universal_assmp.formula.variable
+    predicate_copy = deepcopy(universal_assmp.formula.predicate)
+    sub_map = {var_to_replace: Term(constant)}
+    instantiated_u_a = predicate_copy.substitute(sub_map)
+
+    new_conc = '({p1_conc}&{inst_with_cont})'.format(p1_conc=str(p1.conclusion), inst_with_cont=str(instantiated_u_a))
+
+    new_proof = Prover(p1.assumptions, new_conc)
+    p1_conc_line = new_proof.add_proof(p1.conclusion, p1)
+    assump_line = new_proof.add_assumption(new_proof.proof.assumptions[-1].formula)
+    instantiated_u_a_line = new_proof.add_universal_instantiation(str(instantiated_u_a), assump_line, constant)
+    new_conc_line = new_proof.add_tautological_inference(new_conc, [p1_conc_line, instantiated_u_a_line])
+
+    return new_proof.proof
 
 
 def universally_close(sentences, constants):
