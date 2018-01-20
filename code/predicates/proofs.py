@@ -60,14 +60,6 @@ class Schema:
                     formula.arguments[i] = formula.arguments[i].substitute(constants_and_variables_instantiation_map)
 
                 formal_parameters, new_formula = relations_instantiation_map[formula.root]
-                # shared_bound_vars = \
-                #     set(formal_parameters).union(new_formula.free_variables().difference({quantified_var})).intersection(bound_variables)
-                #
-                # if shared_bound_vars:
-                #     for s in shared_bound_vars:
-                #         # if s == constants_and_variables_instantiation_map.get(former_qvar):
-                #         #     continue
-                #         raise Schema.BoundVariableError(s, new_formula.root)  # TODO verify
 
                 if new_formula.free_variables().difference(set(formal_parameters)).intersection(bound_variables):
                     for s in new_formula.free_variables().intersection(bound_variables):
@@ -88,7 +80,6 @@ class Schema:
         elif is_equality(root):
             pass
         elif is_quantifier(root):
-            former_var = formula.variable
             q_var = None
             if formula.variable in constants_and_variables_instantiation_map.keys():
                 formula.variable = constants_and_variables_instantiation_map[formula.variable].root

@@ -11,6 +11,7 @@ from predicates.proofs import *
 from predicates.prover import *
 from predicates.prenex import *
 from predicates.util import *
+from predicates.deduction import *
 
 
 def is_closed(sentences, constants):
@@ -237,19 +238,11 @@ def model_or_inconsistent(sentences, constants):
     primitives = get_primitives(q_free_unsatisfied)
     H = set()
 
-    # for sentence in sentences:
-    #     for phi in primitives:
-    #     if phi == sentence:
-    #         H.add(str(phi))
-    #     if not_phi == sentence:
-    #         H.add(str(not_phi))
     for phi in primitives:
         if phi in sentences:
             H.add(str(phi))
         else:
             H.add(str('~{}'.format(phi)))
-    # H.add(str(q_free_unsatisfied))
-    # H.add(str(unsatisfied))
 
     conclusion = '({}&~{})'.format(str(q_free_unsatisfied), str(q_free_unsatisfied))
 
@@ -263,7 +256,6 @@ def model_or_inconsistent(sentences, constants):
     last_line = prover.add_tautological_inference(conclusion, [neg_line, qline])
 
     return prover.proof
-
 
 
 def combine_contradictions(proof_true, proof_false):
@@ -282,6 +274,18 @@ def combine_contradictions(proof_true, proof_false):
     assert proof_false.assumptions[-1].formula == \
            Formula('~', proof_true.assumptions[-1].formula)
     # Task 12.4
+
+    p1 = proof_by_contradiction(proof_true, str(proof_true.assumptions[-1].formula))
+    p2 = proof_by_contradiction(proof_false, str(proof_false.assumptions[-1].formula))
+
+    new_conc = '({p1_conc}&{p2_conc})'.format(p1_conc=str(p1.conclusion), p2_conc=str(p2.conclusion))
+    new_proof = Prover(p1.assumptions, new_conc)
+    p1_conc_line = new_proof.add_proof(p1.conclusion, p1)
+    p2_conc_line = new_proof.add_proof(p2.conclusion, p2)
+
+    new_proof.add_tautological_inference(new_conc, [p1_conc_line, p2_conc_line])
+
+    return new_proof.proof
 
 
 def eliminate_universal_instance_assumption(proof, constant):
