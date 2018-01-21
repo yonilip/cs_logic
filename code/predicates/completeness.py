@@ -473,6 +473,26 @@ def eliminate_existential_witness_assumption(proof, constant):
     return prover.proof
 
 
+def existentially_close_helper(sentence, sentences, constants, sentences_superset, constants_superset):
+    if not is_quantifier(sentence.root):
+        return
+
+    if sentence.root == 'A':
+        return existentially_close_helper(sentence.predicate, sentences, constants, sentences_superset,
+                                          constants_superset)
+    elif sentence.root == 'E':
+        # create and add new constant
+        new_constant = next(fresh_constant_name_generator)
+        constants_superset.append(new_constant)
+
+        # create and add new witness with new constant
+        witness = deepcopy(sentence.predicate).substitute({sentence.variable: Term(new_constant)})
+        sentences_superset.append(witness)
+
+        existentially_close_helper(witness, sentences, constants, sentences_superset, constants_superset)
+
+        return
+
 def existentially_close(sentences, constants):
     """ Return a pair of a set of sentences that contains the given set of
         prenex-normal-form sentences and a set of constant names that contains
@@ -487,3 +507,12 @@ def existentially_close(sentences, constants):
     for constant in constants:
         assert is_constant(constant)
     # Task 12.9
+    # witness = phi(c) for Ex[phi(x)]
+    sentences_superset = list(deepcopy(sentences))
+    constants_superset = list(deepcopy(constants))
+
+    for sentence in sentences:
+        existentially_close_helper(sentence, sentences, constants, sentences_superset, constants_superset)
+
+    sentences_superset, constants_superset = set(sentences_superset), set(constants_superset)
+    return sentences_superset, constants_superset
