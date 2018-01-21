@@ -362,6 +362,7 @@ def universally_close(sentences, constants):
 
     return new_sentences
 
+
 def is_relation_with_variable(s):
     return s.find('(') != -1 and is_relation(s[:s.find('(')])
 
@@ -427,46 +428,49 @@ def eliminate_existential_witness_assumption(proof, constant):
            proof.assumptions[-2].formula.predicate.substitute(
                {proof.assumptions[-2].formula.variable: Term(constant)})
     # Task 12.8
-    contradiction = '(R(y)&~R(y))'
-    # add phi proof
-    proof = replace_constant(proof, constant)
-    proof = eliminate_universal_instance_assumption(proof, constant)
+    variable = proof.assumptions[-2].formula.variable
 
-    # prover = Prover(proof.assumptions, contradiction)
-    # proof_line = prover.add_proof(proof.conclusion, proof)
+    # replace constant
+    proof = replace_constant(proof, constant)
+    phi = str(proof.assumptions[-1].formula)
 
     # create not phi proof
-    phi = str(proof.assumptions[-1].formula)
     not_phi_proof = proof_by_contradiction(proof, phi)
     not_phi = str(not_phi_proof.conclusion)
+
+    # Calculate strings
+    phi_x = str(Formula.parse(phi).substitute({'zz': Term(variable)}))
+    not_phi_x = str(Formula.parse(not_phi).substitute({'zz': Term(variable)}))
+    contradiction = '({phi_x}&{not_phi_x})'.format(not_phi_x='~R(y)', phi_x='R(y)')
 
     # add not phi proof
     prover = Prover(not_phi_proof.assumptions, contradiction)
     not_phi_line = prover.add_proof(not_phi_proof.conclusion, not_phi_proof)
 
+    # from ~phi(zz) to ~phi(x)
+    not_phi_x_line = prover.add_free_instantiation(not_phi_x, not_phi_line, {'zz': variable})
+
+    # Ex[phi(x)]
+    exists_phi_x_str = 'E{x}[{phi_x}]'.format(x=variable, phi_x=phi_x)
+    exists_phi_x_line = prover.add_instantiated_assumption(exists_phi_x_str, proof.assumptions[-2], {})
+
+    # ~phi(x) -> (phi(x)->contradiction)
     # use tautology to create contradiction
-    taut_str = '({not_phi}->({phi}->{contradiction}))'.format(not_phi=not_phi, phi=phi, contradiction=contradiction)
+    taut_str = '({not_phi_x}->({phi_x}->{contradiction}))'.format(not_phi_x=not_phi_x, phi_x=phi_x,
+                                                                  contradiction=contradiction)
     taut_line = prover.add_tautology(taut_str)
-    phi_implies_cont_str = '({phi}->{contradiction})'.format(phi=phi, contradiction=contradiction)
-    phi_implies_cont_line = prover.add_tautological_inference(phi_implies_cont_str, [not_phi_line, taut_line])
 
-    ug_str = 'Azz[{phi_implies_cont_str}]'.format(phi_implies_cont_str=phi_implies_cont_str)
-    ug_line = prover.add_ug(ug_str, phi_implies_cont_line)
+    phi_x_implies_contradiction_str = '({phi_x}->{contradiction})'.format(phi_x=phi_x, contradiction=contradiction)
+    phi_x_implies_contradiction_line = prover.add_tautological_inference(phi_x_implies_contradiction_str,
+                                                                         [not_phi_x_line, taut_line])
 
-    exists_phi_str = 'Ezz[{phi}]'.format(phi=phi)
-    exists_phi_subed_line = prover.add_instantiated_assumption(exists_phi_str, proof.assumptions[1], {'x': 'zz'})
+    # Prove contradiction
+    # line1 - Ex[phi(x)]
+    # line2 - (phi(x)->statement)
+    contradiction_line = prover.add_existential_derivation(contradiction, exists_phi_x_line,
+                                                           phi_x_implies_contradiction_line)
 
-    # prove tautology via ES
-    es_str = '(({ug}&{exists_phi})->{contradiction})'.format(ug=ug_str, exists_phi=exists_phi_str,
-                                                             contradiction=contradiction)
-    es_dict = {'x': 'zz', 'Q()': contradiction, 'R(v)': Formula.parse(phi).substitute({constant: Term('v')})}
-    es_line = prover.add_instantiated_assumption(es_str, Prover.ES, es_dict)
-    # step3 = prover_true.add_instantiated_assumption(
-    #     '((Ax[(~R(x)->(Q()&~Q()))]&Ex[~R(x)])->(Q()&~Q()))', Prover.ES,
-    #     {'R(v)':'~R(v)', 'Q()':'(Q()&~Q())'})
-    # ES = Schema('((Ax[(R(x)->Q())] & Ex[R(x)])->Q())', {'x','Q','R'})
-
-    return proof
+    return prover.proof
 
 
 def existentially_close(sentences, constants):
