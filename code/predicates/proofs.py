@@ -87,7 +87,7 @@ class Schema:
             formula.predicate = Schema.instantiate_formula_helper(formula.predicate,
                                                                   constants_and_variables_instantiation_map,
                                                                   relations_instantiation_map,
-                                                                  bound_variables.union(set(formula.variable)), q_var)
+                                                                  bound_variables.union(set([formula.variable])), q_var)
             return formula
         elif is_unary(root):
             formula.first = Schema.instantiate_formula_helper(formula.first, constants_and_variables_instantiation_map,
