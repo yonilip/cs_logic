@@ -65,7 +65,7 @@ def is_in_prenex_normal_form(formula):
     return True
 
 
-def make_quantified_variables_unique_helper(formula, sub_map):
+def make_quantified_variables_unique_helper(formula):
     if is_relation(formula.root) or is_equality(formula.root):
         conclusion = equivalence_of(formula, formula)
         prover = Prover(ADDITIONAL_QUANTIFICATION_AXIOMS, conclusion)
@@ -73,7 +73,7 @@ def make_quantified_variables_unique_helper(formula, sub_map):
         return formula, prover.proof
 
     elif is_unary(formula.root):
-        inner_phi, inner_proof = make_quantified_variables_unique_helper(formula.first, sub_map)
+        inner_phi, inner_proof = make_quantified_variables_unique_helper(formula.first)
         new_phi = Formula('~', inner_phi)
 
         old_conc = inner_proof.conclusion
@@ -89,8 +89,8 @@ def make_quantified_variables_unique_helper(formula, sub_map):
     elif is_binary(formula.root):
         old_left = formula.first
         old_right = formula.second
-        inner_left_phi, inner_left_proof = make_quantified_variables_unique_helper(old_left, sub_map)
-        inner_right_phi, inner_right_proof = make_quantified_variables_unique_helper(old_right, sub_map)
+        inner_left_phi, inner_left_proof = make_quantified_variables_unique_helper(old_left)
+        inner_right_phi, inner_right_proof = make_quantified_variables_unique_helper(old_right)
 
         new_phi = Formula(formula.root, inner_left_phi, inner_right_phi)
         old_left_conc = inner_left_proof.conclusion
@@ -108,10 +108,11 @@ def make_quantified_variables_unique_helper(formula, sub_map):
 
 
     elif is_quantifier(formula.root):
-        inner_phi, inner_proof = make_quantified_variables_unique_helper(formula.predicate, sub_map)
+        inner_phi, inner_proof = make_quantified_variables_unique_helper(formula.predicate)
         quantifier = formula.root
         old_var = formula.variable
         new_var = next(fresh_variable_name_generator)
+        sub_map = {}
         sub_map[old_var] = Term(new_var)
 
         inner_phi = inner_phi.substitute(sub_map)
@@ -151,7 +152,7 @@ def make_quantified_variables_unique(formula):
         you have generated this way """
     assert type(formula) is Formula
     # Task 11.4
-    return make_quantified_variables_unique_helper(formula, {})
+    return make_quantified_variables_unique_helper(formula)
 
 
 
