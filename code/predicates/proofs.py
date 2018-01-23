@@ -51,27 +51,32 @@ class Schema:
 
     @staticmethod
     def instantiate_formula_helper(formula: Formula, constants_and_variables_instantiation_map: dict,
-                                   relations_instantiation_map: dict, bound_variables: set, quantified_var=None):
+                                   relations_instantiation_map: dict, bound_variables: set):
         root = formula.root
 
         if is_relation(root):
-            if root in relations_instantiation_map.keys():
-                for i in range(len(formula.arguments)):
-                    formula.arguments[i] = formula.arguments[i].substitute(constants_and_variables_instantiation_map)
-
+            if root in relations_instantiation_map:
                 formal_parameters, new_formula = relations_instantiation_map[formula.root]
-
-                if new_formula.free_variables().difference(set(formal_parameters)).intersection(bound_variables):
-                    for s in new_formula.free_variables().intersection(bound_variables):
-                        raise Schema.BoundVariableError(s, new_formula.root)
-
-                inner_substitution = {}
-                for i, param in enumerate(formal_parameters):
-                    inner_substitution[param] = formula.arguments[i]
-                    if param in bound_variables or new_formula.free_variables().intersection(bound_variables):
-                        if param == quantified_var:
-                            continue
-                        raise Schema.BoundVariableError(param, new_formula.root)
+                # for i in range(len(formula.arguments)):
+                #     formula.arguments[i] = formula.arguments[i].substitute(constants_and_variables_instantiation_map)
+                #
+                #
+                # if new_formula.free_variables().difference(set(formal_parameters)).intersection(bound_variables):
+                #     for s in new_formula.free_variables().intersection(bound_variables):
+                #         raise Schema.BoundVariableError(s, new_formula.root)
+                #
+                # inner_substitution = {}
+                # for i, param in enumerate(formal_parameters):
+                #     inner_substitution[param] = formula.arguments[i]
+                #     if param in bound_variables or new_formula.free_variables().intersection(bound_variables):
+                #         if param == quantified_var:
+                #             continue
+                #         raise Schema.BoundVariableError(param, new_formula.root)
+                for var in new_formula.free_variables():
+                    if var in bound_variables and var not in formal_parameters:
+                        raise Schema.BoundVariableError(var, root)
+                inner_substitution = {formal_parameters[i]: term.substitute(constants_and_variables_instantiation_map)
+                                      for i, term in enumerate(formula.arguments)}
                 formula = new_formula.substitute(inner_substitution)
                 return formula
             else:
@@ -80,14 +85,15 @@ class Schema:
         elif is_equality(root):
             pass
         elif is_quantifier(root):
-            q_var = None
-            if formula.variable in constants_and_variables_instantiation_map.keys():
+            if formula.variable in constants_and_variables_instantiation_map:
                 formula.variable = constants_and_variables_instantiation_map[formula.variable].root
-                q_var = formula.variable
+
+            bound_variables.add(formula.variable)
             formula.predicate = Schema.instantiate_formula_helper(formula.predicate,
                                                                   constants_and_variables_instantiation_map,
                                                                   relations_instantiation_map,
-                                                                  bound_variables.union(set([formula.variable])), q_var)
+                                                                  bound_variables)
+            bound_variables.remove(formula.variable)
             return formula
         elif is_unary(root):
             formula.first = Schema.instantiate_formula_helper(formula.first, constants_and_variables_instantiation_map,
@@ -156,7 +162,6 @@ class Schema:
         formula = deepcopy(formula)
         return Schema.instantiate_formula_helper(formula, constants_and_variables_instantiation_map,
                                                  relations_instantiation_map, bound_variables)
-
 
     def instantiate(self, instantiation_map):
         """ Return the first-order formula obtained by applying the mapping
