@@ -105,8 +105,6 @@ def make_quantified_variables_unique_helper(formula):
 
         return new_phi, prover.proof
 
-
-
     elif is_quantifier(formula.root):
         inner_phi, inner_proof = make_quantified_variables_unique_helper(formula.predicate)
         quantifier = formula.root
@@ -155,10 +153,6 @@ def make_quantified_variables_unique(formula):
     return make_quantified_variables_unique_helper(formula)
 
 
-
-
-
-
 def pull_out_quantifications_across_negation(formula):
     """ Takes a formula whose root is a negation, i.e., a formula of the form
         ~Q1x1[Q2x2[...Qnxn[inner_formula]...]] (where n>=0, each Qi is a
@@ -172,6 +166,50 @@ def pull_out_quantifications_across_negation(formula):
         as from ADDITIONAL_QUANTIFICATION_AXIOMS """
     assert type(formula) == Formula and formula.root == '~'
     # Task 11.5
+    if not is_unary(formula.root):
+        return
+
+    without_neg = formula.first
+
+    if not is_quantifier(without_neg.root):
+        conclusion = equivalence_of(formula, formula)
+        prover = Prover(ADDITIONAL_QUANTIFICATION_AXIOMS, conclusion)
+        prover.add_tautology(conclusion)
+        return formula, prover.proof
+
+    without_outer_Q = without_neg.predicate
+    neg_without_outer_Q = Formula('~', without_outer_Q)
+    neg_inside, neg_inside_proof = pull_out_quantifications_across_negation(neg_without_outer_Q)
+    quantifier = 'A' if without_neg.root == 'E' else 'E'
+    ax_idx = 14 if quantifier == 'A' else 15
+    var = without_neg.variable
+
+    neg_with_new_Q = Formula(quantifier, var, neg_without_outer_Q)  # left in sicum equiv
+    new_Q_neg_inside = Formula(quantifier, var, neg_inside)  # right in equiv in step 4
+    equiv_step_4_formula = equivalence_of(neg_with_new_Q, new_Q_neg_inside)
+
+    equiv_step_5_formula = equivalence_of(formula, neg_with_new_Q)
+
+    equiv_step_6_formula = equivalence_of(formula, new_Q_neg_inside)  # also conclusion
+
+    prover = Prover(ADDITIONAL_QUANTIFICATION_AXIOMS, equiv_step_6_formula)
+    step_2_proof_line = prover.add_proof(neg_inside_proof.conclusion, neg_inside_proof)
+    step_4_line = prover.add_instantiated_assumption(Formula('->', neg_inside_proof.conclusion, equiv_step_4_formula),
+                                                     ADDITIONAL_QUANTIFICATION_AXIOMS[ax_idx],
+                                                     {'x': var, 'y': var,
+                                                      'R({v})'.format(v=var): str(neg_without_outer_Q),
+                                                      'Q({v})'.format(v=var): str(neg_inside)}
+                                                     )
+    mp_step_4 = prover.add_mp(equiv_step_4_formula, step_2_proof_line, step_4_line)
+
+    ax_idx = 0 if ax_idx == 15 else 1
+    step_5_line = prover.add_instantiated_assumption(equiv_step_5_formula, ADDITIONAL_QUANTIFICATION_AXIOMS[ax_idx],
+                                                     {'x': var,
+                                                      'R({v})'.format(v=var): str(without_outer_Q)})
+
+    last_line = prover.add_tautological_inference(str(equiv_step_6_formula), [mp_step_4, step_5_line])
+
+    return new_Q_neg_inside, prover.proof
 
 
 def pull_out_quantifications_from_left_across_binary_operator(formula):
