@@ -82,7 +82,7 @@ def make_quantified_variables_unique_helper(formula):
         prover = Prover(ADDITIONAL_QUANTIFICATION_AXIOMS, conclusion)
         old_conc_step = prover.add_proof(old_conc, inner_proof)
 
-        taut_step = prover.add_tautological_inference(str(conclusion), [old_conc_step])
+        taut_step = prover.add_tautological_inference(conclusion, [old_conc_step])
 
         return new_phi, prover.proof
 
@@ -101,7 +101,7 @@ def make_quantified_variables_unique_helper(formula):
         old_left_conc_step = prover.add_proof(old_left_conc, inner_left_proof)
         old_right_conc_step = prover.add_proof(old_right_conc, inner_right_proof)
 
-        taut_step = prover.add_tautological_inference(str(conclusion), [old_right_conc_step, old_left_conc_step])
+        taut_step = prover.add_tautological_inference(conclusion, [old_right_conc_step, old_left_conc_step])
 
         return new_phi, prover.proof
 
@@ -207,7 +207,7 @@ def pull_out_quantifications_across_negation(formula):
                                                      {'x': var,
                                                       'R({v})'.format(v=var): str(without_outer_Q)})
 
-    last_line = prover.add_tautological_inference(str(equiv_step_6_formula), [mp_step_4, step_5_line])
+    last_line = prover.add_tautological_inference(equiv_step_6_formula, [mp_step_4, step_5_line])
 
     return new_Q_neg_inside, prover.proof
 
@@ -227,6 +227,61 @@ def pull_out_quantifications_from_left_across_binary_operator(formula):
         variable and free variable, in formula have the same name """
     assert type(formula) == Formula and is_binary(formula.root)
     # Task 11.6.1
+
+    if is_binary(formula.root) and not is_quantifier(formula.first.root):
+        conclusion = equivalence_of(formula, formula)
+        prover = Prover(ADDITIONAL_QUANTIFICATION_AXIOMS, conclusion)
+        prover.add_tautology(conclusion)
+        return formula, prover.proof
+
+    left_part = formula.first
+    outer_Q = left_part.root
+    var = left_part.variable
+    inner_formula = left_part.predicate
+
+    binary_formula_inner = Formula(formula.root, inner_formula, formula.second)
+    binary_formula_tag, binary_formula_tag_proof = \
+        pull_out_quantifications_from_left_across_binary_operator(binary_formula_inner)
+
+    if formula.root == '->':
+        outer_Q = 'A' if outer_Q == 'E' else 'E'
+
+    ax_idx = 14 if outer_Q == 'A' else 15
+
+    new_Q_binary_formula_inner = Formula(outer_Q, var, binary_formula_inner)
+    new_Q_binary_formula_tag = Formula(outer_Q, var, binary_formula_tag)
+    step_4_equiv = equivalence_of(new_Q_binary_formula_inner, new_Q_binary_formula_tag)
+
+    step_5_equiv = equivalence_of(formula, new_Q_binary_formula_inner)
+    step_6_equiv = equivalence_of(formula, new_Q_binary_formula_tag)
+
+    prover = Prover(ADDITIONAL_QUANTIFICATION_AXIOMS, step_6_equiv)
+    step_2_proof_line = prover.add_proof(binary_formula_tag_proof.conclusion, binary_formula_tag_proof)
+    step_4_line = prover.add_instantiated_assumption(Formula('->', binary_formula_tag_proof.conclusion,
+                                                             step_4_equiv),
+                                                     ADDITIONAL_QUANTIFICATION_AXIOMS[ax_idx],
+                                                     {'x': var, 'y': var,
+                                                      'R({v})'.format(v=var): str(binary_formula_inner),
+                                                      'Q({v})'.format(v=var): str(binary_formula_tag)}
+                                                     )
+    mp_step_4 = prover.add_mp(step_4_equiv, step_2_proof_line, step_4_line)
+
+    if formula.root == '&':
+        ax_idx = 2 if outer_Q == 'A' else 3
+    elif formula.root == '|':
+        ax_idx = 6 if outer_Q == 'A' else 7
+    else:  # root == '->'
+        ax_idx = 10 if outer_Q == 'A' else 11
+
+    step_5_line = prover.add_instantiated_assumption(step_5_equiv, ADDITIONAL_QUANTIFICATION_AXIOMS[ax_idx],
+                                                     {'x': var,
+                                                      'R({v})'.format(v=var): str(inner_formula),
+                                                      'Q()': str(formula.second)})
+
+    last_line = prover.add_tautological_inference(step_6_equiv, [mp_step_4, step_5_line])
+    return new_Q_binary_formula_tag, prover.proof
+
+
 
 
 def pull_out_quantifications_from_right_across_binary_operator(formula):

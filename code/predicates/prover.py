@@ -162,7 +162,7 @@ class Prover:
             returned """
         # Task 10.2
         # Build tautology
-        tautology = Formula.parse(conclusion)
+        tautology = Formula.parse(conclusion) if type(conclusion) is str else conclusion
         for current_step in reversed(line_numbers):
             current_formula = self.proof.lines[current_step].formula
             tautology = Formula('->', current_formula, tautology)
