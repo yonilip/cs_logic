@@ -434,10 +434,13 @@ def pull_out_quantifications_across_binary_operator(formula):
         psi = psi_quantified
         phi = phi_quantified
 
-    final_iff = str(equivalence_of(formula, Formula.parse(conclusion)))
     finalStep = prover.add_tautological_inference(final_iff, [step1, step2] + quantifier_steps)
 
     return Formula.parse(conclusion), prover.proof
+
+
+def to_prenex_normal_form_from_unique_quantified_variables_helper(formula, prover):
+    return formula, prover
 
 
 def to_prenex_normal_form_from_unique_quantified_variables(formula):
@@ -449,6 +452,107 @@ def to_prenex_normal_form_from_unique_quantified_variables(formula):
         variable, in formula have the same name """
     assert type(formula) is Formula
     # Task 11.8
+    formulas_and_proofs = []
+    if is_in_prenex_normal_form(formula):
+        conclusion = equivalence_of(formula, formula)
+        prover = Prover(ADDITIONAL_QUANTIFICATION_AXIOMS, conclusion)
+        prover.add_tautology(conclusion)
+        return formula, prover.proof
+
+    # case3: unary.
+    # We will prove ~A<=>~B.
+    elif formula.root == '~':
+        # Send first recursively we got A<=>B as tup[0].
+        not_a = formula
+        b, proof_a_iff_b = to_prenex_normal_form_from_unique_quantified_variables(formula.first)
+        a_iff_b = proof_a_iff_b.conclusion
+        not_b = Formula('~', proof_a_iff_b.conclusion.first.second)
+
+        # Send ~tup[0] (=~B) to task 5 got ~B<=>C.
+        c, proof_notB_iff_c = pull_out_quantifications_across_negation(not_b)
+
+        # We want to prove ~A<=>C
+        not_a_iff_c = str(equivalence_of(not_a, c))
+        prover = Prover(ADDITIONAL_QUANTIFICATION_AXIOMS, not_a_iff_c)
+
+        a_iff_b_line = prover.add_proof(a_iff_b, proof_a_iff_b)
+
+        notA_iff_notB = equivalence_of(not_a, not_b)
+        t_line = prover.add_tautology('({a_iff_b}->{notA_iff_notB})'.format(a_iff_b=str(a_iff_b),
+                                                                            notA_iff_notB=str(notA_iff_notB)))
+        notA_iff_notB_line = prover.add_tautological_inference(str(notA_iff_notB), [a_iff_b_line, t_line])
+
+        notB_iff_c_line = prover.add_proof(proof_notB_iff_c.conclusion, proof_notB_iff_c)
+
+        notA_iff_c = equivalence_of(not_a, c)
+        notA_iff_c_line = prover.add_tautological_inference(notA_iff_c, [notA_iff_notB_line, notB_iff_c_line])
+
+        return c, prover.proof
+
+    elif is_binary(formula.root):
+        ac = formula
+        a, c = formula.first, formula.second
+        operator = formula.root
+
+        # case4: binary. Send first recursively we got A<=>B,
+        b, proof_a_iff_b = to_prenex_normal_form_from_unique_quantified_variables(a)
+
+        # Send second recursively we got C<=>D.
+        d, proof_c_iff_d = to_prenex_normal_form_from_unique_quantified_variables(c)
+
+        # We will prove A*C<=>B*D (* is the binary operator).
+        # Build formula from B and D - Formula(*,B,D), and send it to
+        # task7. We got B*D<=>E.
+        bd = Formula(operator, b, d)
+        e, proof_bd_iff_e = pull_out_quantifications_across_binary_operator(bd)
+
+        # We would like to prove: A*C<=>E
+        conclusion = equivalence_of(ac, e)
+        prover = Prover(ADDITIONAL_QUANTIFICATION_AXIOMS, conclusion)
+
+        # PROVER MOTHAFACKA
+        ab_line = prover.add_proof(proof_a_iff_b.conclusion, proof_a_iff_b)
+
+        cd_line = prover.add_proof(proof_c_iff_d.conclusion, proof_c_iff_d)
+
+        ac_bd = equivalence_of(ac, bd)
+        ac_bd_line = prover.add_tautological_inference(ac_bd, [ab_line, cd_line])
+
+        bd_e_line = prover.add_proof(proof_bd_iff_e.conclusion, proof_bd_iff_e)
+
+        ac_e = equivalence_of(ac, e)
+        ac_e_line = prover.add_tautological_inference(ac_e, [ac_bd_line, bd_e_line])
+
+        return e, prover.proof
+
+    # is_quantifier(formula.root):
+    else:
+        # case2: quantifier. Send predicate recursively we got A<=>B as tup[0].
+        # use 14/15 axiom to prove: A<=>B => Ax[A]<=>Ax[B]
+        b, proof_a_iff_b = to_prenex_normal_form_from_unique_quantified_variables(formula.predicate)
+
+        a_quantified = formula
+        b_quantified = formula.root + formula.variable + '[' + str(b) + ']'
+        conclusion = equivalence_of(a_quantified, b_quantified)
+        prover = Prover(ADDITIONAL_QUANTIFICATION_AXIOMS, conclusion)
+
+        axiom = ADDITIONAL_QUANTIFICATION_AXIOMS[-2] if formula.root == 'A' else ADDITIONAL_QUANTIFICATION_AXIOMS[-1]
+
+        inst_assum_step = prover.add_instantiated_assumption(Formula('->', proof_a_iff_b.conclusion, conclusion),
+             axiom,
+             {'x': formula.variable, 'y': formula.variable,
+              'R({v})'.format(v=formula.variable): str(proof_a_iff_b.conclusion),
+              'Q({v})'.format(v=formula.variable): str(conclusion)})
+
+        return conclusion, prover.proof
+# case2: quantifier. Send predicate recursively we got A<=>B as tup[0].
+# use 14/15 axiom to prove: A<=>B => Ax[A]<=>Ax[B]
+
+# case4: binary. Send first recursively we got A<=>B, Send second
+# recursively we got C<=>D. We will prove A*C<=>B*D (* is the binary
+# operator). Build formula from B and D - Formula(*,B,D), and send it to
+# task7. We got B*D<=>E. We would like to prove: A*C<=>E
+
 
 
 def to_prenex_normal_form(formula):
