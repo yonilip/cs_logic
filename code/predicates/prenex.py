@@ -439,10 +439,6 @@ def pull_out_quantifications_across_binary_operator(formula):
     return Formula.parse(conclusion), prover.proof
 
 
-def to_prenex_normal_form_from_unique_quantified_variables_helper(formula, prover):
-    return formula, prover
-
-
 def to_prenex_normal_form_from_unique_quantified_variables(formula):
     """ Takes a formula and returns a pair: an equivalent formula in prenex
         normal form, and a proof of the equivalence (i.e., a proof of
@@ -525,34 +521,32 @@ def to_prenex_normal_form_from_unique_quantified_variables(formula):
 
         return e, prover.proof
 
-    # is_quantifier(formula.root):
+    # case is_quantifier(formula.root): (Tests didnt cover this)
     else:
         # case2: quantifier. Send predicate recursively we got A<=>B as tup[0].
         # use 14/15 axiom to prove: A<=>B => Ax[A]<=>Ax[B]
         b, proof_a_iff_b = to_prenex_normal_form_from_unique_quantified_variables(formula.predicate)
 
+        a = formula.predicate
         a_quantified = formula
-        b_quantified = formula.root + formula.variable + '[' + str(b) + ']'
+        b_quantified = Formula.parse(formula.root + formula.variable + '[' + str(b) + ']')
         conclusion = equivalence_of(a_quantified, b_quantified)
         prover = Prover(ADDITIONAL_QUANTIFICATION_AXIOMS, conclusion)
 
+        a_iff_b_line = prover.add_proof(proof_a_iff_b.conclusion, proof_a_iff_b)
+
         axiom = ADDITIONAL_QUANTIFICATION_AXIOMS[-2] if formula.root == 'A' else ADDITIONAL_QUANTIFICATION_AXIOMS[-1]
 
+        sub_map = {'x': formula.variable, 'y': formula.variable,
+         'R({v})'.format(v=formula.variable): str(a),
+         'Q({v})'.format(v=formula.variable): str(b)}
         inst_assum_step = prover.add_instantiated_assumption(Formula('->', proof_a_iff_b.conclusion, conclusion),
-             axiom,
-             {'x': formula.variable, 'y': formula.variable,
-              'R({v})'.format(v=formula.variable): str(proof_a_iff_b.conclusion),
-              'Q({v})'.format(v=formula.variable): str(conclusion)})
+             axiom, sub_map)
 
-        return conclusion, prover.proof
-# case2: quantifier. Send predicate recursively we got A<=>B as tup[0].
-# use 14/15 axiom to prove: A<=>B => Ax[A]<=>Ax[B]
 
-# case4: binary. Send first recursively we got A<=>B, Send second
-# recursively we got C<=>D. We will prove A*C<=>B*D (* is the binary
-# operator). Build formula from B and D - Formula(*,B,D), and send it to
-# task7. We got B*D<=>E. We would like to prove: A*C<=>E
+        final_step = prover.add_tautological_inference(conclusion, [a_iff_b_line, inst_assum_step])
 
+        return b_quantified, prover.proof
 
 
 def to_prenex_normal_form(formula):
@@ -566,3 +560,15 @@ def to_prenex_normal_form(formula):
         way  """
     assert type(formula) is Formula
     # Task 11.9
+    unique_formula, unique_proof = make_quantified_variables_unique(formula)
+
+    pnf, pnf_proof = to_prenex_normal_form_from_unique_quantified_variables(unique_formula)
+
+    conclusion = equivalence_of(formula, pnf)
+    prover = Prover(ADDITIONAL_QUANTIFICATION_AXIOMS, conclusion)
+    unique_line = prover.add_proof(unique_proof.conclusion, unique_proof)
+    pnf_line = prover.add_proof(pnf_proof.conclusion, pnf_proof)
+
+    prover.add_tautological_inference(str(conclusion), [unique_line, pnf_line])
+
+    return pnf, prover.proof
