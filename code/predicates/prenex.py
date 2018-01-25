@@ -386,10 +386,11 @@ def pull_out_quantifications_across_binary_operator(formula):
     operator = str(formula.root)
 
     conclusion = first_quantifiers + second_quantifiers + \
-                 first_inner + operator + second_inner + \
+                 '(' + first_inner + operator + second_inner + ')' + \
                  first_ending + second_ending
+    final_iff = str(equivalence_of(formula, Formula.parse(conclusion)))
 
-    prover = Prover(ADDITIONAL_QUANTIFICATION_AXIOMS, conclusion)
+    prover = Prover(ADDITIONAL_QUANTIFICATION_AXIOMS, final_iff)
 
     left_formula, left_proof = pull_out_quantifications_from_left_across_binary_operator(formula)
     step1 = prover.add_proof(left_proof.conclusion, left_proof)
@@ -399,22 +400,49 @@ def pull_out_quantifications_across_binary_operator(formula):
     step2 = prover.add_proof(right_proof.conclusion, right_proof)
 
     psi_iff_phi = right_proof.conclusion
-    psi = first_inner
-    phi = str(second)
-    first_inner_quantified = first_quantifiers + first_inner + first_quantifiers.count('[') * ']'
-    sub_map = {'x': first.variable, 'y': second.variable,
-              'R(v)': str(Formula.parse(psi).substitute({first.variable: Term('v')})),
-              'Q(v)': str(Formula.parse(second_inner).substitute({second.variable: Term('v')}))
-               }
-    ax15_conclusion = '({psi_iff_phi}->(({psi_quantified}->{phi})&({phi}->{psi_quantified})))'.format(
-        phi=phi, psi_iff_phi=psi_iff_phi, psi_quantified=first_inner_quantified)
+    psi = str(right_proof.conclusion.first.first)
+    phi = str(right_proof.conclusion.first.second)
+    psi_quantified = '{quantifiers}{psi}{closing_quantifiers}'.format(psi=psi, quantifiers=first_quantifiers,
+                                                                      closing_quantifiers=first_ending) # TODO for
+    phi_quantified = '{quantifiers}{phi}{closing_quantifiers}'.format(phi=phi, quantifiers=first_quantifiers,
+                                                                      closing_quantifiers=first_ending) # TODO for
+    if first_quantifiers:
+        sub_map = {'x': first.variable, 'y': first.variable,
+                  # 'R(v)': str(Formula.parse(psi).substitute({first.variable: Term('v')})),
+                  # 'Q(v)': str(Formula.parse(phi).substitute({first.variable: Term('v')}))
+                   'R({v})'.format(v=first.variable): psi,
+                'Q({v})'.format(v=first.variable): phi
 
-    step3 = prover.add_instantiated_assumption(ax15_conclusion, ADDITIONAL_QUANTIFICATION_AXIOMS[-2], sub_map)
+                   }
+        psi_quantified_iff_phi_quantified = equivalence_of(Formula.parse(psi_quantified), Formula.parse(phi_quantified))
+        ax15_conclusion = '({psi_iff_phi}->{psi_quantified_iff_phi_quantified})'.format(psi_iff_phi=psi_iff_phi,
+            psi_quantified_iff_phi_quantified=psi_quantified_iff_phi_quantified)
+
+        step3 = prover.add_instantiated_assumption(ax15_conclusion, ADDITIONAL_QUANTIFICATION_AXIOMS[-2], sub_map)
+
+    final_iff = '(({a}->{b})&({b}->{a}))'.format(a=str(formula), b=conclusion)
+    lines = [step1, step2, step3] if first_quantifiers else [step1, step2]
+    step4 = prover.add_tautological_inference(final_iff, lines)
+    # for quantifier in :
+    # ((Ax[S(x)]&Ay[T(y)])->Ax[Ay[S(x)&T(y)]])   &   (Ax[Ay[S(x)&T(y)]]->(Ax[S(x)]&Ay[T(y)]))
+    # psi_iff_phi = right_proof.conclusion
+    # psi = first_inner
+    # phi = str(second)
+    # # first_inner_quantified = first_quantifiers + first_inner + first_quantifiers.count('[') * ']'
+    # sub_map = {'x': first.variable, 'y': second.variable,
+    #           'R(v)': str(Formula.parse(psi).substitute({first.variable: Term('v')})),
+    #           'Q(v)': str(Formula.parse(second_inner).substitute({second.variable: Term('v')}))
+    #            }
+    # ax15_conclusion = '({psi_iff_phi}->(({conclusion}->{phi})&({phi}->{conclusion})))'.format(
+    #     phi=phi, psi_iff_phi=psi_iff_phi, conclusion=conclusion)
+
+    # step3 = prover.add_instantiated_assumption(ax15_conclusion, ADDITIONAL_QUANTIFICATION_AXIOMS[-2], sub_map)
+
     # R_x =
     # Q_x =
     # # right_proof.conclusion -> equivalence_of(Ax[right_proof.conclusion.left], Ay[right_proof.conclusion.right])
-    Schema('(((R(x)->Q(x))&(Q(x)->R(x)))->((Ax[R(x)]->Ay[Q(y)])&(Ay[Q(y)]->Ax[R(x)])))', {'x': 'x', 'y': 'y', 'R', 'Q'}),
-    (((R(x)->Q(x)) & (Q(x)->R(x)))     ->     ((Ax[R(x)]->Ay[Q(y)]) & (Ay[Q(y)]->Ax[R(x)])))
+    # Schema('(((R(x)->Q(x))&(Q(x)->R(x)))->((Ax[R(x)]->Ay[Q(y)])&(Ay[Q(y)]->Ax[R(x)])))', {'x': 'x', 'y': 'y', 'R', 'Q'}),
+    # (((R(x)->Q(x)) & (Q(x)->R(x)))     ->     ((Ax[R(x)]->Ay[Q(y)]) & (Ay[Q(y)]->Ax[R(x)])))
     # conclusion = str(equivalence_of({}{}, formula))
     #
     # step_4_line = prover.add_instantiated_assumption(Formula('->', binary_formula_tag_proof.conclusion,
@@ -425,9 +453,10 @@ def pull_out_quantifications_across_binary_operator(formula):
     #                                                   'Q({v})'.format(v=var): str(binary_formula_tag)}
     #                                                  )
     #
+    # step5 = prover.add_assumption(formula)
 
 
-    return prover.conclusion, prover.proof
+    return Formula.parse(conclusion), prover.proof
 
 
 def to_prenex_normal_form_from_unique_quantified_variables(formula):
