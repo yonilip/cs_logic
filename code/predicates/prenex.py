@@ -271,7 +271,7 @@ def pull_out_quantifications_from_left_across_binary_operator(formula):
     elif formula.root == '|':
         ax_idx = 6 if outer_Q == 'A' else 7
     else:  # root == '->'
-        ax_idx = 10 if outer_Q == 'A' else 11
+        ax_idx = 11 if outer_Q == 'A' else 10
 
     step_5_line = prover.add_instantiated_assumption(step_5_equiv, ADDITIONAL_QUANTIFICATION_AXIOMS[ax_idx],
                                                      {'x': var,
